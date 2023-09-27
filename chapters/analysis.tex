@@ -47,26 +47,26 @@ int main() {
 \blindtext
 
 \begin{table}[!ht]
-	\caption{Country list}\label{t:1}
+	\caption{Kódy krajín podľa štandardov ISO}\label{t:1}
 	\smallskip
 	\centering
 
-	\begin{tabular}{ |p{3cm}||p{3cm}|p{3cm}|p{3cm}|  }
-		\hline
-		\multicolumn{4}{|c|}{Country List} \\
-		\hline
-		Country Name or Area Name& ISO ALPHA 2 Code &ISO ALPHA 3 Code&ISO numeric Code\\
-		\hline
+	\begin{tabular}{llll}
+		\toprule
+		Názov krajiny & Alpha 2 & Alpha 3 & Numeric\\
+		\midrule
 		Afghanistan & AF & AFG & 004\\
-		Aland Islands & AX & ALA & 248\\
-		Albania & AL & ALB & 008\\
-		Algeria & DZ & DZA & 012\\
-		American Samoa & AS & ASM & 016\\
+		Alandské Ostrovy & AX & ALA & 248\\
+		Albánsko & AL & ALB & 008\\
+		Alžírsko & DZ & DZA & 012\\
+		Americká Samoa & AS & ASM & 016\\
 		Andorra & AD & AND & 020\\
 		Angola & AO & AGO & 024\\
-		\hline
+		\toprule
 	\end{tabular}
 \end{table}
+
+Pre sadzbu profesionálne vyzerajúcich tabuliek odporúčame použiť balík \emph{booktabs}\footnote{\url{https://en.wikibooks.org/wiki/LaTeX/Tables\#Professional_tables}}.
 
 
 \section{Phasellus id pretium neque}

@@ -16,8 +16,8 @@ Fedora users will write:
 
 ```bash
 sudo dnf install texlive-collection-latexrecommended \
-    texlive-collection-langczechslovak texlive-totalcount \
-    texlive-biblatex texlive-biblatex-iso690 texlive-glossaries \
+    texlive-collection-fontsrecommended texlive-collection-langczechslovak \
+    texlive-totalcount texlive-biblatex-iso690 texlive-glossaries \
     latexmk texstudio
 ```
 
@@ -39,6 +39,11 @@ latexmk -pdf -bibtex -pvc thesis
 Running this command will create the resulting document in _PDF_ format, which will be displayed in the document browser afterwards. However, the tool will not quit and will monitor changes, while with each change (saving a _.tex_ file), the resulting document will be re-generated.
 
 Of course, you can open the project in any _LaTeX_ editor or IDE, e.g. _TeX Studio_.
+
+
+## Docker Image
+
+Instead of local installation, you can use a Docker container as described in the section [Running locally](https://git.kpi.fei.tuke.sk/kpi/latex#running-locally) of Docker image documentation.
 
 
 ## Update
@@ -87,6 +92,6 @@ _BibTeX_ is used to generate the bibliography. It only displays those items that
 
 ### Books about using LaTeX
 
-* [The Not So Short Introduction to LaTeX 2ε](http://tug.ctan.org/tex-archive/info/lshort/english/lshort.pdf)
-* [Nie príliš stručný úvod do systému LaTeX 2ε](http://people.tuke.sk/jan.busa/kega/latex/latex_uvod.pdf) (Slovak translation)
+* [The Not So Short Introduction to LaTeX 2ε](http://mirrors.ctan.org/info/lshort/english/lshort.pdf)
+* [Nie príliš stručný úvod do systému LaTeX 2ε](http://mirrors.ctan.org/info/lshort/slovak/Slshorte.pdf) (Slovak translation)
 * [LaTeX Wikibook](https://en.wikibooks.org/wiki/LaTeX)
