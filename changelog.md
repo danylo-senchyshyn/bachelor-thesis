@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2024.1] - 2024-04-11
+- vypustené čestné vyhlásenie z práce
+
+
 ## [2022.1] - 2021-10-04
 - consultant definition is now optional
 
@@ -13,7 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2021.1] - 2021-02-08
 - znovu zapnuté farebné ramčeky okolo odkazov
-- pridaný súbor latexmkrc s konfiguráciou automatického generovania slovníkov (#10)
+- pridaný súbor `latexmkrc` s konfiguráciou automatického generovania slovníkov (#10)
 
 ## [2020.1] - 2020-09-25
 - zrušený analytický list a nahradený len abstraktom a kľúčovými slovami
@@ -58,8 +62,8 @@ All notable changes to this project will be documented in this file.
 
 
 ## [2017.4] - 2017-04-25
-- akceptovaný merge request od mateja 
-    - hlavičky a päty stránok sú orientované vpravo, keďže záverečná práca je tlačená jednostranne a text je na pravej strane 
+- akceptovaný merge request od mateja
+    - hlavičky a päty stránok sú orientované vpravo, keďže záverečná práca je tlačená jednostranne a text je na pravej strane
     - číslovanie stránok je aktuálne v päte a vždy vpravo
     - opravený problém s názvami príloh
 - výška stránky sa kvôli číslovaniu zmenšila o 1cm
@@ -72,7 +76,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2017.2] - 2017-03-18
 - opravený problém s číslovaním literatúry
-    - v súbore thesis.tex došlo k prehodeniu riadkov pri umiestňovaní literatúry kvôli nesprávnej strane v obsahu. z pôvodného 
+    - v súbore thesis.tex došlo k prehodeniu riadkov pri umiestňovaní literatúry kvôli nesprávnej strane v obsahu. z pôvodného
     ```latex
     \printbibliography[title={Literatúra}]
     \addcontentsline{toc}{chapter}{Literatúra}
@@ -86,7 +90,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2017.1] - 2017-01-17
 - zrušený balík `parskip`
-    - pridaný `\noindent` do čestného vyhlásenia 
+    - pridaný `\noindent` do čestného vyhlásenia
     - zrušené odsadzovanie na titulných stranách
 - oprava prostredia tabular na titulných stranách
     - na druhej strane už lícuje s okrajom

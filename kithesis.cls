@@ -68,8 +68,9 @@
 
 % slovak translation of bibliography
 \DefineBibliographyStrings{slovak}{%
-    bibliography = {Literatúra}
+    bibliography = {Zoznam použitej literatúry}
 }
+% \def\refname{Zoznam použitej literatúry} % TODO replaced by biblatex stuff, should be \bibname either
 
 \RequirePackage[
    unicode,
@@ -83,7 +84,7 @@
    bookmarksnumbered,
    bookmarksopen,
    pdfhighlight={/P},
-   colorlinks=false, % TODO draft vs publish ready?
+   colorlinks=true, % TODO draft vs publish ready?
    %hidelinks, % disable color links completly
    citecolor=magenta,
    baseurl={https://kpi.fei.tuke.sk/}
@@ -103,10 +104,9 @@
 \RequirePackage[small]{caption}
 \setlength{\captionmargin}{25pt}
 
-% TODO These commande probably have no effect, because are overriden by babel
+% TODO These commands probably have no effect, because are overriden by babel
 \def\figurename{Obrázok}
 \def\tabname{Tabuľka}
-% \def\refname{Zoznam použitej literatúry} % TODO replaced by biblatex stuff, should be \bibname either
 
 %% Vlastná hlavička
 \RequirePackage{fancyhdr}
@@ -178,15 +178,15 @@
     \iflanguage{slovak}{
         Tu vložte zadávací list pomocou príkazu\\
         {\tt{\textbackslash{}thesisspec\{cesta/k/suboru/so/zadavacim.listom\}}}\\
-        v preambule dokumentu. 
-        
+        v preambule dokumentu.
+
         Kópiu zadávacieho listu skenujte čiernobielo (v odtieňoch sivej) na $200$ až $300$ DPI!
         Nezabudnite do jednej práce vložiť originál zadávacieho listu!
     }{
         Here insert the assignment statement using the command\\
         {\tt{\textbackslash{}thesisspec\{path/to/the/filw/with/assignment.statement\}}}\\
         in the preamble of the document.
-        
+
         Copy of the assignment statement should be scanned black\&white (grayscale) using DPI from $200$ to $300$!
         Don't forget to insert the original assignment statement into one of the theses copies.
     }
@@ -377,6 +377,8 @@
         \renewcommand{\lstlistingname}{Listing}
         \renewcommand{\acrlistname}{List of Abbreviations}
         \renewcommand{\appendixlistname}{List of Appendixes}
+        \renewcommand{\lstlistingname}{Listing}
+        \renewcommand{\lstlistlistingname}{List of \lstlistingname s}
     }
     \addto\captionsslovak{
         \renewcommand{\@title}{\@title@sk}
@@ -406,6 +408,8 @@
         \renewcommand{\acrlistname}{Zoznam skratiek}
         \renewcommand{\appendixlistname}{Zoznam príloh}
         \renewcommand{\appendixname}{Príloha}
+        \renewcommand{\lstlistingname}{Výpis}
+        \renewcommand{\lstlistlistingname}{Zoznam výpisov}
     }
 }
 
@@ -505,7 +509,7 @@
     \subsection*{\abstractname}
 
     \@abstract
-    
+
     \subsection*{\keywordsname}
 
     \@keywords
@@ -516,7 +520,7 @@
         \begin{otherlanguage}{english}
             \@abstract
         \end{otherlanguage}
-        
+
         \subsection*{\secondkeywordsname}
 
         \begin{otherlanguage}{english}
@@ -528,7 +532,7 @@
         \begin{otherlanguage}{slovak}
             \@abstract
         \end{otherlanguage}
-        
+
         \subsection*{\secondkeywordsname}
 
         \begin{otherlanguage}{slovak}
@@ -560,12 +564,12 @@
 
     \noindent\@declaration
 
-    \bigskip
-
-    \noindent \@college@city,~\@submissionday.\@submissionmonth.\@submissionyear \hfill
-    \begin{tabular}[t]{c}
-        \hbox to 50mm {\dotfill} \\ \textit{\small \signaturename}
-    \end{tabular}
+%    \bigskip
+%
+%    \noindent \@college@city,~\@submissionday.\@submissionmonth.\@submissionyear \hfill
+%    \begin{tabular}[t]{c}
+%        \hbox to 50mm {\dotfill} \\ \textit{\small \signaturename}
+%    \end{tabular}
     \newpage
 }
 

@@ -1,6 +1,6 @@
 # About
 
-Template for final theses writing at _DCI FEEI TUKE_. 
+Template for final theses writing at _DCI FEEI TUKE_.
 
 Warning! The encoding of all documents is set to _UTF-8_! So don't forget to set up your environment in which you will write your thesis to use this encoding!
 
@@ -12,28 +12,45 @@ We recommend installing the [TeX Live](https://www.tug.org/texlive/) package.
 
 As an editor, we recommend installing [TeX Studio](http://www.texstudio.org/) or [TeX Maker](http://www.xm1math.net/texmaker/).
 
-Fedora users will write: 
+Fedora users will write:
 
 ```bash
-sudo dnf install texlive-collection-latexrecommended \
-    texlive-collection-fontsrecommended texlive-collection-langczechslovak \
-    texlive-totalcount texlive-biblatex-iso690 texlive-glossaries \
-    latexmk texstudio
+$ sudo dnf install \
+   texlive-pdfpages \
+   texlive-metafont \
+   latexmk \
+   texlive-collection-fontsrecommended \
+   texlive-totalcount \
+   texlive-biblatex-iso690 \
+   texlive-glossaries \
+   texlive-babel-english \
+   texlive-babel-slovak \
+   texlive-hyphen-slovak \
+   texkuve-vlna
 ```
 
 Similarly, Debian and Ubuntu users will write:
 
 ```bash
-sudo apt-get install texlive-latex-extra texlive-fonts-recommended \
+$ sudo apt-get install texlive-latex-extra texlive-fonts-recommended \
     texlive-lang-czechslovak texlive-bibtex-extra biber latexmk texstudio
 ```
+
+
+## Editors for Writing Your Thesis in LaTeX
+
+There exists many _LaTeX_ editors and extensions for common code editors for _LaTeX_ support. You can try these:
+
+* [TeXstudio](https://www.texstudio.org/) - _TeXstudio_ is an IDE for creating _LaTeX_ documents.
+* [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) - _VS Code_ extension for writing _LaTeX_ documents.
+
 
 ## Compilation
 
 To create a document, type the following command from the command line:
 
 ```bash
-latexmk -pdf -bibtex -pvc thesis
+$ latexmk -pdf -bibtex -pvc thesis
 ```
 
 Running this command will create the resulting document in _PDF_ format, which will be displayed in the document browser afterwards. However, the tool will not quit and will monitor changes, while with each change (saving a _.tex_ file), the resulting document will be re-generated.
@@ -48,12 +65,12 @@ Instead of local installation, you can use a Docker container as described in th
 
 ## Update
 
-In case the template is updated, just update the `kithesis.cls` file in your project. However, always look in the `CHANGELOG.md` file to make sure there was an update. 
+In case the template is updated, just update the `kithesis.cls` file in your project. However, always look in the `CHANGELOG.md` file to make sure there was an update.
 
 
 ## Spell Checking
 
-In case your editor does not support spell-checking, you can use the `aspell` tool as follows: 
+In case your editor does not support spell-checking, you can use the `aspell` tool as follows:
 
 ```bash
 aspell -d sk_SK -t -c file.tex
@@ -62,24 +79,24 @@ aspell -d sk_SK -t -c file.tex
 
 ## Troubleshooting
 
-### Q1: I found an error in the template. Where can I report it? 
+### Q1: I found an error in the template. Where can I report it?
 
-Either by e-mail to miroslav.binas@tuke.sk or directly here on gitlab. Ideally with a _merge request_. 
+Either by e-mail to miroslav.binas@tuke.sk or directly here on gitlab. Ideally with a _merge request_.
 
 
-### Q2: The page numbering of the table of contents is in Roman numerals. Is that all right? 
+### Q2: The page numbering of the table of contents is in Roman numerals. Is that all right?
 
 Yes, it is OK. The work uses two styles of page numbering. Numbering with Roman numerals is in the introductory part of the work (table of contents and all lists). Numbering of the rest of the work, starting from the introduction or motivation, is numbered in Arabic numerals. Numbering of the second part of the work begins on the page with the introduction or motivation.
 
 
 ### Q3: Table of contents is not displayed.
 
-Try compiling the work again. It is typical for _LaTeX_. If you want to have your table of contents updated, it is always necessary to translate it twice. 
+Try compiling the work again. It is typical for _LaTeX_. If you want to have your table of contents updated, it is always necessary to translate it twice.
 
 
 ### Q4: The bibliography only shows 3 records, even though I have more.
 
-_BibTeX_ is used to generate the bibliography. It only displays those items that you actually quote in the work. Therefore, if you cite only 3 documents in the work, only those will be displayed in the bibliography. 
+_BibTeX_ is used to generate the bibliography. It only displays those items that you actually quote in the work. Therefore, if you cite only 3 documents in the work, only those will be displayed in the bibliography.
 
 
 ## Additional Resources
