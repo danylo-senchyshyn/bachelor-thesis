@@ -14,7 +14,7 @@ all: pdf
 watch: $(SOURCES)
 	@echo "Building PDF"
 	@vlna $(SOURCES)
-	@$(LATEXMK) -pdf -bibtex -pvc $(OUTPUT)
+	@$(LATEXMK) -cd -pdf -bibtex -pvc $(OUTPUT)
 
 pdf: $(SOURCES)  ## Build thesis as PDF document
 	@echo "Building PDF"
@@ -25,7 +25,7 @@ pdf: $(SOURCES)  ## Build thesis as PDF document
 clean:  ## Clean
 	@echo "Cleanup"
 	$(LATEXMK) -C
-	@rm -rf chapters/*aux
+	@rm -rf chapters/*aux appendixes/*aux
 
 deploy: pdf
 

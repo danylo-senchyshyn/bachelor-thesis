@@ -37,40 +37,6 @@
 % Location of file with bibliography resources
 \addbibresource{chapters/bibliography.bib}
 
-% Variables
-%\thesisspec{figures/thesisspec.png}
-
-\title{Karel the Robot \br learns C language}{Robot Karel\br sa učí jazyk C}
-
-\author[Bc.]{Janko}{Hraško}[PhD.]
-\supervisor{Leslie Lamport} %veduci prace
-%\consultant{Donald E. Knuth} %konzultant
-%\college{University of Žilina}{Žilinská univerzita} %univerzita
-%\faculty{Faculty of Electrical Engineering and informatics}{Fakulta elektrotechniky a informatiky} %fakulta
-%\department{Department of Computers and Informatics}{Katedra počítačov a informatiky} %katedra
-%\departmentacr{DCI}{KPI} % skratka katedry
-%\thesis{Master thesis}{Diplomová práca} %typ prace
-\submissiondate{13}{5}{2024}
-%\fieldofstudy{9.2.1 Informatika}
-%\studyprogramme{Informatika}
-%\city{Košice} %mesto
-\keywords{\LaTeX, programming, typesetting}{\LaTeX, programovanie, sadzba textu}
-%\declaration{som nepodvadzal}
-
-\abstract{%
-    % english
-	\blindtext
-}{%
-    % slovak
-	\blindtext
-}
-
-\acknowledgment{Na tomto mieste by som rád poďakoval svojmu vedúcemu práce za jeho čas a odborné vedenie počas riešenia mojej záverečnej práce.
-
-Rovnako by som sa rád poďakoval svojim rodičom a priateľom za ich podporu a povzbudzovanie počas celého môjho štúdia.
-
-V~neposlednom rade by som sa rád poďakoval pánom \textit{Donaldovi E. Knuthovi} a \textit{Leslie Lamportovi} za typografický systém \LaTeX, s~ktorým som strávil množstvo nezabudnuteľných večerov.}
-
 % if you want to work only on selected chapters
 %\includeonly{chapters/analyza} %,chapters/synteza}
 
@@ -88,6 +54,10 @@ V~neposlednom rade by som sa rád poďakoval pánom \textit{Donaldovi E. Knuthov
 %% -----------------------------------------------------------------
 
 \begin{document}
+
+% Configuration variables are stored in separate file variables.tex
+\include{variables}
+
 %% Title page, abstract, declaration etc.:
 \frontmatter{}
 

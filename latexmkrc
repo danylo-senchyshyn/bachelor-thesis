@@ -11,3 +11,7 @@ sub makeglossaries {
     popd;
     return $return;
 }
+
+# $emulate_aux = 1;
+# $out_dir = 'dist';
+# $aux_dir = 'dist';

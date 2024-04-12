@@ -4,7 +4,7 @@ _minted*
 *.acr
 *.alg
 *.aux
-*.bbl
+*.bbl*
 *.bcf
 *.blg
 *.fdb_latexmk
@@ -22,5 +22,7 @@ _minted*
 *.glg
 *.glo
 *.gls
+*.te~
 
-/thesis.pdf
+thesis.pdf
+thesis.dvi

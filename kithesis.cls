@@ -177,7 +177,7 @@
     \begin{center}
     \iflanguage{slovak}{
         Tu vložte zadávací list pomocou príkazu\\
-        {\tt{\textbackslash{}thesisspec\{cesta/k/suboru/so/zadavacim.listom\}}}\\
+        {\texttt{\textbackslash{}thesisspec\{cesta/k/suboru/so/zadavacim.listom\}}}\\
         v preambule dokumentu.
 
         Kópiu zadávacieho listu skenujte čiernobielo (v odtieňoch sivej) na $200$ až $300$ DPI!
@@ -374,7 +374,7 @@
         \renewcommand{\secondkeywordsname}{Keywords in Slovak}
         \renewcommand{\bibcitationname}{Bibliographic Citation}
         \renewcommand{\supervisorcitationname}{Supervisor}
-        \renewcommand{\lstlistingname}{Listing}
+        % \renewcommand{\lstlistingname}{Listing}
         \renewcommand{\acrlistname}{List of Abbreviations}
         \renewcommand{\appendixlistname}{List of Appendixes}
         \renewcommand{\lstlistingname}{Listing}
@@ -404,7 +404,7 @@
         \renewcommand{\secondkeywordsname}{Kľúčové slová v AJ}
         \renewcommand{\bibcitationname}{Bibliografická citácia}
         \renewcommand{\supervisorcitationname}{Vedúci práce}
-        \renewcommand{\lstlistingname}{Zdrojový kód}
+        % \renewcommand{\lstlistingname}{Zdrojový kód}
         \renewcommand{\acrlistname}{Zoznam skratiek}
         \renewcommand{\appendixlistname}{Zoznam príloh}
         \renewcommand{\appendixname}{Príloha}

@@ -5,7 +5,8 @@ All notable changes to this project will be documented in this file.
 - vypustené čestné vyhlásenie z práce
 - pridaný súbor `Makefile` na zostavovanie práce
 - prvá verzia bakalárskej práce o Robotovi Karlovi
-- pridané preklady pre balík `listings`
+- pridaný preklad pre balík `listings` ako "Výpis"
+- osamostatnenie premenných pre definovanie metadát práce do samostatného súboru `variables.tex`
 
 ## [2022.1] - 2021-10-04
 - consultant definition is now optional
