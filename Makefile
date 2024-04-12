@@ -21,6 +21,9 @@ pdf: $(SOURCES)  ## Build thesis as PDF document
 	@vlna $(SOURCES)
 	@$(LATEXMK) -pdf -bibtex $^
 
+eurocv: ## Builds authors CV only
+	@echo "Building EuroCV"
+
 ##@ Misc
 clean:  ## Clean
 	@echo "Cleanup"
