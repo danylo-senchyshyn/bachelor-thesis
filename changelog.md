@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2024.1] - 2024-04-11
+## [2024.1] - 2024-04-14
 - vypustené čestné vyhlásenie z práce
 - pridaný súbor `Makefile` na zostavovanie práce
 - prvá verzia bakalárskej práce o Robotovi Karlovi

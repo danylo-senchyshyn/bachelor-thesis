@@ -146,11 +146,13 @@
 
 
 % zmena štýlu prvej stránke kapitoly
-\renewcommand\chapter{\if@openright\cleardoublepage\else\clearpage\fi
-                    \thispagestyle{chapterpage}%
-                    \global\@topnum\z@
-                    \@afterindentfalse
-                    \secdef\@chapter\@schapter}
+\renewcommand\chapter{
+    \if@openright\cleardoublepage\else\clearpage\fi
+    \thispagestyle{chapterpage}
+    \global\@topnum\z@
+    \@afterindentfalse
+    \secdef\@chapter\@schapter
+}
 
 \renewcommand{\headrulewidth}{0.7pt}
 
