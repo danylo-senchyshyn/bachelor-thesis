@@ -52,7 +52,7 @@ Robot: A~Gentle Introduction to the Art of Programming} \cite{Pattis1994}, ktor�
 
 
 
-\section{asdf}
+\section{Svet Robota Karla}
 
 z~coho sa svet robota karla sklada
 
@@ -60,7 +60,50 @@ steny, znacky
 
 streets (ulice, riadky) a avenues (aleje, stlpce)
 
-\section{Primitívy a senzory Robota Karla}
+\section{Príkazy Robota Karla}
+
+\emph{Robota Karla} je možné ovládať pomocou niekoľkých príkazov, nazývaných tiež \emph{primitívne funkcie} alebo len \emph{primitívy}. Ich názvy z pôvodného jazyka v \cite{Pattis1994} spolu s opisom ich funkcionality sa nachádzajú v tabuľke \ref{table:karels_primitives}.
+
+\begin{table}[!ht]
+	\caption{Príkazy Robota Karla}\label{table:karels_primitives}
+	\smallskip
+	\centering
+
+	\begin{tabular}{llll}
+		\toprule
+		príkaz & význam \\
+		\midrule
+
+		\verb|move| & \emph{Karel} urobí jeden krok v smere, ktorým je otočený. \\
+		\verb|turnleft| & \emph{Karel} sa otočí o 90°. \\
+		\verb|pickbeeper| & \emph{Karel} vezme značku z aktuálnej pozície a vloží si ju do batohu. \\
+		\verb|putbeeper| & \emph{Karel} položí značku z batohu na aktuálnu pozíciu. \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+
+\section{Senzory Robota Karla}
+
+\emph{Robot Karel} obsahuje niekoľko senzorov, ktoré je možné použiť vtedy, keď sa v rámci programu potrebuje rozhodnúť.
+
+\begin{table}[!ht]
+	\caption{Senzory Robota Karla}\label{table:karels_sensors}
+	\smallskip
+	\centering
+
+	\begin{tabular}{llll}
+		\toprule
+		príkaz & význam \\
+		\midrule
+
+		\verb|front_is_clear| & x \\
+		\verb|beepers_present| & x \\
+		\verb|beepers_in_bag| & x \\
+		\verb|facing_north| & x \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
 \section{Robot Karel a objektové programovanie}
 
