@@ -23,6 +23,7 @@ _minted*
 *.glo
 *.gls
 *.te~
+*(busy)
 
 thesis.pdf
 thesis.dvi

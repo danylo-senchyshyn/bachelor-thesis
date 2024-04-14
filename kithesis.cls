@@ -3,15 +3,15 @@
 %% KPI Thesis Class.
 %%
 %% Class for writing bachelor/master/phd thesis at Computer Science department
-%% at Faculty of Electrical Engineering and Informatics and Technical University
-%% of Košice.
+%% at Faculty of Electrical Engineering and Informatics and Technical
+%% University of Košice.
 %%
 %% department homepage: http://kpi.fei.tuke.sk
 %% project homepage: https://git.kpi.fei.tuke.sk/tuke/thesis.in.latex
 %%
 %%%%%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{kithesis}[2022/10/04 KPI Thesis Class, v2022.1]
+\ProvidesClass{kithesis}[2024/04/14 KPI Thesis Class, v2024.1]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -52,9 +52,24 @@
 \RequirePackage[utf8]{inputenc}
 \RequirePackage[T1]{fontenc}
 
+%% for printing source code
+% See for details: https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings
+\RequirePackage{listings}
+\lstset{
+    basicstyle=\small\ttfamily,  % smaller typewriter font
+    showstringspaces=false       % don't show spaces in string
+}
+
+%% total counters for conditional showing of lists
+% must be defined after all packages with required counters
 \RequirePackage[
     figure,
-    table]{totalcount}
+    table,
+    lstlisting
+]{totalcount}
+
+%% for professional-looking tables
+\usepackage{booktabs}
 
 %% Numeric citations and sorting by citation order
 \RequirePackage{csquotes}
@@ -105,8 +120,8 @@
 \setlength{\captionmargin}{25pt}
 
 % TODO These commands probably have no effect, because are overriden by babel
-\def\figurename{Obrázok}
-\def\tabname{Tabuľka}
+% \def\figurename{Obrázok}
+% \def\tabname{Tabuľka}
 
 %% Vlastná hlavička
 \RequirePackage{fancyhdr}
@@ -248,6 +263,7 @@
     \renewcommand{\@department@sk}{#2}
 }
 
+
 % DOCVAR: department's shortcut
 \newcommand{\@departmentacr@en}{DCI}
 \newcommand{\@departmentacr@sk}{KPI}
@@ -323,7 +339,9 @@
 
 
 % DOCVAR: thesis (type of the thesis)
-\newcommand{\@acknowledgment}{Na tomto mieste by som sa rád poďakoval svojmu vedúcemu záverečnej práce za pripomienky a~odbornú pomoc.}
+\newcommand{\@acknowledgment}{%
+    Na tomto mieste by som sa rád poďakoval svojmu vedúcemu záverečnej práce za pripomienky a~odbornú pomoc.
+}
 \newcommand{\acknowledgment}[1]{\renewcommand{\@acknowledgment}{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -335,7 +353,7 @@
 \newcommand{\declarationname}{No Language Selected}
 \newcommand{\signaturename}{No Language Selected}
 \newcommand{\acknowledgementname}{No Language Selected}
-\newcommand{\lstlistingname}{No Language Selected}
+\renewcommand{\lstlistingname}{No Language Selected}
 \newcommand{\studyprogrammename}{No Language Selected}
 \newcommand{\fieldofstudyname}{No Language Selected}
 \newcommand{\departmentname}{No Language Selected}
@@ -374,11 +392,11 @@
         \renewcommand{\secondkeywordsname}{Keywords in Slovak}
         \renewcommand{\bibcitationname}{Bibliographic Citation}
         \renewcommand{\supervisorcitationname}{Supervisor}
-        % \renewcommand{\lstlistingname}{Listing}
         \renewcommand{\acrlistname}{List of Abbreviations}
         \renewcommand{\appendixlistname}{List of Appendixes}
         \renewcommand{\lstlistingname}{Listing}
         \renewcommand{\lstlistlistingname}{List of \lstlistingname s}
+        \renewcommand{\figurename}{Figure}
     }
     \addto\captionsslovak{
         \renewcommand{\@title}{\@title@sk}
@@ -404,12 +422,12 @@
         \renewcommand{\secondkeywordsname}{Kľúčové slová v AJ}
         \renewcommand{\bibcitationname}{Bibliografická citácia}
         \renewcommand{\supervisorcitationname}{Vedúci práce}
-        % \renewcommand{\lstlistingname}{Zdrojový kód}
         \renewcommand{\acrlistname}{Zoznam skratiek}
         \renewcommand{\appendixlistname}{Zoznam príloh}
         \renewcommand{\appendixname}{Príloha}
         \renewcommand{\lstlistingname}{Výpis}
         \renewcommand{\lstlistlistingname}{Zoznam výpisov}
+        \renewcommand{\figurename}{Obrázok}
     }
 }
 
@@ -457,6 +475,12 @@
     % show list of tables only if there are some
     \iftotaltables%
         \listoftables%
+        \newpage%
+    \fi
+
+    % show list of listings only if there are some
+    \iftotallstlistings%
+        \lstlistoflistings%
         \newpage%
     \fi
 

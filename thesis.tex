@@ -24,24 +24,17 @@
 % If you have problem with colored links in final PDF document, uncomment this line
 % \hypersetup{hidelinks}
 
-\usepackage{listings}  % for source code
-% Listings settings
-% See for details: https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings
-\lstset{
-    basicstyle=\small\ttfamily,  % smaller typewriter font
-    showstringspaces=false       % don't show spaces in string
-}
-
-\usepackage{booktabs}  % for professional-looking tables
-
 % Location of file with bibliography resources
-\addbibresource{chapters/bibliography.bib}
+\addbibresource{bibliography.bib}
 
 % if you want to work only on selected chapters
-%\includeonly{chapters/analyza} %,chapters/synteza}
+\includeonly{chapters/introduction,chapters/microworlds} %,chapters/synteza}
 
 % Load acronyms
 \input{acronyms}
+
+% Configuration variables are stored in separate file variables.tex
+\input{variables}
 
 
 %% -----------------------------------------------------------------
@@ -55,18 +48,10 @@
 
 \begin{document}
 
-% Configuration variables are stored in separate file variables.tex
-\include{variables}
-
 %% Title page, abstract, declaration etc.:
 \frontmatter{}
 
-%% List of code listings, if you are using package minted
-\lstlistoflistings
-
-%\pagenumbering{arabic}
-
-%% Chapters
+    %% List of thesis chapters in required order
 \include{chapters/introduction}
 \include{chapters/microworlds}
 \include{chapters/analysis}
@@ -89,7 +74,7 @@
 % Glossaries
 \printglossary
 
-%% Appendix
+%% Appendixes
 \include{appendixes/list}
 \appendix
 \renewcommand\chaptername{\appendixname}

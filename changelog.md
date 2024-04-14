@@ -7,6 +7,10 @@ All notable changes to this project will be documented in this file.
 - prvá verzia bakalárskej práce o Robotovi Karlovi
 - pridaný preklad pre balík `listings` ako "Výpis"
 - osamostatnenie premenných pre definovanie metadát práce do samostatného súboru `variables.tex`
+- skratka obrázku "Obr." bola premenovaná na plný "Obrázok" po vzore tabuliek a výpisov
+- zoznam výpisov sa zobrazuje automagicky na základe toho, či práca obsahuje aspoň jeden
+- presunutie zoznamu literatúry z priečinku `chapters/` do hlavného priečinku práce
+- kopec refaktoringu a vyčistenie súboru `thesis.tex`
 
 ## [2022.1] - 2021-10-04
 - consultant definition is now optional
