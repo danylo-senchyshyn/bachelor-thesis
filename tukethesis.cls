@@ -166,6 +166,10 @@
 \makeglossaries % prikaz na vytvorenie suboru .glo
 
 
+% good linebraking of bibtex url
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -486,6 +490,25 @@
 
     \pagestyle{fancy}
     \pagenumbering{arabic}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% Back matter
+%%
+%%%%%
+\newcommand{\backmatter}{
+    %% The bibliography
+    \printbibliography[heading=bibintoc]
+
+    \label{theend} % the last page of the thesis
+
+    % List of acronyms
+    \printglossary[type=\acronymtype,title={\acrlistname}]
+
+    % Glossaries
+    \printglossary
 }
 
 

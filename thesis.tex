@@ -37,8 +37,8 @@
 % Load acronyms
 \input{acronyms}
 
-% Configuration variables are stored in separate file variables.tex
-\input{variables}
+% Document metadata variables are stored in separate file metadata.tex
+\input{metadata}
 
 
 %% -----------------------------------------------------------------
@@ -64,20 +64,7 @@
 \include{chapters/evaluation}
 \include{chapters/summary}
 
-% good linebraking of bibtex url
-\setcounter{biburllcpenalty}{7000}
-\setcounter{biburlucpenalty}{8000}
-
-%% The bibliography
-\printbibliography[heading=bibintoc]
-
-\label{theend} % the last page of the thesis
-
-% List of acronyms
-\printglossary[type=\acronymtype,title={\acrlistname}]
-
-% Glossaries
-\printglossary
+\backmatter{}
 
 %% Appendixes
 \include{appendixes/list}
