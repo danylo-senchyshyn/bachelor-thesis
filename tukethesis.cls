@@ -1,17 +1,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-%% KPI Thesis Class.
+%% TUKE Thesis Class.
 %%
-%% Class for writing bachelor/master/phd thesis at Computer Science department
-%% at Faculty of Electrical Engineering and Informatics and Technical
-%% University of Košice.
+%% Class for writing bachelor/master/phd thesis
+%% at Technical University of Košice.
 %%
-%% department homepage: http://kpi.fei.tuke.sk
 %% project homepage: https://git.kpi.fei.tuke.sk/tuke/thesis.in.latex
 %%
 %%%%%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{kithesis}[2024/04/14 KPI Thesis Class, v2024.1]
+\ProvidesClass{tukethesis}[2024/04/14 TUKE Thesis Class, v2024.1]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%

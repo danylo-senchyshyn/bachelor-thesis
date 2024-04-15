@@ -11,7 +11,7 @@ all: pdf
 
 ##@ Development
 
-watch: $(SOURCES)
+watch: $(SOURCES)  ## Live build
 	@echo "Building PDF"
 	@vlna $(SOURCES)
 	@$(LATEXMK) -cd -pdf -bibtex -pvc $(OUTPUT)

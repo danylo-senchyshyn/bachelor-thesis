@@ -26,14 +26,20 @@ $ sudo dnf install \
    texlive-babel-english \
    texlive-babel-slovak \
    texlive-hyphen-slovak \
-   texkuve-vlna
+   texlive-vlna
 ```
 
 Similarly, Debian and Ubuntu users will write:
 
 ```bash
-$ sudo apt-get install texlive-latex-extra texlive-fonts-recommended \
-    texlive-lang-czechslovak texlive-bibtex-extra biber latexmk texstudio
+$ sudo apt-get install \
+   texlive-latex-extra \
+   texlive-fonts-recommended \
+   texlive-lang-czechslovak \
+   texlive-bibtex-extra \
+   biber \
+   latexmk \
+   texstudio
 ```
 
 

@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - skratka obrázku "Obr." bola premenovaná na plný "Obrázok" po vzore tabuliek a výpisov
 - zoznam výpisov sa zobrazuje automagicky na základe toho, či práca obsahuje aspoň jeden
 - presunutie zoznamu literatúry z priečinku `chapters/` do hlavného priečinku práce
+- styl `kithesis` bol premenovany na `tukethesis`
 - kopec refaktoringu a vyčistenie súboru `thesis.tex`
 
 ## [2022.1] - 2021-10-04
