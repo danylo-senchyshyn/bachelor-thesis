@@ -27,8 +27,8 @@ eurocv: ## Builds authors CV only
 ##@ Misc
 clean:  ## Clean
 	@echo "Cleanup"
-	$(LATEXMK) -C
-	@rm -rf chapters/*aux appendixes/*aux
+	$(LATEXMK) -C -silent
+	@find . -regextype posix-extended -iregex ".*(log|aux|fls|fdb_latexmk|te~|bbl.*|ist|lol)" -exec rm {} \;
 
 deploy: pdf
 
