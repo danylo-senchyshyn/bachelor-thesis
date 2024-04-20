@@ -12,6 +12,10 @@ All notable changes to this project will be documented in this file.
 - presunutie zoznamu literatúry z priečinku `chapters/` do hlavného priečinku práce
 - styl `kithesis` bol premenovany na `tukethesis`
 - vytvoreny prikaz `\backmatter{}`, do ktoreho bol vlozeny zoznam pouzitej literatury a zoznam skratiek
+- do metadát PDF dokumentu bol korektne pridaný autor
+- do metadát PDF dokumentu sa vkladá názov, kľúčové slová aj podnadpis na základe jazyka práce
+- všetky linky sú momentálne fialové
+- v obsahu už nie sú rámčeky, ale fialové odkazy
 - kopec refaktoringu a vyčistenie súboru `thesis.tex`
 
 ## [2022.1] - 2021-10-04

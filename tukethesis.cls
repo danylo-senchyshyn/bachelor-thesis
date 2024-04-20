@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%r
 %%
 %% TUKE Thesis Class.
 %%
@@ -97,29 +97,19 @@
    bookmarksnumbered,
    bookmarksopen,
    pdfhighlight={/P},
-   colorlinks=true, % TODO draft vs publish ready?
+   colorlinks=true,
    %hidelinks, % disable color links completly
    citecolor=magenta,
+   linkcolor=magenta,
+   filecolor=magenta,
+   urlcolor=magenta,
    baseurl={https://kpi.fei.tuke.sk/}
 ]{hyperref}
 
-% PDF metadata based on macro values
-\AtBeginDocument{
-  \hypersetup{
-    pdftitle = {\@title@en},
-    pdfauthor = {\@author},
-    pdfkeywords = {\@keywords@en},
-    pdfsubject = {\@thesis}
-  }
-}
 
 % popisky ku obrazkom a tabulkam
 \RequirePackage[small]{caption}
 \setlength{\captionmargin}{25pt}
-
-% TODO These commands probably have no effect, because are overriden by babel
-% \def\figurename{Obrázok}
-% \def\tabname{Tabuľka}
 
 %% Vlastná hlavička
 \RequirePackage{fancyhdr}
@@ -187,7 +177,7 @@
 %%
 %%%%%
 
-\def\br{\\}
+%\def\br{\\}
 
 % DOCVAR: thesisspec (The list of thesis specifications)
 \newcommand{\@thesisspec}{
@@ -352,6 +342,7 @@
 %%
 %% Translations of strings used in the thesis
 %%
+%%%%%
 
 % Default empty declarations
 \newcommand{\declarationname}{No Language Selected}
@@ -371,69 +362,6 @@
 \newcommand{\acrlistname}{No Language Selected}
 \newcommand{\appendixlistname}{No Language Selected}
 
-\AtBeginDocument{
-    \addto\captionsenglish{
-        \renewcommand{\@title}{\@title@en}
-        \renewcommand{\@abstract}{\@abstract@en}
-        \renewcommand{\@keywords}{\@keywords@en}
-        \renewcommand{\@college}{\@college@en}
-        \renewcommand{\@department}{\@department@en}
-        \renewcommand{\@departmentacr}{\@departmentacr@en}
-        \renewcommand{\@faculty}{\@faculty@en}
-        \renewcommand{\@thesis}{\@thesis@en}
-        \renewcommand{\@declaration}{\@declaration@en}
-        \renewcommand{\declarationname}{Declaration}
-        \renewcommand{\signaturename}{Signature}
-        \renewcommand{\acknowledgementname}{Acknowledgement}
-        \renewcommand{\studyprogrammename}{Study Programme}
-        \renewcommand{\fieldofstudyname}{Field of Study}
-        \renewcommand{\departmentname}{Department}
-        \renewcommand{\supervisorname}{Supervisor}
-        \renewcommand{\consultantname}{Consultant}
-        \renewcommand{\abstractname}{Abstract in English}
-        \renewcommand{\keywordsname}{Keywords in English}
-        \renewcommand{\secondabstractname}{Abstract in Slovak}
-        \renewcommand{\secondkeywordsname}{Keywords in Slovak}
-        \renewcommand{\bibcitationname}{Bibliographic Citation}
-        \renewcommand{\supervisorcitationname}{Supervisor}
-        \renewcommand{\acrlistname}{List of Abbreviations}
-        \renewcommand{\appendixlistname}{List of Appendixes}
-        \renewcommand{\lstlistingname}{Listing}
-        \renewcommand{\lstlistlistingname}{List of \lstlistingname s}
-        \renewcommand{\figurename}{Figure}
-    }
-    \addto\captionsslovak{
-        \renewcommand{\@title}{\@title@sk}
-        \renewcommand{\@abstract}{\@abstract@sk}
-        \renewcommand{\@keywords}{\@keywords@sk}
-        \renewcommand{\@college}{\@college@sk}
-        \renewcommand{\@department}{\@department@sk}
-        \renewcommand{\@departmentacr}{\@departmentacr@sk}
-        \renewcommand{\@faculty}{\@faculty@sk}
-        \renewcommand{\@thesis}{\@thesis@sk}
-        \renewcommand{\@declaration}{\@declaration@sk}
-        \renewcommand{\declarationname}{Čestné vyhlásenie}
-        \renewcommand{\signaturename}{Vlastnoručný podpis}
-        \renewcommand{\acknowledgementname}{Poďakovanie}
-        \renewcommand{\studyprogrammename}{Študijný program}
-        \renewcommand{\fieldofstudyname}{Študijný odbor}
-        \renewcommand{\departmentname}{Školiace pracovisko}
-        \renewcommand{\supervisorname}{Školiteľ}
-        \renewcommand{\consultantname}{Konzultant}
-        \renewcommand{\abstractname}{Abstrakt v SJ}
-        \renewcommand{\keywordsname}{Kľúčové slová v SJ}
-        \renewcommand{\secondabstractname}{Abstrakt v AJ}
-        \renewcommand{\secondkeywordsname}{Kľúčové slová v AJ}
-        \renewcommand{\bibcitationname}{Bibliografická citácia}
-        \renewcommand{\supervisorcitationname}{Vedúci práce}
-        \renewcommand{\acrlistname}{Zoznam skratiek}
-        \renewcommand{\appendixlistname}{Zoznam príloh}
-        \renewcommand{\appendixname}{Príloha}
-        \renewcommand{\lstlistingname}{Výpis}
-        \renewcommand{\lstlistlistingname}{Zoznam výpisov}
-        \renewcommand{\figurename}{Obrázok}
-    }
-}
 
 % right page number aligment from 2nd page in table of content
 \fancypagestyle{plain}{%
@@ -452,7 +380,8 @@
 %% Degree.
 %% Date of submission and defense. (optional)
 %% Place and date of publication and publishers (and other info by them).
-%
+%%
+%%%%%
 \newcommand{\frontmatter}{
     \pagenumbering{roman}
     \pagestyle{empty}  % no page numbers until TOC
@@ -518,6 +447,7 @@
 %%
 %%%%%
 \newcommand{\frontpage}{
+    \def\br{\\}
 
     \begin{center}
         {\Large \textbf{\@college}}
@@ -686,16 +616,15 @@
 %%%%%
 
 % Font for some math characters to work with TeX Gyre Pagella font
-
 \RequirePackage{textcomp}
 
 % Font used for thesis is TeX Gyre Pagella.
 % Note: You might need to install it first.
-
 \RequirePackage{tgpagella}
 
 % Use TXTT as a typewriter font. It supports bold and matches Pagella in style.
 \renewcommand*\ttdefault{txtt}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -710,3 +639,87 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\blindtext}{Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Etiam lobortis facilisissem. Nullam nec mi et neque pharetra sollicitudin. Praesent imperdiet mi necante. Donec ullamcorper, felis non sodales commodo, lectus velit ultrices augue, a dignissim nibh lectus placerat pede. Vivamus nunc nunc, molestie ut, ultriciesvel, semper in, velit. Ut porttitor. Praesent in sapien. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Duis fringilla tristique neque. Sed interdum libero utmetus. Pellentesque placerat. Nam rutrum augue a leo. Morbi sed elit sit ametante lobortis sollicitudin. Praesent blandit blandit mauris. Praesent lectus tellus, aliquet aliquam, luctus a, egestas a, turpis. Mauris lacinia lorem sit amet ipsum. Nunc quis urna dictum turpis accumsan semper.}
+
+
+\AtBeginDocument{
+    \addto\captionsenglish{
+        \renewcommand{\@title}{\@title@en}
+        \renewcommand{\@abstract}{\@abstract@en}
+        \renewcommand{\@keywords}{\@keywords@en}
+        \renewcommand{\@college}{\@college@en}
+        \renewcommand{\@department}{\@department@en}
+        \renewcommand{\@departmentacr}{\@departmentacr@en}
+        \renewcommand{\@faculty}{\@faculty@en}
+        \renewcommand{\@thesis}{\@thesis@en}
+        \renewcommand{\@declaration}{\@declaration@en}
+        \renewcommand{\declarationname}{Declaration}
+        \renewcommand{\signaturename}{Signature}
+        \renewcommand{\acknowledgementname}{Acknowledgement}
+        \renewcommand{\studyprogrammename}{Study Programme}
+        \renewcommand{\fieldofstudyname}{Field of Study}
+        \renewcommand{\departmentname}{Department}
+        \renewcommand{\supervisorname}{Supervisor}
+        \renewcommand{\consultantname}{Consultant}
+        \renewcommand{\abstractname}{Abstract in English}
+        \renewcommand{\keywordsname}{Keywords in English}
+        \renewcommand{\secondabstractname}{Abstract in Slovak}
+        \renewcommand{\secondkeywordsname}{Keywords in Slovak}
+        \renewcommand{\bibcitationname}{Bibliographic Citation}
+        \renewcommand{\supervisorcitationname}{Supervisor}
+        \renewcommand{\acrlistname}{List of Abbreviations}
+        \renewcommand{\appendixlistname}{List of Appendixes}
+        \renewcommand{\lstlistingname}{Listing}
+        \renewcommand{\lstlistlistingname}{List of \lstlistingname s}
+        \renewcommand{\figurename}{Figure}
+    }
+    \addto\captionsslovak{
+        \renewcommand{\@title}{\@title@sk}
+        \renewcommand{\@abstract}{\@abstract@sk}
+        \renewcommand{\@keywords}{\@keywords@sk}
+        \renewcommand{\@college}{\@college@sk}
+        \renewcommand{\@department}{\@department@sk}
+        \renewcommand{\@departmentacr}{\@departmentacr@sk}
+        \renewcommand{\@faculty}{\@faculty@sk}
+        \renewcommand{\@thesis}{\@thesis@sk}
+        \renewcommand{\@declaration}{\@declaration@sk}
+        \renewcommand{\declarationname}{Čestné vyhlásenie}
+        \renewcommand{\signaturename}{Vlastnoručný podpis}
+        \renewcommand{\acknowledgementname}{Poďakovanie}
+        \renewcommand{\studyprogrammename}{Študijný program}
+        \renewcommand{\fieldofstudyname}{Študijný odbor}
+        \renewcommand{\departmentname}{Školiace pracovisko}
+        \renewcommand{\supervisorname}{Školiteľ}
+        \renewcommand{\consultantname}{Konzultant}
+        \renewcommand{\abstractname}{Abstrakt v SJ}
+        \renewcommand{\keywordsname}{Kľúčové slová v SJ}
+        \renewcommand{\secondabstractname}{Abstrakt v AJ}
+        \renewcommand{\secondkeywordsname}{Kľúčové slová v AJ}
+        \renewcommand{\bibcitationname}{Bibliografická citácia}
+        \renewcommand{\supervisorcitationname}{Vedúci práce}
+        \renewcommand{\acrlistname}{Zoznam skratiek}
+        \renewcommand{\appendixlistname}{Zoznam príloh}
+        \renewcommand{\appendixname}{Príloha}
+        \renewcommand{\lstlistingname}{Výpis}
+        \renewcommand{\lstlistlistingname}{Zoznam výpisov}
+        \renewcommand{\figurename}{Obrázok}
+    }
+
+    % PDF metadata based on macro values and current language
+    \def\br{}
+    \iflanguage{slovak}{
+        \hypersetup{
+            pdftitle = {\@title@sk},
+            pdfauthor = {\@author@firstname~\@author@lastname},
+            pdfkeywords = {\@keywords@sk},
+            pdfsubject = {\@thesis@sk}
+        }
+    }{
+        \hypersetup{
+            pdftitle = {\@title@en},
+            pdfauthor = {\@author@firstname~\@author@lastname},
+            pdfkeywords = {\@keywords@en},
+            pdfsubject = {\@thesis@en}
+        }
+    }
+}
+
