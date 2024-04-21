@@ -21,6 +21,7 @@
 % For thesis written in English just change the order of languages:
 % \usepackage[main=english,slovak]{babel}
 
+\usepackage{nameref}
 % If you have problem with colored links in final PDF document, uncomment this line
 % \hypersetup{hidelinks}
 
@@ -31,13 +32,16 @@
 \includeonly{
     chapters/introduction,
     chapters/microworlds,
-    chapters/goals
+    chapters/goals,
+    appendixes/list,
+    appendixes/reference,
+    appendixes/structure,
 }
 
 % Load acronyms
 \input{acronyms}
 
-% Document metadata variables are stored in separate file metadata.tex
+% Load thesis metadata
 \input{metadata}
 
 
@@ -55,7 +59,7 @@
 %% Title page, abstract, declaration etc.:
 \frontmatter{}
 
-    %% List of thesis chapters in required order
+%% List of thesis chapters in required order
 \include{chapters/introduction}
 \include{chapters/microworlds}
 \include{chapters/goals}
@@ -66,11 +70,20 @@
 
 \backmatter{}
 
-%% Appendixes
+
+%% -----------------------------------------------------------------
+%%                                       _ _
+%%       __ _ _ __  _ __   ___ _ __   __| (_) ___ ___  ___
+%%      / _` | '_ \| '_ \ / _ \ '_ \ / _` | |/ __/ _ \/ __|
+%%     | (_| | |_) | |_) |  __/ | | | (_| | | (_|  __/\__ \
+%%      \__,_| .__/| .__/ \___|_| |_|\__,_|_|\___\___||___/
+%%           |_|   |_|
+%% -----------------------------------------------------------------
+
 \include{appendixes/list}
 \appendix
 \renewcommand\chaptername{\appendixname}
-\include{appendixes/prilohaa}
+\include{appendixes/reference}
 \include{appendixes/structure}
 
 % zivotopis autora

@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - do metadát PDF dokumentu sa vkladá názov, kľúčové slová aj podnadpis na základe jazyka práce
 - všetky linky sú momentálne fialové
 - v obsahu už nie sú rámčeky, ale fialové odkazy
+- pridanie názvu referencie pri prílohách pomocou balíka `\nameref{}`
 - kopec refaktoringu a vyčistenie súboru `thesis.tex`
 
 ## [2022.1] - 2021-10-04

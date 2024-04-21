@@ -706,19 +706,19 @@
 
     % PDF metadata based on macro values and current language
     \def\br{}
-    \iflanguage{slovak}{
-        \hypersetup{
-            pdftitle = {\@title@sk},
-            pdfauthor = {\@author@firstname~\@author@lastname},
-            pdfkeywords = {\@keywords@sk},
-            pdfsubject = {\@thesis@sk}
-        }
-    }{
+    \iflanguage{english}{
         \hypersetup{
             pdftitle = {\@title@en},
             pdfauthor = {\@author@firstname~\@author@lastname},
             pdfkeywords = {\@keywords@en},
             pdfsubject = {\@thesis@en}
+        }
+    }{
+        \hypersetup{
+            pdftitle = {\@title@sk},
+            pdfauthor = {\@author@firstname~\@author@lastname},
+            pdfkeywords = {\@keywords@sk},
+            pdfsubject = {\@thesis@sk}
         }
     }
 }
