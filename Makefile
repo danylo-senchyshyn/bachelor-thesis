@@ -21,8 +21,10 @@ pdf: $(SOURCES)  ## Build thesis as PDF document
 	@vlna $(SOURCES)
 	@$(LATEXMK) -pdf -bibtex $^
 
-eurocv: ## Builds authors CV only
+eurocv: eurocv/eurocv.tex  ## Builds authors CV only
 	@echo "Building EuroCV"
+	@cd eurocv && $(LATEXMK) -pdf -pvc eurocv.tex
+
 
 ##@ Misc
 clean:  ## Clean
@@ -32,6 +34,6 @@ clean:  ## Clean
 
 deploy: pdf
 
-.PHONY: help
+.PHONY: help eurocv
 help: ## Display this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make ${COLOR_CYAN}<target>${COLOR_RESET}\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  ${COLOR_CYAN}%-15s${COLOR_RESET} %s\n", $$1, $$2 } /^##@/ { printf "\n${COLOR_GREY}%s${COLOR_RESET}\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
