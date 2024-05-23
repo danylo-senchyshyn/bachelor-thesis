@@ -277,7 +277,7 @@
 \newcommand{\consultant}[1]{\renewcommand{\@consultant}{#1}}
 
 % DOCVAR: field of study
-\newcommand{\@fieldofstudy}{9.2.1. Informatika}
+\newcommand{\@fieldofstudy}{Informatika}
 \newcommand{\fieldofstudy}[1]{\renewcommand{\@fieldofstudy}{#1}}
 
 % DOCVAR: study programme
