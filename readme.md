@@ -6,6 +6,7 @@ Warning! The encoding of all documents is set to _UTF-8_! So don't forget to set
 
 The current version is based on the official release, also available on the website of the University Library. However, it has not been updated for some time, so this project is an effort to keep the current version of this project in collaboration with students. However, please note that this version is still under development and due to potential changes, we recommend _changelog_ monitoring.
 
+
 ## Install
 
 We recommend installing the [TeX Live](https://www.tug.org/texlive/) package.
@@ -32,14 +33,34 @@ $ sudo dnf install \
 Similarly, Debian and Ubuntu users will write:
 
 ```bash
-$ sudo apt-get install \
+$ sudo apt-get install --yes \
    texlive-latex-extra \
    texlive-fonts-recommended \
    texlive-lang-czechslovak \
    texlive-bibtex-extra \
    biber \
-   latexmk \
-   texstudio
+   latexmk
+```
+
+
+## Build with Docker
+
+For building your thesis you can also use _Docker_ image.
+
+```bash
+$ docker container run --rm -it --volume .:/home --user $(id --user):$(id --group) bletvaska/thesis make pdf
+```
+
+To make things easier, you can create alias:
+
+```bash
+$ alias mkthesis='docker container run --rm -it --volume .:/home --user $(id --user):$(id --group) bletvaska/thesis make'
+```
+
+Then you can simply write commands:
+
+```bash
+$ mkthesis clean pdf
 ```
 
 
