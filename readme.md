@@ -54,7 +54,7 @@ $ docker container run --rm -it --volume .:/home --user $(id --user):$(id --grou
 To make things easier, you can create alias:
 
 ```bash
-$ alias mkthesis='docker container run --rm -it --volume .:/home --user $(id --user):$(id --group) bletvaska/thesis make'
+$ alias mkthesis='docker container run --rm -it --volume /path/to/thesis/folder:/thesis --user $(id --user):$(id --group) bletvaska/thesis make'
 ```
 
 Then you can simply write commands:

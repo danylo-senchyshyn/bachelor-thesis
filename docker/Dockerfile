@@ -32,6 +32,7 @@ RUN dnf install -y \
 
 COPY Makefile /app/
 COPY entrypoint.bash /
+ENV MAKEFILE_PATH=/app/Makefile
 
 WORKDIR /thesis
 
@@ -39,5 +40,5 @@ ENTRYPOINT [ "/entrypoint.bash" ]
 
 USER "${USERNAME}"
 
-CMD [ "make", "--makefile=/app/Makefile", "help" ]
+CMD [ "make", "help" ]
 

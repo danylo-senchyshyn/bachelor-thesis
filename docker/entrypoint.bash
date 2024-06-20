@@ -18,5 +18,13 @@ if [[ -f "${packages_file}" ]]; then
     fi
 fi
 
+# running make?
+if [[ "${1}" == "make" ]]; then
+  shift
+  make --makefile="${MAKEFILE_PATH}" "${@}"
+  exit 0
+fi
+
 # exec
 exec "$@"
+
