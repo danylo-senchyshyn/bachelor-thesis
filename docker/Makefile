@@ -1,36 +1,42 @@
 
 LATEXMK := /usr/bin/latexmk
-OUTPUT := thesis
-SOURCES := thesis.tex chapters/*tex
+CHKTEX	:= /usr/bin/chktex
+OUTPUT 	:= thesis
+SOURCES := thesis.tex chapters/*tex appendixes/*tex
 VERSION := 2024.06
 
-COLOR_GREY := \033[1m
-COLOR_MAGENTA := \033[35m
-COLOR_CYAN := \033[36m
-COLOR_RESET := \033[0m
+COLOR_GREY 		:= \033[1m
+COLOR_MAGENTA 	:= \033[35m
+COLOR_CYAN 		:= \033[36m
+COLOR_RESET 	:= \033[0m
 
-all: pdf
 
-##@ Development
+define heading
+	@echo -e "${COLOR_MAGENTA}:: ${1}${COLOR_RESET}"
+endef
+
+all: help
+
+##@ Build
 
 watch: $(SOURCES)  ## Live build.
-	@echo "Building PDF"
+	$(call heading,Building PDF (watch))
 	@vlna $(SOURCES)
 	@$(LATEXMK) -cd -pdf -bibtex -pvc -view=none $(OUTPUT)
 
 pdf: $(SOURCES)  ## Build thesis as PDF document.
-	@echo "Building PDF"
+	$(call heading,Building PDF)
 	@vlna $(SOURCES)
 	@$(LATEXMK) -pdf -bibtex $^
 
 eurocv: eurocv/eurocv.tex  ## Builds authors CV only.
-	@echo "Building EuroCV"
+	$(call heading,Building EuroCV)
 	@cd eurocv && $(LATEXMK) -pdf -pvc eurocv.tex
 
 
 ##@ Misc
 clean:  ## Clean up.
-	@echo "Cleanup"
+	$(call heading,Cleanup)
 	$(LATEXMK) -C -silent
 	@find . -regextype posix-extended -iregex ".*(log|aux|fls|fdb_latexmk|te~|bbl.*|ist|lol)" -exec rm -rf {} \;
 
@@ -38,8 +44,18 @@ version:  ## Shows version of this Makefile.
 	@echo "$(VERSION)"
 
 stats:  ## Shows thesis statistics.
-	@echo "Statistics"
+	$(call heading,Statistics - Count Words)
 	@texcount -total $(SOURCES)
+
+	$(call heading,Statistics - Count Letters)
+	@texcount -total -letters $(SOURCES)
+
+spellcheck:  ## Runs spell checking of sources.
+	$(call heading,Spell Checking)
+
+lint:  ## Runs linter for sources.
+	$(call heading,Linter)
+	$(CHKTEX) $(SOURCES)
 
 
 deploy: pdf

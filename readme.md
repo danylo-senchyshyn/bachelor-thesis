@@ -85,11 +85,6 @@ Running this command will create the resulting document in _PDF_ format, which w
 Of course, you can open the project in any _LaTeX_ editor or IDE, e.g. _TeX Studio_.
 
 
-## Docker Image
-
-Instead of local installation, you can use a Docker container as described in the section [Running locally](https://git.kpi.fei.tuke.sk/kpi/latex#running-locally) of Docker image documentation.
-
-
 ## Update
 
 In case the template is updated, just update the `kithesis.cls` file in your project. However, always look in the `CHANGELOG.md` file to make sure there was an update.
@@ -133,6 +128,7 @@ _BibTeX_ is used to generate the bibliography. It only displays those items that
 * [TeXiFy IDEA for IntelliJ IDEs](https://plugins.jetbrains.com/plugin/9473-texify-idea)
 * [LaTeX Workshop for VS Code](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop)
 * [VimTeX: A modern Vim and neovim filetype plugin for LaTeX files](https://github.com/lervag/vimtex)
+
 
 ### Books about using LaTeX
 
