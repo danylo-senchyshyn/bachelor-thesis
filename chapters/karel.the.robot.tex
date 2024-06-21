@@ -1,0 +1,117 @@
+% !TEX root = ../thesis.tex
+
+
+\chapter{(Mikro)svet Robota Karla}\label{ch:karel.the.robot}
+
+Do mikrosvetov, ktoré sú určené na výučbu programovania, patrí aj \emph{Robot Karel}. Imperatívny jazyk \emph{Robota Karla} navrhol v~roku 1970 postgraduálny študent \emph{Stanfordskej univerzity} \emph{Richard Pattis}. \emph{Richard} sa rozhodol, že študenti sa jednoduchšie naučia základy programovania, ak sa ich budú učiť v~jednoduchom prostredí bez zbytočných komplexností, ktoré sú charakteristické pre väčšinu programovacích jazykov.\cite{karel_learns_java}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=.9\textwidth]{figures/richard.pattis.jpg}
+    \caption[Richard Pattis]{Richard Pattis bojujúci s~umelou inteligenciou (1976) \footnotemark }
+\end{figure}
+
+\footnotetext{Zdroj: \url{https://www.cs.cmu.edu/~pattis/}}
+
+Meno robota \emph{Pattis} vybral podľa českého autora \emph{Karla Čapka}, ktorý v~roku 1921 napísal divadelnú hru s~názvom \emph{R.U.R.}, v~ktorej bolo meno \emph{robot} prvýkrát použité.
+
+V~roku 1981 \emph{Pattis} vydal knihu s~názvom \emph{Karel the Robot: A~Gentle Introduction to the Art of Programming} \cite{Pattis1994}, ktorá sa stala veľmi populárnou učebniciou tohto jazyka.
+
+
+\section{Svet Robota Karla}
+
+z~coho sa svet robota karla sklada
+
+2D svet
+
+steny, znacky
+
+streets (ulice, riadky) a avenues (aleje, stlpce)
+
+obrázok
+
+\section{Príkazy Robota Karla}
+
+\emph{Robota Karla} je možné ovládať pomocou niekoľkých príkazov, nazývaných tiež \emph{primitívne funkcie} alebo len \emph{primitívy}. Ich názvy z~pôvodného jazyka v~\cite{Pattis1994} spolu s~opisom ich funkcionality sa nachádzajú v~tabuľke \ref{tab:karels_primitives}.
+
+\begin{table}[!ht]
+	\caption{Príkazy Robota Karla}\label{tab:karels_primitives}
+	\smallskip
+	\centering
+
+	\begin{tabular}{llll}
+		\toprule
+		príkaz & význam \\
+		\midrule
+
+		\verb|move| & \emph{Karel} urobí jeden krok v~smere, ktorým je otočený. \\
+		\verb|turnleft| & \emph{Karel} sa otočí o~90°. \\
+		\verb|pickbeeper| & \emph{Karel} vezme značku z~aktuálnej pozície a vloží si ju do batohu. \\
+		\verb|putbeeper| & \emph{Karel} položí značku z~batohu na aktuálnu pozíciu. \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+
+\section{Senzory Robota Karla}
+
+\emph{Robot Karel} obsahuje niekoľko senzorov, ktoré je možné použiť vtedy, keď sa v~rámci programu potrebuje rozhodnúť. Ich názvy z~pôvodného jazyka v~\cite{Pattis1994} spolu s~opisom ich funkcionality sa nachádzajú v~tabuľke \ref{tab:karels_sensors}.
+
+Každý jeden senzor je pritom reprezentovaný ako kľúčové slovo jazyka \emph{Karel}. V~princípe sa jedná o~funkciu, ktorá vracia dva typy hodnôt:
+
+\begin{itemize}
+    \item hodnotu \verb|true|, ak je odpoveď na zistenie senzora pravdivá, a
+    \item hodnotu \verb|false|, ak je odpoveď na zistenie senzora nepravdivá
+\end{itemize}
+
+\begin{table}[!ht]
+	\caption{Senzory Robota Karla}\label{tab:karels_sensors}
+	\smallskip
+	\centering
+
+   \begin{tabular}{l|p{80mm}}
+		\toprule
+		príkaz & význam \\
+		\midrule
+
+		\verb|front-is-clear| & senzor overí, či nie je pred \emph{Karlom} stena alebo hranica sveta \\
+		\verb|next-to-a-beeper| & x \\
+		\verb|any-beepers-in-beeper-bag| & x \\
+		\verb|facing-north| & x \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\section{Robot Karel a objektové programovanie}
+
+Aj keď bol pôvodne programovací jazyk \emph{Robot Karel} navrhnutý pre výučbu procedurálneho programovania, vznikli rôzne implementácie aj pre výučbu objektového programovania. Napríklad aj samotní autori pôvodnej učebnice vydali knihu s~názvom \emph{Karel++: A~Gentle Introduction to the Art of Object-Oriented Programming} \cite{Pattis1996}, ktorá sa venuje práve objektovému programovaniu s~\emph{Robotom Karlom} v~jazyku \emph{C++}. Samozrejme sa dá stretnúť s~rozličnými implementáciami v~mnohých súčasných programovacích jazykoch, ktoré poskytujú objektovú paradigmu.
+
+
+\lstinputlisting[caption={Ukážka programu v~pôvodnom jazyku podľa \cite{Pattis1994}}]{listings/program.karel}
+
+\section{Robot Karel v~Československu}
+
+V~80-tych rokoch minulého storočia bol \emph{Robot Karel} veľmi populárny aj v~Československu. Za svoju popularitu vďačí najmä 3D verzii pre 8-bitové mikropočítače \emph{PMD 85}, za ktorou stojí \emph{Marián Vittek} z~\emph{Univerzity Komenského v~Bratislave}.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=.9\textwidth]{figures/karel3d.png}
+    \caption{Robot Karel v~3D na mikropočítači PMD 85}
+\end{figure}
+
+Podpore programovacieho jazyka \emph{Karel} sa venoval aj časopis \emph{Zenit pionierov} (slovenská obdoba českého časopisu \emph{ABC}), kde mu v~istom čase bola venovaná jedna strana v~seriáli \emph{Kamarát Karel}. V~čísle 25 ročníka 1987-88 sa dokonca \emph{Robot Karel} objavil aj v~podobe vystrihovačky.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=.9\textwidth]{figures/karel.v.zenite.pionierov.png}
+    \caption{Jedna z~častí seriálu \emph{Kamarát Karel} v~časopise \emph{Zenit pionierov}}
+\end{figure}
+
+\emph{Robotovi Karlovi} boli venované aj niektoré knihy. Napríklad kniha \emph{Martina si hraje s~počítačem} \cite{Synovcova1989} z~roku 1989 obsahovala 107 programov pre \emph{Robota Karla} a spolu s~nimi aj vystrihovačku, vďaka ktorej mohli prograomvať aj tí, ktorí prístup ku mikropočítaču nemajú.
+
+V~roku 1991 zasa vyšla kniha \emph{Kamaráti robota Karla} \cite{Gasparovicova1991}, ktorá však už bola určená pre PC verziu \emph{Robota Karla}.
+
+Pre rozličné platformy a architektúry vznikli v~Československu a neskôr v~Českej republiku a na Slovensku rôzne implementácie, ktoré vznikajú dodnes. Najznámejším projektom v~súčasnosti by mohol byť \emph{Robot Emil} z~projektu \emph{Informatika s~Emilom}\footnote{\url{https://www.robotemil.com/}}.
+
+\emph{Robot Karel} býva taktiež témou záverečných prác na univerzitách v~Čechách a na Slovensku. Aj v~rámci našej univerzity sa niektoré záverečné práce venovali tejto téme. Napr. v~diplomovej práci \cite{Valo2012} sa diplomant venoval vytvoreniu 3D verzie \emph{Robota Karla}, ktorý by bol programovateľný cez sieť. Alebo v~bakalárskej práci \cite{Parackova2017} sa bakalárantka venovala možnosti testovania úloh pre \emph{Robota Karla} pomocou testovacej platformy \emph{Aréna}.
+
