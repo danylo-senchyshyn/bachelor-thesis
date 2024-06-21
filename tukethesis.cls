@@ -696,6 +696,7 @@
         \renewcommand{\acrlistname}{Zoznam skratiek}
         \renewcommand{\appendixlistname}{Zoznam príloh}
         \renewcommand{\appendixname}{Príloha}
+        \renewcommand{\appendixautorefname}{Príloha}
         \renewcommand{\lstlistingname}{Výpis}
         \renewcommand{\lstlistlistingname}{Zoznam výpisov}
         \renewcommand{\figurename}{Obrázok}

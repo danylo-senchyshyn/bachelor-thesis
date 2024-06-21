@@ -20,6 +20,14 @@ Then you can use prepared `Makefile` for all the jobs you need when preparing yo
 $ mkthesis
 ```
 
+The basic workflow for writing can be used with following targets:
+
+```bash
+$ mkthesis clean watch
+```
+
+Your thesis will be watched for changes. If there will be any change, your PDF file will be recompiled automatically.
+
 
 ## Build Image Locally
 

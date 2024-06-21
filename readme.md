@@ -57,11 +57,19 @@ To make things easier, you can create alias:
 $ alias mkthesis='docker container run --rm -it --volume /path/to/thesis/folder:/thesis --user $(id --user):$(id --group) bletvaska/thesis make'
 ```
 
-Then you can simply write commands:
+Then you can use prepared `Makefile` for all the jobs you need when preparing your thesis. To get help about the available targets, you can simply type:
 
 ```bash
-$ mkthesis clean pdf
+$ mkthesis
 ```
+
+The basic workflow for writing can be used with following targets:
+
+```bash
+$ mkthesis clean watch
+```
+
+Your thesis will be watched for changes. If there will be any change, your PDF file will be recompiled automatically.
 
 
 ## Editors for Writing Your Thesis in LaTeX

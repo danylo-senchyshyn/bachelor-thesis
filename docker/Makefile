@@ -19,13 +19,18 @@ all: help
 
 ##@ Build
 
-watch: $(SOURCES)  ## Live build.
+watch: $(SOURCES)  	## Live build.
 	$(call heading,Building PDF (watch))
 	@vlna $(SOURCES)
 	@$(LATEXMK) -cd -pdf -bibtex -pvc -view=none $(OUTPUT)
 
-pdf: $(SOURCES)  ## Build thesis as PDF document.
+pdf: $(SOURCES)  	## Build thesis as PDF document.
 	$(call heading,Building PDF)
+	@vlna $(SOURCES)
+	@$(LATEXMK) -pdf -bibtex $^
+
+ebook: $(SOURCES)	## Build ebook version of thesis (with colors).
+	$(call heading,Building Ebook)
 	@vlna $(SOURCES)
 	@$(LATEXMK) -pdf -bibtex $^
 
