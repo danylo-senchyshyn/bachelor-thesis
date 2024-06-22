@@ -2,7 +2,9 @@
 LATEXMK := /usr/bin/latexmk
 CHKTEX	:= /usr/bin/chktex
 OUTPUT 	:= thesis
-SOURCES := thesis.tex chapters/*tex appendixes/*tex
+SOURCES_MAIN := thesis.tex chapters/*tex
+SOURCES_APP := appendixes/*tex
+SOURCES := ${SOURCES_MAIN} ${SOURCES_APP}
 VERSION := 2024.06
 
 COLOR_GREY 		:= \033[1m
@@ -24,15 +26,19 @@ watch: $(SOURCES)  	## Live build.
 	@vlna $(SOURCES)
 	@$(LATEXMK) -cd -pdf -bibtex -pvc -view=none $(OUTPUT)
 
-pdf: $(SOURCES)  	## Build thesis as PDF document.
+thesis: $(SOURCES)  	## Build thesis as PDF document.
 	$(call heading,Building PDF)
 	@vlna $(SOURCES)
 	@$(LATEXMK) -pdf -bibtex $^
 
-ebook: $(SOURCES)	## Build ebook version of thesis (with colors).
+pdf: thesis
+
+ethesis: $(SOURCES)	## Build ebook version of thesis (with colored links).
 	$(call heading,Building Ebook)
 	@vlna $(SOURCES)
 	@$(LATEXMK) -pdf -bibtex $^
+
+ebook: ethesis
 
 eurocv: eurocv/eurocv.tex  ## Builds authors CV only.
 	$(call heading,Building EuroCV)
@@ -50,10 +56,10 @@ version:  ## Shows version of this Makefile.
 
 stats:  ## Shows thesis statistics.
 	$(call heading,Statistics - Count Words)
-	@texcount -total $(SOURCES)
+	@texcount -total $(SOURCES_MAIN)
 
 	$(call heading,Statistics - Count Letters)
-	@texcount -total -letters $(SOURCES)
+	@texcount -total -letters $(SOURCES_MAIN)
 
 spellcheck:  ## Runs spell checking of sources.
 	$(call heading,Spell Checking)
@@ -62,8 +68,6 @@ lint:  ## Runs linter for sources.
 	$(call heading,Linter)
 	$(CHKTEX) $(SOURCES)
 
-
-deploy: pdf
 
 .PHONY: help eurocv
 help: ## Display this help.
