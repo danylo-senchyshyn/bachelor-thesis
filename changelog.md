@@ -9,6 +9,12 @@ All notable changes to this project will be documented in this file.
     - `thesis` - spravi PDF pre tlac
     - `ethesis` - spravi PDF s farebnymi linkami
 - poznamky pod ciarou pokracuju v cislovani napriek kapitolami
+- pridane pravidlo `make dist` pre vytvorenie celej distribucie pre odovzdanie prace
+   - `thesis-main.pdf` - len hlavna praca
+   - `ethesis-main.pdf` - len hlavna praca s farebnymi odkazmi
+   - `thesis-full.pdf` - cela praca aj s prilohami
+   - `ethesis-full.pdf` - cela praca aj s prilohami s farebnymi odkazmi
+- pri preklade vznikol priecinok `build/`, v ktorom sa nachadza vysledok prekladu so vsetkymi priebezne vytvaranymi subormi. tym padom je vysledny projekt cistejsi
 
 ## [2024.1] - 2024-04-14
 - vypustené čestné vyhlásenie z práce

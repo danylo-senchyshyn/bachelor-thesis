@@ -1,7 +1,11 @@
 
-LATEXMK := /usr/bin/latexmk
-CHKTEX	:= /usr/bin/chktex
-OUTPUT 	:= thesis
+LATEXMK 		:= /usr/bin/latexmk
+CHKTEX			:= /usr/bin/chktex
+PDFLATEX 		:= /usr/bin/pdflatex
+OUTPUT 			:= thesis
+DIST			:= dist/
+BUILD			:= build/
+LOGFILE			:= build.log
 SOURCES_APP 	:= appendixes/*tex
 SOURCES_MAIN 	:= $(OUTPUT).tex chapters/*tex
 SOURCES 		:= ${SOURCES_MAIN} ${SOURCES_APP}
@@ -13,10 +17,16 @@ COLOR_RESET 	:= \033[0m
 
 
 define heading
-	@echo -e "${COLOR_MAGENTA}:: ${1}${COLOR_RESET}"
+	title="${1}"
+	@echo -e "${COLOR_MAGENTA}:: ${title}${COLOR_RESET}"
 endef
 
 all: help
+
+pre_build:
+	@mkdir "$(DIST)"
+	@mkdir --parents "$(BUILD)"{chapters,appendixes}
+	@vlna $(SOURCES)
 
 ##@ Build
 
@@ -24,6 +34,7 @@ watch: $(SOURCES)  	## Live build.
 	$(call heading,Building PDF (watch))
 	@vlna $(SOURCES)
 	@$(LATEXMK) -cd -pdf -bibtex -pvc -view=none $(OUTPUT)
+
 
 thesis: $(SOURCES)  	## Build thesis as PDF document suitable for printing.
 	$(call heading,Building PDF)
@@ -43,11 +54,23 @@ eurocv: eurocv/eurocv.tex  ## Builds authors CV only.
 	$(call heading,Building EuroCV)
 	@cd eurocv && $(LATEXMK) -pdf -pvc eurocv.tex
 
+dist: pre_build  ## Builds distribution ready documents.
+	$(call heading,Building Distribution Ready Documents)
+
+	# build full pdf with appendixes
+	@$(LATEXMK) -bibtex -pdf -pdflatex="$(PDFLATEX) -output-directory=$(BUILD) '\def\hideappendixes{true}\include{$(OUTPUT)}'"
+	@mv "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/$(OUTPUT)-main.pdf"
+
+	# # build full ebook with appendixes
+	# @$(LATEXMK) -pdf -bibtex $(OUTPUT)
+	# @mv thesis.pdf "$(DIST)/ethesis-full.pdf"
+
 
 ##@ Misc
 clean:  ## Clean up.
 	$(call heading,Cleanup)
 	$(LATEXMK) -C -silent
+	@rm -rf "${DIST}" "$(BUILD)" "$(LOGFILE)"
 	@find . -regextype posix-extended -iregex ".*(log|aux|fls|fdb_latexmk|te~|bbl.*|ist|lol)" -exec rm -rf {} \;
 
 version:  ## Shows version of this Makefile.

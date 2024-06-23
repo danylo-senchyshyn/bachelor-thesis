@@ -13,6 +13,7 @@ ENV TUKE_THESIS_VERSION="${VERSION}"
 ENV TZ="Europe/Bratislava"
 ENV MAKEFILE_PATH="/app/Makefile"
 
+# latex installation instructions in fedora: https://docs.fedoraproject.org/en-US/neurofedora/latex/
 RUN dnf install -y \
         # aspell-sk \
         make \
