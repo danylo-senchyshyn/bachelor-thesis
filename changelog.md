@@ -6,15 +6,16 @@ All notable changes to this project will be documented in this file.
 - do Docker obrazu presunutý am súbor `Makefile`, v ktorom sa nachádzajú aj ďalšie nástroje na kontrolu práce
 - pridaný preklad pre prílohu pre automatické referencie v zozname príloh
 - pridane dva ciele pre `Makefile`
-    - `thesis` - spravi PDF pre tlac
-    - `ethesis` - spravi PDF s farebnymi linkami
+    - `thesis` - verzia urcena pre tlac
+    - `ethesis` - ebook verzia (s farebnymi linkami)
 - poznamky pod ciarou pokracuju v cislovani napriek kapitolami
 - pridane pravidlo `make dist` pre vytvorenie celej distribucie pre odovzdanie prace
-   - `thesis-main.pdf` - len hlavna praca
-   - `ethesis-main.pdf` - len hlavna praca s farebnymi odkazmi
-   - `thesis-full.pdf` - cela praca aj s prilohami
-   - `ethesis-full.pdf` - cela praca aj s prilohami s farebnymi odkazmi
+   - `thesis-main.pdf` - len hlavna praca - verzia urcena pre tlac
+   - `thesis-full.pdf` - cela praca aj s prilohami - verzia urcena pre tlac
+   - `ethesis-main.pdf` - len hlavna praca - ebook verzia
+   - `ethesis-full.pdf` - cela praca aj s prilohami - ebook verzia
 - pri preklade vznikol priecinok `build/`, v ktorom sa nachadza vysledok prekladu so vsetkymi priebezne vytvaranymi subormi. tym padom je vysledny projekt cistejsi
+- konfiguracia pre `latexmk` bola presunuta do Docker obrazu do priecinku `/app`
 
 ## [2024.1] - 2024-04-14
 - vypustené čestné vyhlásenie z práce

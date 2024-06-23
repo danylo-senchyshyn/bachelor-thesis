@@ -13,5 +13,9 @@ sub makeglossaries {
 }
 
 # $emulate_aux = 1;
-$out_dir = 'build';
-$aux_dir = 'build';
+$out_dir    = 'build';
+$aux_dir    = 'build';
+
+$pdf_mode   = 1;    # compile to pdf
+$bibtex_use = 1;    # use bibtex for bibliography
+# $silent     = 1;    # suppress most messages

@@ -11,11 +11,14 @@ LABEL version="2024.06"
 LABEL homepage="https://git.kpi.fei.tuke.sk/tuke/thesis.in.latex"
 ENV TUKE_THESIS_VERSION="${VERSION}"
 ENV TZ="Europe/Bratislava"
-ENV MAKEFILE_PATH="/app/Makefile"
+ENV APP_PATH="/app"
+ENV MAKEFILE_PATH="${APP_PATH}/Makefile"
+ENV LC_ALL="sk_SK.UTF-8"
 
 # latex installation instructions in fedora: https://docs.fedoraproject.org/en-US/neurofedora/latex/
 RUN dnf install -y \
         # aspell-sk \
+        glibc-langpack-sk \
         make \
         texlive-pdfpages \
         texlive-metafont \
@@ -33,9 +36,11 @@ RUN dnf install -y \
     && dnf clean all \
     && groupadd --system "${GROUPNAME}" --gid "${GID}" \
     && useradd --no-log-init --system --gid "${GROUPNAME}" --uid "${UID}" "${USERNAME}" \
-    && echo "ALL ALL=(ALL) NOPASSWD: /usr/bin/dnf" >> /etc/sudoers
+    && echo "ALL ALL=(ALL) NOPASSWD: /usr/bin/dnf" >> /etc/sudoers \
+    && echo 'LANG="en_US.UTF-8"' > /etc/locale.conf
 
 COPY Makefile /app/
+COPY latexmkrc /app/
 COPY entrypoint.bash /
 
 WORKDIR /thesis

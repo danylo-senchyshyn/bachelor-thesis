@@ -26,6 +26,8 @@
 %%
 %%%%%
 
+
+\RequirePackage{nameref}      %% named references
 \RequirePackage{pdfpages}
 
 % titlesec for modification of chapters and sections
