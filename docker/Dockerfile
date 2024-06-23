@@ -1,16 +1,20 @@
 FROM fedora:40
 
-LABEL version="2024.06"
-ENV TUKE_THESIS_VERSION="2024.06"
-ENV TZ="Europe/Bratislava"
-
+ARG VERSION="2024.06"
 ARG USERNAME="student"
 ARG GROUPNAME="student"
 ARG UID=1000
 ARG GID=1000
 
+LABEL maintainer="mirek <miroslav.binas@tuke.sk>"
+LABEL version="2024.06"
+LABEL homepage="https://git.kpi.fei.tuke.sk/tuke/thesis.in.latex"
+ENV TUKE_THESIS_VERSION="${VERSION}"
+ENV TZ="Europe/Bratislava"
+ENV MAKEFILE_PATH="/app/Makefile"
+
 RUN dnf install -y \
-        aspell-sk \
+        # aspell-sk \
         make \
         texlive-pdfpages \
         texlive-metafont \
@@ -32,7 +36,6 @@ RUN dnf install -y \
 
 COPY Makefile /app/
 COPY entrypoint.bash /
-ENV MAKEFILE_PATH=/app/Makefile
 
 WORKDIR /thesis
 
@@ -41,4 +44,3 @@ ENTRYPOINT [ "/entrypoint.bash" ]
 USER "${USERNAME}"
 
 CMD [ "make", "help" ]
-

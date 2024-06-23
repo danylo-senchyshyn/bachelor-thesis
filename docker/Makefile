@@ -2,10 +2,9 @@
 LATEXMK := /usr/bin/latexmk
 CHKTEX	:= /usr/bin/chktex
 OUTPUT 	:= thesis
-SOURCES_MAIN := thesis.tex chapters/*tex
-SOURCES_APP := appendixes/*tex
-SOURCES := ${SOURCES_MAIN} ${SOURCES_APP}
-VERSION := 2024.06
+SOURCES_APP 	:= appendixes/*tex
+SOURCES_MAIN 	:= $(OUTPUT).tex chapters/*tex
+SOURCES 		:= ${SOURCES_MAIN} ${SOURCES_APP}
 
 COLOR_GREY 		:= \033[1m
 COLOR_MAGENTA 	:= \033[35m
@@ -26,17 +25,17 @@ watch: $(SOURCES)  	## Live build.
 	@vlna $(SOURCES)
 	@$(LATEXMK) -cd -pdf -bibtex -pvc -view=none $(OUTPUT)
 
-thesis: $(SOURCES)  	## Build thesis as PDF document.
+thesis: $(SOURCES)  	## Build thesis as PDF document suitable for printing.
 	$(call heading,Building PDF)
 	@vlna $(SOURCES)
-	@$(LATEXMK) -pdf -bibtex $^
+	@$(LATEXMK) -bibtex -pdf -pdflatex="pdflatex '\AtBeginDocument{\hypersetup{hidelinks}}\input{$(OUTPUT)}'"
 
 pdf: thesis
 
 ethesis: $(SOURCES)	## Build ebook version of thesis (with colored links).
 	$(call heading,Building Ebook)
 	@vlna $(SOURCES)
-	@$(LATEXMK) -pdf -bibtex $^
+	@$(LATEXMK) -pdf -bibtex $(OUTPUT)
 
 ebook: ethesis
 
@@ -52,7 +51,11 @@ clean:  ## Clean up.
 	@find . -regextype posix-extended -iregex ".*(log|aux|fls|fdb_latexmk|te~|bbl.*|ist|lol)" -exec rm -rf {} \;
 
 version:  ## Shows version of this Makefile.
-	@echo "$(VERSION)"
+	@echo "${TUKE_THESIS_VERSION}"
+	@pdflatex --version | head --lines 1
+	@latexmk -version
+	@texcount --version | head --lines 1
+	@chktex --version | head --lines 1
 
 stats:  ## Shows thesis statistics.
 	$(call heading,Statistics - Count Words)
@@ -61,8 +64,8 @@ stats:  ## Shows thesis statistics.
 	$(call heading,Statistics - Count Letters)
 	@texcount -total -letters $(SOURCES_MAIN)
 
-spellcheck:  ## Runs spell checking of sources.
-	$(call heading,Spell Checking)
+# spellcheck:  ## Runs spell checking of sources.
+# 	$(call heading,Spell Checking)
 
 lint:  ## Runs linter for sources.
 	$(call heading,Linter)

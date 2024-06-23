@@ -9,7 +9,7 @@
 %%
 %%%%%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{tukethesis}[2024/04/14 TUKE Thesis Class, v2024.1]
+\ProvidesClass{tukethesis}[2024/06/23 TUKE Thesis Class, v2024.2]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -159,6 +159,10 @@
 % good linebraking of bibtex url
 \setcounter{biburllcpenalty}{7000}
 \setcounter{biburlucpenalty}{8000}
+
+
+% continue footnote numbering over pages and chapters
+\counterwithout{footnote}{chapter}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,10 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2024.2] - 2024-06-20
+## [2024.2] - 2024-06-23
 - na zostavovanie práce vytvorený samostatný Docker obraz
 - do Docker obrazu presunutý am súbor `Makefile`, v ktorom sa nachádzajú aj ďalšie nástroje na kontrolu práce
 - pridaný preklad pre prílohu pre automatické referencie v zozname príloh
+- pridane dva ciele pre `Makefile`
+    - `thesis` - spravi PDF pre tlac
+    - `ethesis` - spravi PDF s farebnymi linkami
+- poznamky pod ciarou pokracuju v cislovani napriek kapitolami
 
 ## [2024.1] - 2024-04-14
 - vypustené čestné vyhlásenie z práce
