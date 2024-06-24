@@ -22,7 +22,9 @@
 % \usepackage[main=english,slovak]{babel}
 
 % If you have problem with colored links in final PDF document, uncomment this line
-% \hypersetup{hidelinks}
+\ifdefined\printable
+   \hypersetup{hidelinks}
+\fi
 
 % Location of file with bibliography resources
 \addbibresource{bibliography.bib}

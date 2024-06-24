@@ -40,6 +40,7 @@ RUN dnf install -y \
     && echo 'LANG="en_US.UTF-8"' > /etc/locale.conf
 
 COPY Makefile /app/
+COPY colors.mk /app/
 COPY latexmkrc /app/
 COPY entrypoint.bash /
 
