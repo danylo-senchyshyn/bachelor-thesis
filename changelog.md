@@ -16,6 +16,8 @@ All notable changes to this project will be documented in this file.
    - `ethesis-full.pdf` - cela praca aj s prilohami - ebook verzia
 - pri preklade vznikol priecinok `build/`, v ktorom sa nachadza vysledok prekladu so vsetkymi priebezne vytvaranymi subormi. tym padom je vysledny projekt cistejsi
 - konfiguracia pre `latexmk` bola presunuta do Docker obrazu do priecinku `/app`
+- v pravidle `dist` su pouzite samostatne prikazy na zostavenie vysledných dokumentov, pretože pri spustení príkazu `latexmk` vždy dôjde k chybe
+- vytvorené nové makro `\printable`, pomocou ktorého je možné zapnúť/vypnúť farebné linky
 
 ## [2024.1] - 2024-04-14
 - vypustené čestné vyhlásenie z práce
