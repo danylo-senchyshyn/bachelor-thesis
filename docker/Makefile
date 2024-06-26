@@ -53,16 +53,16 @@ thesis: clean pre_build  	## Build thesis as PDF document suitable for printing.
 
 	@mv "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/$(OUTPUT)-full.pdf"
 
-thesis_main: clean pre_build
-	@$(call heading,Building PDF with Main Part Only)
+# thesis_main: clean pre_build
+# 	@$(call heading,Building PDF with Main Part Only)
 
-	@$(PDFLATEX) '\def\printable{true}\def\hideappendixes{true}\input{$(OUTPUT)}'
-	@makeglossaries -d "$(BUILD)" thesis
-	@biber --output-directory="$(BUILD)" "$(OUTPUT)"
-	@$(PDFLATEX) '\def\printable{true}\def\hideappendixes{true}\input{$(OUTPUT)}'
-	@$(PDFLATEX) '\def\printable{true}\def\hideappendixes{true}\input{$(OUTPUT)}'
+# 	@$(PDFLATEX) '\def\printable{true}\def\hideappendixes{true}\input{$(OUTPUT)}'
+# 	@makeglossaries -d "$(BUILD)" thesis
+# 	@biber --output-directory="$(BUILD)" "$(OUTPUT)"
+# 	@$(PDFLATEX) '\def\printable{true}\def\hideappendixes{true}\input{$(OUTPUT)}'
+# 	@$(PDFLATEX) '\def\printable{true}\def\hideappendixes{true}\input{$(OUTPUT)}'
 
-	@mv "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/$(OUTPUT)-main.pdf"
+# 	@mv "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/$(OUTPUT)-main.pdf"
 
 
 pdf: thesis
@@ -72,16 +72,16 @@ ethesis: clean pre_build	## Build ebook version of thesis (with colored links).
 	@$(LATEXMK) -pdflatex="$(PDFLATEX)"  $(OUTPUT)
 	@mv "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/e$(OUTPUT)-full.pdf"
 
-ethesis_main: clean pre_build
-	@$(call heading,Building Ebook with Main Part Only)
+# ethesis_main: clean pre_build
+# 	@$(call heading,Building Ebook with Main Part Only)
 
-	@$(PDFLATEX) '\def\hideappendixes{true}\input{$(OUTPUT)}'
-	@makeglossaries -d "$(BUILD)" thesis
-	@biber --output-directory="$(BUILD)" "$(OUTPUT)"
-	@$(PDFLATEX) '\def\hideappendixes{true}\input{$(OUTPUT)}'
-	@$(PDFLATEX) '\def\hideappendixes{true}\input{$(OUTPUT)}'
+# 	@$(PDFLATEX) '\def\hideappendixes{true}\input{$(OUTPUT)}'
+# 	@makeglossaries -d "$(BUILD)" thesis
+# 	@biber --output-directory="$(BUILD)" "$(OUTPUT)"
+# 	@$(PDFLATEX) '\def\hideappendixes{true}\input{$(OUTPUT)}'
+# 	@$(PDFLATEX) '\def\hideappendixes{true}\input{$(OUTPUT)}'
 
-	@mv "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/e$(OUTPUT)-main.pdf"
+# 	@mv "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/e$(OUTPUT)-main.pdf"
 
 ebook: ethesis
 
@@ -89,7 +89,7 @@ eurocv: eurocv/eurocv.tex  ## Builds authors CV only.
 	@$(call heading,Building EuroCV)
 	@cd eurocv && $(LATEXMK) -pdf -pvc eurocv.tex
 
-dist: thesis ethesis thesis_main ethesis_main ## Builds distribution ready documents.
+dist: thesis ethesis	## Builds distribution ready documents.
 	@$(call heading,Building Distribution Ready Documents)
 
 
