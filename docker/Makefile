@@ -51,7 +51,7 @@ thesis: clean pre_build  	## Build thesis as PDF document suitable for printing.
 	@$(PDFLATEX) '\def\printable{true}\input{$(OUTPUT)}'
 	@$(PDFLATEX) '\def\printable{true}\input{$(OUTPUT)}'
 
-	@mv "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/$(OUTPUT)-full.pdf"
+	@cp "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/$(OUTPUT)-full.pdf"
 
 # thesis_main: clean pre_build
 # 	@$(call heading,Building PDF with Main Part Only)
@@ -70,7 +70,7 @@ pdf: thesis
 ethesis: clean pre_build	## Build ebook version of thesis (with colored links).
 	@$(call heading,Building Full Ebook)
 	@$(LATEXMK) -pdflatex="$(PDFLATEX)"  $(OUTPUT)
-	@mv "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/e$(OUTPUT)-full.pdf"
+	@cp "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/e$(OUTPUT)-full.pdf"
 
 # ethesis_main: clean pre_build
 # 	@$(call heading,Building Ebook with Main Part Only)
