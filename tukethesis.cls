@@ -49,16 +49,37 @@
 \RequirePackage{graphicx}
 \DeclareGraphicsExtensions{.pdf,.png,.jpg,.eps}
 
-\RequirePackage[utf8]{inputenc}
-\RequirePackage[T1]{fontenc}
+% not needed for lualatex
+% \RequirePackage[utf8]{inputenc}
+% \RequirePackage[T1]{fontenc}
 
 %% for printing source code
 % See for details: https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings
+% GitHub colors (https://gist.github.com/maelquerre/b625bda6cab11c1b0ae67a2be86f027e)
+\definecolor{GitHubBlue}{HTML}{005CC5}
+\definecolor{GitHubDarkBlue}{HTML}{032F62}
+\definecolor{GitHubGray}{HTML}{6A737D}
+\definecolor{GitHubGreen}{HTML}{22863A}
+\definecolor{GitHubOrange}{HTML}{E36209}
+\definecolor{GitHubPurple}{HTML}{6F42C1}
+\definecolor{GitHubRed}{HTML}{D73A49}
+
+\colorlet{Keyword}{GitHubRed}
+\colorlet{Function}{GitHubBlue}
+\colorlet{Method}{GitHubPurple}
+\colorlet{String}{GitHubDarkBlue}
+\colorlet{Comment}{GitHubGray}
+
 \RequirePackage{listings}
-\lstset{
-    basicstyle=\small\ttfamily,  % smaller typewriter font
-    showstringspaces=false       % don't show spaces in string
+\lstdefinestyle{default}{
+   basicstyle=\small\ttfamily,  % smaller typewriter font
+   showstringspaces=false,      % don't show spaces in string
+   captionpos=t,                % place caption above listings
+   commentstyle=\color{GitHubGray},
+   keywordstyle=\color{GitHubRed},
+   stringstyle=\color{GitHubDarkBlue}
 }
+\lstset{style=default}
 
 %% total counters for conditional showing of lists
 % must be defined after all packages with required counters
@@ -617,19 +638,22 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-%% Fonts
+%% Font Settings
 %%
 %%%%%
 
-% Font for some math characters to work with TeX Gyre Pagella font
-\RequirePackage{textcomp}
-
-% Font used for thesis is TeX Gyre Pagella.
-% Note: You might need to install it first.
-\RequirePackage{tgpagella}
-
+% Set the fonts
+\RequirePackage{fontspec}
+\setmainfont{TeX Gyre Pagella}   % \rmfamily{}
+\setsansfont{TeX Gyre Heros}[Scale=MatchLowercase]   % \rmfamily{}
 % Use TXTT as a typewriter font. It supports bold and matches Pagella in style.
-\renewcommand*\ttdefault{txtt}
+\setmonofont{txtt}               % \ttfamily{}
+% TODO what about this font for codes?
+% \setmonofont{Inconsolata}[Scale=MatchLowercase]               % \ttfamily{}
+
+% Set math font
+\RequirePackage{unicode-math}
+\setmathfont{TeX Gyre Pagella Math}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -726,4 +750,3 @@
         }
     }
 }
-

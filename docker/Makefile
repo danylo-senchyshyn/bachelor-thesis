@@ -6,15 +6,14 @@ LOGFILE			:= build.log
 SOURCES_APP 	:= appendixes/*tex
 SOURCES_MAIN 	:= $(OUTPUT).tex chapters/*tex
 SOURCES 		:= ${SOURCES_MAIN} ${SOURCES_APP}
-LATEXMK 		:= /usr/bin/latexmk -r ${APP_PATH}/latexmkrc -norc
+LATEXMK 		:= /usr/bin/latexmk -r ${APP_PATH}/latexmkrc -norc -lualatex -out2dir=${DIST}
 CHKTEX			:= /usr/bin/chktex
-PDFLATEX 		:= /usr/bin/pdflatex -output-directory=${BUILD} -halt-on-error
-VLNA			:= /usr/bin/vlna -s -l
+# PDFLATEX 		:= /usr/bin/pdflatex -output-directory=${BUILD} -halt-on-error
+LUALATEX 		:= /usr/bin/lualatex -output-directory=${BUILD} -halt-on-error -output-format pdf
+# VLNA			:= /usr/bin/vlna -s -l
 
-# Get the directory of the Makefile
+# Include external modules
 MKFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-
-# Include the colors.mk file from the same directory
 include $(MKFILE_DIR)colors.mk
 
 # prints heading with color
@@ -32,26 +31,29 @@ all: help
 
 pre_build:
 	@mkdir --parents "$(DIST)" "$(BUILD)/"{chapters,appendixes}
-	@$(VLNA) $(SOURCES)
+#	@$(VLNA) $(SOURCES)
 
 
 ##@ Build
 
+# init:	## Init empty Thesis
+# 	@$(call heading,Init Thesis)
+
 watch: pre_build  	## Live build.
 	@$(call heading,Building PDF (watch))
-	@$(LATEXMK) -pvc -view=none $(OUTPUT)
+	@$(LATEXMK) -pvc -view=none $(OUTPUT) -jobname="$(OUTPUT)-watch"
 
 
 thesis: clean pre_build  	## Build thesis as PDF document suitable for printing.
 	@$(call heading,Building Full PDF)
 
-	@$(PDFLATEX) '\def\printable{true}\input{$(OUTPUT)}'
+	@$(LUALATEX) '\def\printable{true}\input{$(OUTPUT)}' -jobname="$(OUTPUT)"
 	@makeglossaries -d "$(BUILD)" thesis
 	@biber --output-directory="$(BUILD)" "$(OUTPUT)"
-	@$(PDFLATEX) '\def\printable{true}\input{$(OUTPUT)}'
-	@$(PDFLATEX) '\def\printable{true}\input{$(OUTPUT)}'
+	@$(LUALATEX) '\def\printable{true}\input{$(OUTPUT)}' -jobname="$(OUTPUT)"
+	@$(LUALATEX) '\def\printable{true}\input{$(OUTPUT)}' -jobname="$(OUTPUT)"
 
-	@cp "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/$(OUTPUT)-full.pdf"
+	@cp "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/$(OUTPUT).pdf"
 
 # thesis_main: clean pre_build
 # 	@$(call heading,Building PDF with Main Part Only)
@@ -69,8 +71,8 @@ pdf: thesis
 
 ethesis: clean pre_build	## Build ebook version of thesis (with colored links).
 	@$(call heading,Building Full Ebook)
-	@$(LATEXMK) -pdflatex="$(PDFLATEX)"  $(OUTPUT)
-	@cp "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/e$(OUTPUT)-full.pdf"
+	@$(LATEXMK) -lualatex="$(LUALATEX)" $(OUTPUT) -jobname="e$(OUTPUT)"
+#    @cp "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/e$(OUTPUT).pdf"
 
 # ethesis_main: clean pre_build
 # 	@$(call heading,Building Ebook with Main Part Only)
@@ -102,8 +104,8 @@ clean:  ## Clean up.
 
 
 version:  ## Shows version of this Makefile.
-	@echo "${TUKE_THESIS_VERSION}"
-	@pdflatex --version | head --lines 1
+	@echo "TUKE Thesis version: ${TUKE_THESIS_VERSION}"
+	@lualatex --version | head --lines 1
 	@latexmk -version
 	@texcount --version | head --lines 1
 	@chktex --version | head --lines 1
@@ -124,6 +126,16 @@ lint:  ## Runs linter for sources.
 	@$(CHKTEX) $(SOURCES)
 
 
+shell:  ## Spawns shell in the contianer
+	@$(call heading,Shell)
+	@bash
+
+
+fonts:   ## List all fonts for LuaLaTeX
+	@$(call heading,List Fonts)
+	@luaotfload-tool --list=*
+
+
 help: ## Display this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\n${B_HI_WHITE}Usage:${RESET}\n  make ${B_CYAN}<target>${RESET}\n"} \
 	/^[a-zA-Z_0-9-]+:.*?##/ { printf "  ${B_CYAN}%-15s${RESET} %s\n", $$1, $$2 } \
@@ -133,3 +145,4 @@ help: ## Display this help.
 
 
 .PHONY: help eurocv thesis lint clean version
+

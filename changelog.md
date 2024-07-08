@@ -1,6 +1,17 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2024.3] - 2024-07-05
+- pridanie ďalšieho príkazu `shell` do súboru `Makefile` (thesis maker)
+   - spustí shell pre surový prístup do kontajnera so zdrojovými súbormi práce
+- prechod od `pdflatex`-u do `lualatex`-u
+   - refaktoring šablóny
+   - refaktoring súboru `Makefile`
+- pribudlo pravidlo `fonts` do súboru `Makefile` pre zobrazenie dostupných fontov
+   - pravdepodobne je to dočasné, ale možno by nebolo zlé spraviť niečo ako "Testovací dokument", kde by boli všetky možnosti/štýly/fonty toho, ako to v dokumente vyzerá
+   - a možno by to mohla byť špeciálna príloha
+- `vlna` nahradená za balík `luavlna`
+
 ## [2024.2] - 2024-06-23
 - na zostavovanie práce vytvorený samostatný Docker obraz
 - do Docker obrazu presunutý am súbor `Makefile`, v ktorom sa nachádzajú aj ďalšie nástroje na kontrolu práce

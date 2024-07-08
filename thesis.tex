@@ -15,25 +15,28 @@
 %% -----------------------------------------------------------------
 
 \documentclass{tukethesis}
+\usepackage{luavlna}
 
 % Additional packages
 \usepackage[main=slovak,english]{babel}
 % For thesis written in English just change the order of languages:
 % \usepackage[main=english,slovak]{babel}
 
-% If you have problem with colored links in final PDF document, uncomment this line
+% If you have problem with colored links in final PDF document, set \hypersetup{} explicitly
 \ifdefined\printable
    \hypersetup{hidelinks}
 \fi
 
-% Location of file with bibliography resources
-\addbibresource{bibliography.bib}
+\addbibresource{bibliography.bib}   % Location of file with bibliography resources
+\input{acronyms}                    % Load acronyms
+\input{metadata}                    % Load thesis metadata
 
 % if you want to work only on selected chapters
-% \includeonly{
+\includeonly{
 %    %  chapters/introduction,
 %     chapters/microworlds,
-%     chapters/karel.the.robot,
+    chapters/karel.the.robot,
+    chapters/libkarel,
 %    %  chapters/goals,
 %    %  appendixes/list,
 %     appendixes/installation.instructions,
@@ -41,13 +44,7 @@
 %    %  appendixes/superkarel.reference,
 %    %  appendixes/bit.reference,
 %    %  appendixes/structure
-% }
-
-% Load acronyms
-\input{acronyms}
-
-% Load thesis metadata
-\input{metadata}
+}
 
 
 %% -----------------------------------------------------------------
@@ -88,17 +85,14 @@
 %%           |_|   |_|
 %% -----------------------------------------------------------------
 
-\ifdefined\hideappendixes
-\else
-    \include{appendixes/list}
-    \appendix
-    \renewcommand\chaptername{\appendixname}
-    \include{appendixes/installation.instructions}
-    \include{appendixes/karel.reference}
-    \include{appendixes/superkarel.reference}
-    \include{appendixes/bit.reference}
-    \include{appendixes/structure}
-\fi
+\include{appendixes/list}
+\appendix
+\renewcommand\chaptername{\appendixname}
+\include{appendixes/installation.instructions}
+\include{appendixes/karel.reference}
+\include{appendixes/superkarel.reference}
+\include{appendixes/bit.reference}
+\include{appendixes/structure}
 
 
 %% -----------------------------------------------------------------
