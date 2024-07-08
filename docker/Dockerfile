@@ -46,6 +46,7 @@ COPY Makefile /app/
 COPY colors.mk /app/
 COPY latexmkrc /app/
 COPY entrypoint.bash /
+COPY mkthesis.sh /usr/local/bin/mkthesis.sh
 
 WORKDIR /thesis
 

@@ -8,9 +8,7 @@ SOURCES_MAIN 	:= $(OUTPUT).tex chapters/*tex
 SOURCES 		:= ${SOURCES_MAIN} ${SOURCES_APP}
 LATEXMK 		:= /usr/bin/latexmk -r ${APP_PATH}/latexmkrc -norc -lualatex -out2dir=${DIST}
 CHKTEX			:= /usr/bin/chktex
-# PDFLATEX 		:= /usr/bin/pdflatex -output-directory=${BUILD} -halt-on-error
-LUALATEX 		:= /usr/bin/lualatex -output-directory=${BUILD} -halt-on-error -output-format pdf
-# VLNA			:= /usr/bin/vlna -s -l
+LUALATEX 		:= /usr/bin/lualatex -output-directory=${BUILD} -halt-on-error -output-format=pdf
 
 # Include external modules
 MKFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
@@ -31,7 +29,6 @@ all: help
 
 pre_build:
 	@mkdir --parents "$(DIST)" "$(BUILD)/"{chapters,appendixes}
-#	@$(VLNA) $(SOURCES)
 
 
 ##@ Build
@@ -55,41 +52,20 @@ thesis: clean pre_build  	## Build thesis as PDF document suitable for printing.
 
 	@cp "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/$(OUTPUT).pdf"
 
-# thesis_main: clean pre_build
-# 	@$(call heading,Building PDF with Main Part Only)
-
-# 	@$(PDFLATEX) '\def\printable{true}\def\hideappendixes{true}\input{$(OUTPUT)}'
-# 	@makeglossaries -d "$(BUILD)" thesis
-# 	@biber --output-directory="$(BUILD)" "$(OUTPUT)"
-# 	@$(PDFLATEX) '\def\printable{true}\def\hideappendixes{true}\input{$(OUTPUT)}'
-# 	@$(PDFLATEX) '\def\printable{true}\def\hideappendixes{true}\input{$(OUTPUT)}'
-
-# 	@mv "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/$(OUTPUT)-main.pdf"
-
-
 pdf: thesis
+
 
 ethesis: clean pre_build	## Build ebook version of thesis (with colored links).
 	@$(call heading,Building Full Ebook)
 	@$(LATEXMK) -lualatex="$(LUALATEX)" $(OUTPUT) -jobname="e$(OUTPUT)"
-#    @cp "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/e$(OUTPUT).pdf"
-
-# ethesis_main: clean pre_build
-# 	@$(call heading,Building Ebook with Main Part Only)
-
-# 	@$(PDFLATEX) '\def\hideappendixes{true}\input{$(OUTPUT)}'
-# 	@makeglossaries -d "$(BUILD)" thesis
-# 	@biber --output-directory="$(BUILD)" "$(OUTPUT)"
-# 	@$(PDFLATEX) '\def\hideappendixes{true}\input{$(OUTPUT)}'
-# 	@$(PDFLATEX) '\def\hideappendixes{true}\input{$(OUTPUT)}'
-
-# 	@mv "$(BUILD)/$(OUTPUT).pdf" "$(DIST)/e$(OUTPUT)-main.pdf"
 
 ebook: ethesis
+
 
 eurocv: eurocv/eurocv.tex  ## Builds authors CV only.
 	@$(call heading,Building EuroCV)
 	@cd eurocv && $(LATEXMK) -pdf -pvc eurocv.tex
+
 
 dist: thesis ethesis	## Builds distribution ready documents.
 	@$(call heading,Building Distribution Ready Documents)
@@ -118,8 +94,6 @@ stats:  ## Shows thesis statistics.
 	@$(call heading,Statistics - Count Letters)
 	@texcount -total -letters $(SOURCES_MAIN)
 
-# spellcheck:  ## Runs spell checking of sources.
-# 	$(call heading,Spell Checking)
 
 lint:  ## Runs linter for sources.
 	@$(call heading,Linter)
@@ -145,4 +119,3 @@ help: ## Display this help.
 
 
 .PHONY: help eurocv thesis lint clean version
-

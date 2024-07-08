@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2024.3] - 2024-07-05
+## [2024.3] - 2024-07-08
 - pridanie ďalšieho príkazu `shell` do súboru `Makefile` (thesis maker)
    - spustí shell pre surový prístup do kontajnera so zdrojovými súbormi práce
 - prechod od `pdflatex`-u do `lualatex`-u
@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file.
    - pravdepodobne je to dočasné, ale možno by nebolo zlé spraviť niečo ako "Testovací dokument", kde by boli všetky možnosti/štýly/fonty toho, ako to v dokumente vyzerá
    - a možno by to mohla byť špeciálna príloha
 - `vlna` nahradená za balík `luavlna`
+- do Docker obrazu bol pridaný skript `mkthesis.sh`
+   - len pre použitie vo vnútri spusteného kontajnera
 
 ## [2024.2] - 2024-06-23
 - na zostavovanie práce vytvorený samostatný Docker obraz
