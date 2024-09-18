@@ -24,10 +24,6 @@
 
 % Additional packages
 
-% If you have problem with colored links in final PDF document, set \hypersetup{} explicitly
-\ifdefined\printable
-   \hypersetup{hidelinks}
-\fi
 
 \addbibresource{bibliography.bib}   % Location of file with bibliography resources
 \input{acronyms}                    % Load acronyms
@@ -48,6 +44,10 @@
 %    %  appendixes/structure
 }
 
+% Disable color links in the final version (define \printable in metadata.tex)
+\ifdefined\printable
+   \hypersetup{hidelinks}
+\fi
 
 %% -----------------------------------------------------------------
 %%          _                                       _
