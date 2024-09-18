@@ -6,7 +6,7 @@ LOGFILE			:= build.log
 SOURCES_APP 	:= appendixes/*tex
 SOURCES_MAIN 	:= $(OUTPUT).tex chapters/*tex
 SOURCES 		:= ${SOURCES_MAIN} ${SOURCES_APP}
-LATEXMK 		:= /usr/bin/latexmk -r ${APP_PATH}/latexmkrc -norc -lualatex -out2dir=${DIST}
+LATEXMK 		:= /usr/bin/latexmk -lualatex -out2dir=${DIST}
 CHKTEX			:= /usr/bin/chktex
 LUALATEX 		:= /usr/bin/lualatex -output-directory=${BUILD} -halt-on-error -output-format=pdf
 

@@ -12,10 +12,19 @@ sub makeglossaries {
     return $return;
 }
 
+# Ensure that the chapters and appendixes subdirectories exist within the build directory
+if (! -d 'build') {
+    mkdir 'build' or die "Cannot create build directory: $!";
+}
+if (! -d 'build/chapters') {
+    mkdir 'build/chapters' or die "Cannot create build/chapters directory: $!";
+}
+if (! -d 'build/appendixes') {
+    mkdir 'build/appendixes' or die "Cannot create build/appendixes directory: $!";
+}
+
 # $emulate_aux = 1;
-$out_dir    = 'build';
+$out_dir    = '.';
 $aux_dir    = 'build';
 
-$pdf_mode   = 1;    # compile to pdf
-$bibtex_use = 1;    # use bibtex for bibliography
-# $silent     = 1;    # suppress most messages
+$pdf_mode   = 4;      # compile to pdf using lualatex
