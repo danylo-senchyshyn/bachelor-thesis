@@ -15,12 +15,14 @@
 %% -----------------------------------------------------------------
 
 \documentclass{tukethesis}
-\usepackage{luavlna}
+
+\setdefaultlanguage[vlna]{slovak}
+\setotherlanguage{english}
+%% For thesis written in English just swap the main and other languages:
+% \setdefaultlanguage{english}
+% \setotherlanguage[vlna]{slovak}
 
 % Additional packages
-\usepackage[main=slovak,english]{babel}
-% For thesis written in English just change the order of languages:
-% \usepackage[main=english,slovak]{babel}
 
 % If you have problem with colored links in final PDF document, set \hypersetup{} explicitly
 \ifdefined\printable

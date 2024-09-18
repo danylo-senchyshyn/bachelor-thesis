@@ -92,6 +92,7 @@
 %% for professional-looking tables
 \usepackage{booktabs}
 
+\RequirePackage{polyglossia}
 %% Numeric citations and sorting by citation order
 \RequirePackage{csquotes}
 \RequirePackage[
@@ -735,7 +736,10 @@
         \renewcommand{\lstlistlistingname}{Zoznam výpisov}
         \renewcommand{\figurename}{Obrázok}
     }
+}
 
+% Polyglossia sets the language only in \AfterEndPreambule
+\AfterEndPreamble{
     % PDF metadata based on macro values and current language
     \def\br{}
     \iflanguage{english}{
