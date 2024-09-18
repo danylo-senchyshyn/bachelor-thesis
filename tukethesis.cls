@@ -75,9 +75,9 @@
    basicstyle=\small\ttfamily,  % smaller typewriter font
    showstringspaces=false,      % don't show spaces in string
    captionpos=t,                % place caption above listings
-   commentstyle=\color{GitHubGray},
-   keywordstyle=\color{GitHubRed},
-   stringstyle=\color{GitHubDarkBlue}
+   % commentstyle=\color{GitHubGray},
+   % keywordstyle=\color{GitHubRed},
+   % stringstyle=\color{GitHubDarkBlue}
 }
 \lstset{style=default}
 
