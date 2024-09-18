@@ -646,10 +646,14 @@
 \RequirePackage{fontspec}
 \setmainfont{TeX Gyre Pagella}   % \rmfamily{}
 \setsansfont{TeX Gyre Heros}[Scale=MatchLowercase]   % \rmfamily{}
-% Use TXTT as a typewriter font. It supports bold and matches Pagella in style.
-\setmonofont{txtt}               % \ttfamily{}
-% TODO what about this font for codes?
-% \setmonofont{Inconsolata}[Scale=MatchLowercase]               % \ttfamily{}
+\setmonofont[
+    Path = ./fonts/,
+    UprightFont = *-Regular.otf,
+    BoldFont = *-Bold.otf,
+    ItalicFont = *-It.otf,
+    BoldItalicFont = *-BoldIt.otf,
+    Scale=MatchLowercase
+]{SourceCodePro}   % \ttfamily{}
 
 % Set math font
 \RequirePackage{unicode-math}
