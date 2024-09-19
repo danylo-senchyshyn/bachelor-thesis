@@ -6,7 +6,7 @@ pdf:
   image: git.kpi.fei.tuke.sk:4567/kpi/latex
   # Documentation for LaTex docker image: https://git.kpi.fei.tuke.sk/kpi/latex
   script:
-    - latexmk -pdf -interaction=nonstopmode $MAIN_TEX_FILE
+    - latexmk -interaction=nonstopmode $MAIN_TEX_FILE
   artifacts:
     paths:
       - $MAIN_TEX_FILE.pdf
