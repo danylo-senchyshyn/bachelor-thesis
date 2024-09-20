@@ -9,7 +9,7 @@ Na písanie záverečných prác je možné použiť viacero štruktúr. Pre vyt
     \item pre vytvorene abstraktu bola použitá štruktúra \cite{WikipediaImrad}, ktorá môže byť použitá na napísanie celej práce
 \end{enumerate}
 
-Krátky význam jednotlivých kapitol bude uvedený v~nasledujúcom texte. Ďalšie užitočné informácie môžete nájsť v~\emph{Pokynoch pre vypracovanie záverečných prác}\footnote{\url{https://moodle.fei.tuke.sk/pluginfile.php/27971/mod_resource/content/16/Instructions_v15.pdf}} na serveri \emph{Moodle}.
+Krátky význam jednotlivých kapitol bude uvedený v~nasledujúcom texte. Ďalšie užitočné informácie nájsdete v~\emph{Pokynoch pre vypracovanie záverečných prác}\footnote{\url{https://theses.kpi.fei.tuke.sk/instructions}}.
 
 
 \section*{Abstrakt}
@@ -34,8 +34,6 @@ Predhovor ponúka neformálny priestor na vlastné vyjadrenie autora. Môže obs
 
 Táto kapitola nie je povinná!
 
-V~tejto práci sa jedná o~kapitolu \nameref{ch:preface}.
-
 
 \section*{Úvod}
 
@@ -43,67 +41,56 @@ V~tejto práci sa jedná o~kapitolu \nameref{ch:preface}.
 
 V~úvode neuvádzajte štruktúru práce! Rozsah tejto kapitoly by mal byť minimálne 2 strany.
 
-V~tejto práci sa jedná o~kapitolu \nameref{ch:introduction}.
+Súčasťou úvodu je aj \emph{formulácia úlohy}.
+Vo formulácii úlohy uveďte jasne a vecne ciele práce. Čím budú ciele konkrétnejšie, tým bude jasnejšie, aký problém riešite a ako ho chcete riešiť.
+Formuláciu úlohy vytvorte po dostatočnom naštudovaní problematiky a vytvorení analytickej časti.
 
+\section*{Analytická časť}
 
-\section*{Background work}
+Analytická časť záverečnej práce analyzuje existujúce podobné prístupy k~riešeniu stanoveného problému. Autor práce musí uviesť v~tejto časti existujúce prístupy a riešenia, pričom musí zaujať stanovisko k~týmto prístupom a riešeniam a opísať ich výhody a nedostatky. Prevažne v~tejto časti autor používa odkazy na použité zdroje. Autor v~analýze nepreberá odseky z~cudzích prác ale uvádza prevažne vlastné postoje podložené odkazmi na literatúru. Analytická časť práce by teda nemala byť len povrchným prepisom základných informácií z~Wikipédie alebo zo stránok opisovaných nástrojov. Je potrebné aby bola analýza podporená aj experimentmi ak to umožňuje téma práce (napr. vyskúšam softvér). Vďaka popisu existujúcich riešení autor pochopí problematiku, viac sa nad riešeniami zamyslí, usporiada si ich, zistí ich kladné a záporné vlastnosti, z~čoho potom postupne vyplynie návrh vlastného riešenia v~syntetickej časti. Analytická časť tvorí zvyčajne ¼ jadra práce.
 
-V~tejto časti práce predstavte doménu a problém, ktorý sa snažíte v~rámci svojej práce riešiť. To môže predstavovať
+Analytickú časť je vhodné rozdeliť na niekoľko kapitol, ktoré budú venované rôznym analyzovaným témam. Názvy kapitol majú zodpovedať tomu, čo je v~kapitole opisované. Napríklad, ak v~práci analyzujete súčasný stav v~oblasti medzigalaktických letov, namiesto všeobecného názvu \enquote{Analýza súčasného stavu} by mal byť použitý názov analyzovanej témy -- \enquote{Medzigalaktické lety}.
 
-Táto časť je súčasťou analytickej časti práce.
-
-Do tejto časti spadajú v~tejto práci tieto kapitoly:
-
+Mali by ste v práci mať minimálne kapitoly opisujúce
 \begin{itemize}
-   \item \ref{ch:microworlds} \nameref{ch:microworlds}
+  \item doménu (oblasť) riešeného problému a jej súčasný stav,
+  \item súvisiace práce a existujúce riešenia.
 \end{itemize}
-
-
-\section*{Súvisiaca práca}
 
 Je veľmi pravdepodobné, že sa daný problém pokúšal vyriešiť už aj niekto iný. Alebo existujú riešenia podobné tomu, ktoré potrebujete vyriešiť vy. V~tejto časti práce
-
-Táto časť je súčasťou analytickej časti práce.
-
-Do tejto časti spadajú v~tejto práci tieto kapitoly:
-
-\begin{itemize}
-   \item \ref{ch:karel.the.robot} \nameref{ch:karel.the.robot}
-\end{itemize}
 
 
 \section*{Ciele záverečnej práce}
 
 V~tejto kapitole uveďte vo forme zoznamu/odrážok svoje vlastné ciele, ktoré chcete dosiahnuť v~rámci implementácie tejto práce. Rozhodne tu neprepisujte zadávací list, ale jasne a stručne uveďte, svoje čiastkové ciele. Neskôr ich budete vedieť v~kapitole \emph{Dosiahnuté výsledky} vyhodnotiť aj s~odôvodnením, či sa vám uvedené ciele splniť podarilo alebo nie.
 
-V~tejto práci sa jedná o~kapitolu \ref{ch:goals} \nameref{ch:goals}.
+\section*{Syntetická časť}
+
+Syntetická časť opisuje metódy použité na syntézu riešenia a opisuje syntézu samotného riešenia (zvyčajne je to návrh/implementácia softvérového resp. hardvérového riešenia), pričom sa opiera o závery analytickej časti práce. Začína od toho, ako sa bude riešenie používať: najdôležitejšie scenáre používania a používateľské rozhranie, ktoré bude tieto scenáre efektívne podporovať. Až potom je na rade vnútorná architektúra alebo použité technológie. Syntetická časť tvorí zvyčajne ½ jadra práce.
+
+Syntetickú časť práce vhodne rozdeľte do kapitol a pomenujte ich podľa toho, čomu sú venované. Podľa obsahu práce môže táto časť obsahovať kapitoly opisujúce, napríklad:
+
+\begin{itemize}
+  \item použitú metodológiu -- metodológia experimentu alebo spôsob riešenia úlohy,
+  \item návrh riešenia -- celkový opis riešenia a jeho zdôvodnenie,
+  \item implementáciu -- najpodstatnejšie implementačné rozhodnutia a ich zdôvodnenie.
+\end{itemize}
 
 
-\section*{Použitá metodológia}
+\section*{Vyhodnotenie}
 
-V~tejto práci sa jedná o~kapitolu \ref{ch:methodology} \nameref{ch:methodology}.
+Vyhodnocovacia časť je kľúčovou časťou záverečnej práce. Tato časť obsahuje vyhodnotenie navrhnutého (vytvoreného) riešenia. Uprednostňované je objektívne vyhodnotenie výsledkov práce, ktoré sa opiera o meranie a štatistické metódy, prípadne matematické dôkazy. V prípade nameraných hodnôt musí autor opísať metódu merania, priebeh merania, výsledky a interpretáciu výsledkov v kontexte riešeného problému a stanovených cieľov. Na základe vyhodnotenia riešenia autor opíše prínosy svojej práce. Vyhodnocovacia časť tvorí zvyčajne ¼ jadra práce.
 
-\section*{Implementácia}
-
-V~tejto práci sa jedná o~kapitolu \ref{ch:libkarel} \nameref{ch:libkarel}.
-
-
-\section*{Dosiahnuté výsledky}
-
-V~tejto práci sa jedná o~kapitolu \ref{ch:evaluation} \nameref{ch:evaluation}.
-
-\section*{Interpretácia výsledkov}
-
-\section*{Ďalšia práca}
+Okrem iného môže byť súčasťou vyhodnotenia:
+\begin{itemize}
+  \item zhrnutie dosiahnutých výsledkov,
+  \item interpretácia výsledkov,
+  \item objektívne overenie dosiahnutia cieľov práce
+\end{itemize}
 
 
 \section*{Záver}
 
-V~tejto práci sa jedná o~kapitolu \ref{ch:summary} \nameref{ch:summary}.
+Záver práce obsahuje zhrnutie výsledkov práce s jasným opisom prínosov a pôvodných (vlastných) výsledkov autora a vyhodnotenie splnenia stanovených cieľov. Je to stručné zhrnutie informácií uvedených v záverečnej práci. Záver by nemal obsahovať nové informácie.
 
-
-
-% analyticka cast prace
-% Analytická časť záverečnej práce analyzuje existujúce podobné prístupy k~riešeniu stanoveného problému. Autor práce musí uviesť v~tejto časti existujúce prístupy a riešenia, pričom musí zaujať stanovisko k~týmto prístupom a riešeniam a opísať ich výhody a nedostatky. Prevažne v~tejto časti autor používa odkazy na použité zdroje. Autor v~analýze nepreberá odseky z~cudzích prác ale uvádza prevažne vlastné postoje podložené odkazmi na literatúru. Analytická časť práce by teda nemala byť len povrchným prepisom základných informácií z~Wikipédie alebo zo stránok opisovaných nástrojov. Je potrebné aby bola analýza podporená aj experimentmi ak to umožňuje téma práce (napr. vyskúšam softvér). Vďaka popisu existujúcich riešení autor pochopí problematiku, viac sa nad riešeniami zamyslí, usporiada si ich, zistí ich kladné a záporné vlastnosti, z~čoho potom postupne vyplynie návrh vlastného riešenia v~syntetickej časti. Analytická časť tvorí zvyčajne ¼ jadra práce.
-
-% Analytickú časť je možné rozdeliť na niekoľko kapitol, ktoré budú venované rôznym analyzovaným témam. Názvy kapitol majú zodpovedať tomu, čo je v~kapitole opisované. Napríklad ak v~práci analyzujete súčasný stav v~oblasti medzigalaktických letov, namiesto všeobecného názvu "`Analýza súčasného stavu"' by mal byť použiťý názov analyzovanej témy --- "`Medzigalaktické lety"'.
+V závere by mal tiež autor poukázať na prípadné otvorené otázky, ktoré sú nad rámec rozsahu práce a mal by odporučiť ďalšie aktivity na pokračovanie pri riešení problému. Rozsah záveru je minimálne 1 celá strana.
