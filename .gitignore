@@ -27,6 +27,7 @@ _minted*
 
 dist/
 build/
+/thesis.pdf
 
 *SAVE-ERROR
 
