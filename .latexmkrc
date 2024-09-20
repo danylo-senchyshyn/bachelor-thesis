@@ -27,4 +27,4 @@ if (! -d 'build/appendixes') {
 $out_dir    = '.';
 $aux_dir    = 'build';
 
-$pdf_mode   = 4;      # compile to pdf using lualatex
+$pdf_mode   = 5;      # compile to pdf using xelatex

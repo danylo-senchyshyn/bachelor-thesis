@@ -1,9 +1,9 @@
-%% !TEX program = lualatex
+%% !TEX program = xelatex
 %% -----------------------------------------------------------------
 %% This file uses UTF-8 encoding
 %%
 %% For compilation use following command:
-%% latexmk -lualatex -pvc -bibtex thesis
+%% latexmk -xelatex -pvc -bibtex thesis
 %%
 %% -----------------------------------------------------------------
 %%                                     _     _
@@ -50,13 +50,10 @@
 \frontmatter{}
 
 %% List of thesis chapters in required order
-\include{chapters/01-preface}
-\include{chapters/05-introduction}
-\include{chapters/10-microworlds}
-\include{chapters/15-karel.the.robot}
+% \include{chapters/00-preface}
+\include{chapters/01-introduction}
 \include{chapters/20-goals}
 \include{chapters/30-used.methodology}
-\include{chapters/35-libkarel}
 \include{chapters/40-evaluation}
 \include{chapters/50-summary}
 
@@ -73,13 +70,12 @@
 %%           |_|   |_|
 %% -----------------------------------------------------------------
 
-\include{appendixes/list}
+\include{appendixes/00-list}
 \appendix
 \renewcommand\chaptername{\appendixname}
 \include{appendixes/installation.instructions}
 \include{appendixes/karel.reference}
 \include{appendixes/superkarel.reference}
-\include{appendixes/bit.reference}
 \include{appendixes/structure}
 
 
