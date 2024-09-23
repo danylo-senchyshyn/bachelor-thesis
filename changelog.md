@@ -1,6 +1,17 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2024.9] - 2024-09-23
+
+- Replace LuaLaTeX with XeLaTeX (it is faster).
+- Replace babel with polyglossia.
+- Set Source Code Pro as a monospace font and bundle the font files.
+- Add `\introchapter{}` command for unnumbered chapters that should be included in ToC.
+- Improve `.latexmkrc` configuration.
+- Disable colorful syntax highlighting of listings.
+- Move Makefile and Docker configuration to [kpi/latex](https://git.kpi.fei.tuke.sk/kpi/latex) project.
+- Move example thesis text to [kpi/thesis.example](https://git.kpi.fei.tuke.sk/kpi/thesis.example) project.
+
 ## [2024.3] - 2024-07-08
 - pridanie ďalšieho príkazu `shell` do súboru `Makefile` (thesis maker)
    - spustí shell pre surový prístup do kontajnera so zdrojovými súbormi práce
