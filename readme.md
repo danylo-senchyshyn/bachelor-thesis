@@ -7,27 +7,43 @@ Warning! The encoding of all documents is set to _UTF-8_! So don't forget to set
 The current version is based on the official release, also available on the website of the University Library. However, it has not been updated for some time, so this project is an effort to keep the current version of this project in collaboration with students. However, please note that this version is still under development and due to potential changes, we recommend _changelog_ monitoring.
 
 
-## Install
+## Build with Docker
 
-We recommend installing the [TeX Live](https://www.tug.org/texlive/) package.
+For building your thesis you can also use [Docker image](https://hub.docker.com/repository/docker/kpituke/latex/general)
 
-As an editor, we recommend installing [TeX Studio](http://www.texstudio.org/) or [TeX Maker](http://www.xm1math.net/texmaker/).
+```bash
+$ docker container run --rm -it --volume .:/home --user $(id --user):$(id --group) bletvaska/thesis make pdf
+```
+
+Then you can use prepared `Makefile` for all the jobs you need when preparing your thesis. To get help about the available targets, you can simply type:
+
+```bash
+$ ./mkthesis.sh
+```
+
+The basic workflow for writing can be used with following targets:
+
+```bash
+$ ./mkthesis.sh clean watch
+```
+
+Your thesis will be watched for changes. If there will be any change, your PDF file will be recompiled automatically.
+
+
+## Install Locally
+
+If you want to install LaTeX locally, we recommend using the [TeX Live](https://www.tug.org/texlive/) package.
 
 Fedora users will write:
 
 ```bash
 $ sudo dnf install \
-   texlive-pdfpages \
-   texlive-metafont \
-   latexmk \
-   texlive-collection-fontsrecommended \
-   texlive-totalcount \
-   texlive-biblatex-iso690 \
-   texlive-glossaries \
-   texlive-babel-english \
-   texlive-babel-slovak \
-   texlive-hyphen-slovak \
-   texlive-vlna
+    texlive-collection-latexrecommended \
+    texlive-collection-fontsrecommended \
+    texlive-collection-langczechslovak \
+    texlive-biblatex-iso690 \
+    texlive-glossaries \
+    latexmk
 ```
 
 Similarly, Debian and Ubuntu users will write:
@@ -43,59 +59,30 @@ $ sudo apt-get install --yes \
 ```
 
 
-## Build with Docker
-
-For building your thesis you can also use _Docker_ image.
-
-```bash
-$ docker container run --rm -it --volume .:/home --user $(id --user):$(id --group) bletvaska/thesis make pdf
-```
-
-To make things easier, you can create alias:
-
-```bash
-$ alias mkthesis='docker container run --rm -it --volume /path/to/thesis/folder:/thesis --user $(id --user):$(id --group) bletvaska/thesis make'
-```
-
-Then you can use prepared `Makefile` for all the jobs you need when preparing your thesis. To get help about the available targets, you can simply type:
-
-```bash
-$ mkthesis
-```
-
-The basic workflow for writing can be used with following targets:
-
-```bash
-$ mkthesis clean watch
-```
-
-Your thesis will be watched for changes. If there will be any change, your PDF file will be recompiled automatically.
-
-
-## Editors for Writing Your Thesis in LaTeX
-
-There exists many _LaTeX_ editors and extensions for common code editors for _LaTeX_ support. You can try these:
-
-* [TeXstudio](https://www.texstudio.org/) - _TeXstudio_ is an IDE for creating _LaTeX_ documents.
-* [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) - _VS Code_ extension for writing _LaTeX_ documents.
-
-
 ## Compilation
 
-To create a document, type the following command from the command line:
+The template expect that you would use modern versions of LaTeX: **XeLaTeX** or **LuaLaTeX**. XeLaTeX is configured by default in `.latexmkrc`, so to create a document, type the following command from the command line:
 
 ```bash
-$ latexmk -pdf -bibtex -pvc thesis
+$ latexmk -pvc thesis
 ```
 
 Running this command will create the resulting document in _PDF_ format, which will be displayed in the document browser afterwards. However, the tool will not quit and will monitor changes, while with each change (saving a _.tex_ file), the resulting document will be re-generated.
 
 Of course, you can open the project in any _LaTeX_ editor or IDE, e.g. _TeX Studio_.
 
+## Editors for Writing Your Thesis in LaTeX
+
+There exists many _LaTeX_ editors and extensions for common code editors for _LaTeX_ support. You can try these:
+
+* [TeXstudio](https://www.texstudio.org/) – _TeXstudio_ is an IDE for creating _LaTeX_ documents.
+* [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) – _VS Code_ extension for writing _LaTeX_ documents (use `latexmk (xelatex)` recipe for building).
+* [vimtex](https://github.com/lervag/vimtex) – a modern Vim and neovim filetype plugin for LaTeX files
+
 
 ## Update
 
-In case the template is updated, just update the `kithesis.cls` file in your project. However, always look in the `CHANGELOG.md` file to make sure there was an update.
+In case the template is updated, just update the `tukethesis.cls` file in your project. However, always look in the `changelog.md` file to make sure there was an update.
 
 
 ## Spell Checking
@@ -105,6 +92,8 @@ In case your editor does not support spell-checking, you can use the `aspell` to
 ```bash
 aspell -d sk_SK -t -c file.tex
 ```
+
+For VS Code we recommend [Spell Right](https://marketplace.visualstudio.com/items?itemName=ban.spellright) extension.
 
 
 ## Troubleshooting
@@ -140,6 +129,6 @@ _BibTeX_ is used to generate the bibliography. It only displays those items that
 
 ### Books about using LaTeX
 
-* [The Not So Short Introduction to LaTeX 2ε](http://mirrors.ctan.org/info/lshort/english/lshort.pdf)
-* [Nie príliš stručný úvod do systému LaTeX 2ε](http://mirrors.ctan.org/info/lshort/slovak/Slshorte.pdf) (Slovak translation)
+* [The Not So Short Introduction to LaTeX 2ε](https://tobi.oetiker.ch/lshort/lshort.pdf) (recommended)
+* [Nie príliš stručný úvod do systému LaTeX 2ε](http://mirrors.ctan.org/info/lshort/slovak/Slshorte.pdf) (Slovak translation of older version)
 * [LaTeX Wikibook](https://en.wikibooks.org/wiki/LaTeX)

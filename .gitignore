@@ -28,6 +28,7 @@ _minted*
 dist/
 build/
 /thesis.pdf
+/thesis-watch.pdf
 
 *SAVE-ERROR
 

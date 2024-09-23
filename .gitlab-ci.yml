@@ -3,7 +3,7 @@ variables:
 
 pdf:
   stage: build
-  image: git.kpi.fei.tuke.sk:4567/kpi/latex
+  image: git.kpi.fei.tuke.sk:4567/kpi/latex:2024.09.1
   # Documentation for LaTex docker image: https://git.kpi.fei.tuke.sk/kpi/latex
   script:
     - latexmk -interaction=nonstopmode $MAIN_TEX_FILE
