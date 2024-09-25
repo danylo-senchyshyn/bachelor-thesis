@@ -3,8 +3,10 @@ variables:
 
 pdf:
   stage: build
-  image: git.kpi.fei.tuke.sk:4567/kpi/latex:2024.09.1
+  image: git.kpi.fei.tuke.sk:4567/kpi/latex:2024.09.2
   # Documentation for LaTex docker image: https://git.kpi.fei.tuke.sk/kpi/latex
+  before_script:
+    - /entrypoint.bash  # Install packages specified in `packages` file
   script:
     - latexmk -interaction=nonstopmode $MAIN_TEX_FILE
   artifacts:
