@@ -636,18 +636,6 @@
     \newpage
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
-%% Preface and intro chapters
-%%
-%%%%%
-
-\newcommand{\introchapter}[1]{%
-  \chaptermark{#1}% Set the chapter mark for headers
-  \phantomsection{}% Create an invisible section for hyperlink target
-  \addcontentsline{toc}{chapter}{#1}% Add the chapter to the ToC
-  \chapter*{#1}% Create an unnumbered chapter
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
