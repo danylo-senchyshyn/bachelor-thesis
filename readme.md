@@ -1,10 +1,20 @@
 # About
 
-Template for final theses writing at _DCI FEEI TUKE_.
+Template for final theses writing at _Technical University of Košice_.
 
 Warning! The encoding of all documents is set to _UTF-8_! So don't forget to set up your environment in which you will write your thesis to use this encoding!
 
-The current version is based on the official release, also available on the website of the University Library. However, it has not been updated for some time, so this project is an effort to keep the current version of this project in collaboration with students. However, please note that this version is still under development and due to potential changes, we recommend _changelog_ monitoring.
+## Structure
+
+
+* [thesis.tex](./thesis.tex) is the main file of the thesis. Use it to include additional chapters or appendixes and to use any additional LaTeX packages or macros.
+* [metadata.tex](./metadata.tex) contains the title of the thesis, author's name, and all other metadata.
+* [bibliography.bib](./bibliography.bib) with the bibliography entries.
+* [chapters/](./chapters/) contains files with the main parts of your thesis. You should add more as needed.
+* [appendixes/](./appendixes/) contains appendixes, manuals, and other supplementary materials.
+  * [appendixes/00-list.tex](./appendixes/00-list.tex) is a list of appendixes.
+* [glossary.tex](./glossary.tex) is a list of terms and their descriptions.
+* [acronyms.tex](./acronyms.tex) contains acronyms and their meanings.
 
 
 ## Build with Docker
