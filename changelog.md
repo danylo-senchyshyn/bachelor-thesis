@@ -1,12 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2024.9] - 2024-09-23
+## [2024.9] - 2024-09-26
 
 - Replace LuaLaTeX with XeLaTeX (it is faster).
 - Replace babel with polyglossia.
 - Set Source Code Pro as a monospace font and bundle the font files.
-- Add `\introchapter{}` command for unnumbered chapters that should be included in ToC.
 - Improve `.latexmkrc` configuration.
 - Disable colorful syntax highlighting of listings.
 - Move Makefile and Docker configuration to [kpi/latex](https://git.kpi.fei.tuke.sk/kpi/latex) project.
