@@ -28,3 +28,6 @@ $out_dir    = '.';
 $aux_dir    = 'build';
 
 $pdf_mode   = 5;      # compile to pdf using xelatex
+
+# Set the typesetting engine to XeLaTeX because Overleaf does not correctly read $pdf_mode and outputs compilation error.
+$pdflatex = 'xelatex';
