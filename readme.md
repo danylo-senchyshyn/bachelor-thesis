@@ -22,10 +22,31 @@ Warning! The encoding of all documents is set to _UTF-8_! So don't forget to set
 For building your thesis you can also use [Docker image](https://hub.docker.com/repository/docker/kpituke/latex/general)
 
 ```bash
-$ docker container run --rm -it --volume .:/home --user $(id --user):$(id --group) bletvaska/thesis make pdf
+$ docker container run --rm -it \
+    --volume .:/data \
+    --user $(id --user):$(id --group) \
+    kpituke/latex \
+    make pdf
 ```
 
-Then you can use prepared `Makefile` for all the jobs you need when preparing your thesis. To get help about the available targets, you can simply type:
+If you are using Linux OS, for making things easier you can create an alias:
+
+```bash
+$ alias mkthesis='docker container run --rm -it \
+    --volume .:/data \
+    --user $(id --user):$(id --group) \
+    --name thesis \
+    kpituke/latex \
+    make '
+```
+
+Then you can run your build simply with command:
+
+```bash
+$ mkthesis 
+```
+
+Otherwise you can use prepared shell script, which is located in this repository, by typing:
 
 ```bash
 $ ./mkthesis.sh

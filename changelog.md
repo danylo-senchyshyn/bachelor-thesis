@@ -1,8 +1,20 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2024.9] - 2024-09-26
 
+## [2025.1] - 2025-05-22
+- v projekte prace vytvoreny samostatny priecinok `texmf/`, do ktoreho bola presunuta sablona, a v ktorom sa mozu nachadzat dalsie lokalne veci
+- odstraneny priecinok `fonts/`
+    - fonty su dostupne ako samostatny balik a boli doinstalovane do docker obrazu
+    - zo sablony vyhodena informacia o ich umiestneni na disku
+- aktualizovana/opravena dokumentacia
+- drobny refaktoring
+- `dist` priecinok bol nastaveny ako vystupny v konfiguracii `.latexmkrc`
+    - vystupny dokument sa zostavit v priecinku `dist/` a nie v lokalnom priecinku
+- subor `.latexmkrc` bol presunuty do projektu s docker obrazom
+
+
+## [2024.9] - 2024-09-26
 - Replace LuaLaTeX with XeLaTeX (it is faster).
 - Replace babel with polyglossia.
 - Set Source Code Pro as a monospace font and bundle the font files.
@@ -10,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - Disable colorful syntax highlighting of listings.
 - Move Makefile and Docker configuration to [kpi/latex](https://git.kpi.fei.tuke.sk/kpi/latex) project.
 - Move example thesis text to [kpi/thesis.example](https://git.kpi.fei.tuke.sk/kpi/thesis.example) project.
+
 
 ## [2024.3] - 2024-07-08
 - pridanie ďalšieho príkazu `shell` do súboru `Makefile` (thesis maker)
@@ -23,6 +36,7 @@ All notable changes to this project will be documented in this file.
 - `vlna` nahradená za balík `luavlna`
 - do Docker obrazu bol pridaný skript `mkthesis.sh`
    - len pre použitie vo vnútri spusteného kontajnera
+
 
 ## [2024.2] - 2024-06-23
 - na zostavovanie práce vytvorený samostatný Docker obraz
@@ -42,6 +56,7 @@ All notable changes to this project will be documented in this file.
 - v pravidle `dist` su pouzite samostatne prikazy na zostavenie vysledných dokumentov, pretože pri spustení príkazu `latexmk` vždy dôjde k chybe
 - vytvorené nové makro `\printable`, pomocou ktorého je možné zapnúť/vypnúť farebné linky
 
+
 ## [2024.1] - 2024-04-14
 - vypustené čestné vyhlásenie z práce
 - pridaný súbor `Makefile` na zostavovanie práce
@@ -60,19 +75,24 @@ All notable changes to this project will be documented in this file.
 - pridanie názvu referencie pri prílohách pomocou balíka `\nameref{}`
 - kopec refaktoringu a vyčistenie súboru `thesis.tex`
 
+
 ## [2022.1] - 2021-10-04
 - consultant definition is now optional
 
+
 ## [2021.3] - 2021-09-29
 - specification of the bibliography file removed from the class and added to the thesis.tex
+
 
 ## [2021.2] - 2021-03-23
 - full support for English documents
 - `readme.md` translated to English
 
+
 ## [2021.1] - 2021-02-08
 - znovu zapnuté farebné ramčeky okolo odkazov
 - pridaný súbor `latexmkrc` s konfiguráciou automatického generovania slovníkov (#10)
+
 
 ## [2020.1] - 2020-09-25
 - zrušený analytický list a nahradený len abstraktom a kľúčovými slovami
@@ -89,11 +109,13 @@ All notable changes to this project will be documented in this file.
 - zjednodušená štruktúra kapitol a doplnené informácie o ich obsahu
 - vypnuté farebné ramčeky okolo odkazov
 
+
 ## [2018.1] - 2018-10-07
 - pridaná podpora iso960
 - názov kapitoly Literatúra sa dostal do šablóny
 - pridaná nová štruktúra práce na základe článku: https://www.scss.tcd.ie/joeran.beel/blog/2010/03/02/how-to-write-a-phd-thesis/
 - vytvorený priečinok dist/, kde sa nachádza šablóna
+
 
 ## [2017.7] - 2017-12-19
 - opravený problém s odkazom na _Motiváciu_ v obsahu, ktorý ukazoval na nesprávnu stranu
@@ -103,9 +125,11 @@ All notable changes to this project will be documented in this file.
     - výpis literatúry na jeden riadok spolu s položkou v obsahu
     - pre prílohy bol vytvorený samostatný priečinok `appendixes/`
 
+
 ## [2017.6] - 2017-11-22
 - do konfigurácie balíka `babel` pridaná konfigurácia pre podporu písania literatúry v iných jazykoch ako slovenských
     - ilustráciou je zdroj napísaný po rusky
+
 
 ## [2017.5] - 2017-05-24
 - v prípade, že vytvárate kapitolu bez číslovania, v záhlaví sa zobrazí len jej názov
@@ -154,6 +178,7 @@ All notable changes to this project will be documented in this file.
     - ak je použitý, na príslušnom mieste sa vloží zadávací list
 - zvacsena vyska hlavicky dokumentu
 
+
 ## [0.1.0] - 2015-10-19
 ### Changed
 - Názov hlavného súboru bol premenovaný na `thesis.tex`, nakoľko adresuje ako diplomovú, tak aj bakalársku prácu
@@ -162,3 +187,4 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Bol pridaný súbor `README.md` so všobecnými informáciami o projekte a jeho používaní
 - Bol pridaný súbor `CHANGELOG.md` s informáciami týkajúcimi sa zmien v projekte
+

@@ -9,7 +9,7 @@
 %%
 %%%%%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{tukethesis}[2024/06/23 TUKE Thesis Class, v2024.2]
+\ProvidesClass{tukethesis}[2025/05/22 TUKE Thesis Class, v2025.1]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -648,13 +648,12 @@
 \setmainfont{TeX Gyre Pagella}   % \rmfamily{}
 \setsansfont{TeX Gyre Heros}[Scale=MatchLowercase]   % \rmfamily{}
 \setmonofont[
-    Path = ./fonts/,
-    UprightFont = *-Regular.otf,
-    BoldFont = *-Bold.otf,
-    ItalicFont = *-It.otf,
-    BoldItalicFont = *-BoldIt.otf,
+    UprightFont = *,
+    BoldFont = * Bold,
+    ItalicFont = * Italic,
+    BoldItalicFont = * Bold Italic,
     Scale=MatchLowercase
-]{SourceCodePro}   % \ttfamily{}
+]{Source Code Pro}   % \ttfamily{}
 
 % Set math font
 \RequirePackage{unicode-math}
