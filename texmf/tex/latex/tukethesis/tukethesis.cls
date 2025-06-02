@@ -33,7 +33,10 @@
 % titlesec for modification of chapters and sections
 \RequirePackage{titlesec}
 \titleformat{\chapter}
-    {\huge}{\textbf\thechapter}{20pt}{\huge\textbf}[{\titlerule[0.8pt]}]
+    {\huge\bfseries}                        % font
+    {\thechapter}                           % numbering
+    {20pt}                                  % spacing 
+    {\huge\bfseries}[{\titlerule[0.8pt]}]   % label
 
 % sets the document geometry
 \RequirePackage[
@@ -811,14 +814,14 @@
 
 \newcommand{\setappendixstyle}{
    % no entries from appendixes in the table of contents
-   % \setcounter{tocdepth}{0}
    \renewcommand{\addcontentsline}[3]{}
 
-   % \titleformat{\section}
-   %    {\normalfont\Large\bfseries}  % font
-   %    {}                            % no numbering
-   %    {0pt}                         % no spacing
-   %    {}                            % no label
+   % change the chapter numbering to appendixes
+   \titleformat{\chapter}
+        {\huge\bfseries}                        % font
+        {\thechapter}                           % numbering
+        {20pt}                                  % spacing
+        {\huge\bfseries}[{\titlerule[0.8pt]}]   % label
    
    % use arabic numbers for sections, figures, tables, and listings
    \renewcommand{\thesection}{\arabic{section}}

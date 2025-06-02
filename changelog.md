@@ -11,6 +11,14 @@ All notable changes to this project will be documented in this file.
 - drobny refaktoring
 - `dist` priecinok bol nastaveny ako vystupny v konfiguracii `.latexmkrc`
     - vystupny dokument sa zostavi v priecinku `dist/` a nie v lokalnom priecinku
+- obsah obrázkov, tabuliek a výpisov
+    - bola odstránená vertikálna medzera oddeľujúca položky z rozličných kapitol
+    - bola odstranena aj horizontalna medzera, ktorá odsadzovala položky viac vpravo (keďže sa položky číslujú s prefixom kapitoly, do ktorej patria)
+- z obsahu boli vyhodené prílohy a ich obsah
+- podkapitoly príloh je možné číslovať:
+    - bez prefixu prílohy, alebo
+    - vôbec (potlačením číslovania pomocou znaku `*`)
+- osobitná príloha _LaTeX 101_ so základmi LaTeX-u
 
 
 ## [2024.9] - 2024-09-26
