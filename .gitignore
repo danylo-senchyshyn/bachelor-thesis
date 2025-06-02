@@ -24,6 +24,7 @@ _minted*
 *.gls
 *.te~
 *(busy)
+*.swp
 
 dist/
 build/

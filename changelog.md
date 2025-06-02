@@ -11,7 +11,6 @@ All notable changes to this project will be documented in this file.
 - drobny refaktoring
 - `dist` priecinok bol nastaveny ako vystupny v konfiguracii `.latexmkrc`
     - vystupny dokument sa zostavit v priecinku `dist/` a nie v lokalnom priecinku
-- subor `.latexmkrc` bol presunuty do projektu s docker obrazom
 
 
 ## [2024.9] - 2024-09-26

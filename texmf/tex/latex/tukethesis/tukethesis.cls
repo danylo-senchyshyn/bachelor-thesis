@@ -117,6 +117,8 @@
    pdftoolbar=true,
    pdfmenubar=true,
    pdfwindowui=true,
+   pdfproducer={Moje zostavenie LaTeX}, % nepomáha vo všetkých prípadoch
+   pdfcreator={XeLaTeX (moja konfigurácia)},
    bookmarksopenlevel={0},
    bookmarksnumbered,
    bookmarksopen,
@@ -757,3 +759,25 @@
         }
     }
 }
+
+
+\makeatletter
+%\show\@chapter
+\def\@chapter[#1]#2{\ifnum \c@secnumdepth >\m@ne
+                         \refstepcounter{chapter}%
+                         \typeout{\@chapapp\space\thechapter.}%
+                         \addcontentsline{toc}{chapter}%
+                                   {\protect\numberline{\thechapter}#1}%
+                    \else
+                      \addcontentsline{toc}{chapter}{#1}%
+                    \fi
+                    \chaptermark{#1}%
+%                    \addtocontents{lof}{\protect\addvspace{10\p@}}% 
+                    \addtocontents{lot}{\protect\addvspace{10\p@}}%
+                    \if@twocolumn
+                      \@topnewpage[\@makechapterhead{#2}]%
+                    \else
+                      \@makechapterhead{#2}%
+                      \@afterheading
+                    \fi}
+\makeatother

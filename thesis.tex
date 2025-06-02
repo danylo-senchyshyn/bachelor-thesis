@@ -73,11 +73,47 @@
 %% -----------------------------------------------------------------
 
 \include{appendixes/00-list}
+
+
+\newcommand{\setappendixstyle}{
+   % no entries from appendixes in the table of contents
+   % \setcounter{tocdepth}{0}
+   \renewcommand{\addcontentsline}[3]{}
+
+
+   % \titleformat{\section}
+   %    {\normalfont\Large\bfseries}  % font
+   %    {}                            % no numbering
+   %    {0pt}                         % no spacing
+   %    {}                            % no label
+   
+   % use arabic numbers for sections, figures, tables, and listings
+   \renewcommand{\thesection}{\arabic{section}}
+   \renewcommand{\thefigure}{\arabic{figure}}
+   \renewcommand{\thetable}{\arabic{table}}
+   \renewcommand{\thelstlisting}{\arabic{lstlisting}}
+
+   % no reference in the table of contents for figures, tables, and listings
+   \captionsetup[figure]{list=false}
+   \captionsetup[table]{list=false}
+}
+
 \appendix
-\renewcommand\chaptername{\appendixname}
+\setappendixstyle
+
+
+% \renewcommand\chaptername{\appendixname}
+% \renewcommand\thechapter{\appendixname~\Alph{chapter}.}
+
+% \renewcommand{\thesubsection}{}
+
+
+
+
 \include{appendixes/user.manual}
 \include{appendixes/system.manual}
 \include{appendixes/structure}
+\include{appendixes/latex.101}
 
 
 %% -----------------------------------------------------------------
