@@ -159,7 +159,7 @@
 }
 
 
-% zmena štýlu prvej stránke kapitoly
+% zmena štýlu prvej stránky kapitoly
 \renewcommand\chapter{
     \if@openright\cleardoublepage\else\clearpage\fi
     \thispagestyle{chapterpage}
@@ -761,23 +761,72 @@
 }
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \makeatletter
-%\show\@chapter
-\def\@chapter[#1]#2{\ifnum \c@secnumdepth >\m@ne
-                         \refstepcounter{chapter}%
-                         \typeout{\@chapapp\space\thechapter.}%
-                         \addcontentsline{toc}{chapter}%
-                                   {\protect\numberline{\thechapter}#1}%
-                    \else
-                      \addcontentsline{toc}{chapter}{#1}%
-                    \fi
-                    \chaptermark{#1}%
-%                    \addtocontents{lof}{\protect\addvspace{10\p@}}% 
-                    \addtocontents{lot}{\protect\addvspace{10\p@}}%
-                    \if@twocolumn
-                      \@topnewpage[\@makechapterhead{#2}]%
-                    \else
-                      \@makechapterhead{#2}%
-                      \@afterheading
-                    \fi}
+
+% redefine \chapter command to remove vertical space in lof and lot
+\def\@chapter[#1]#2{%
+    \ifnum \c@secnumdepth >\m@ne
+        \refstepcounter{chapter}%
+        \typeout{\@chapapp\space\thechapter.}%
+        \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}%
+    \else
+        \addcontentsline{toc}{chapter}{#1}%
+    \fi
+    \chaptermark{#1}%
+    \def\@currentlabelname{#2}%
+    % \addtocontents{lof}{\protect\addvspace{10\p@}}% 
+    % \addtocontents{lot}{\protect\addvspace{10\p@}}%
+    \if@twocolumn
+        \@topnewpage[\@makechapterhead{#2}]%
+    \else
+        \@makechapterhead{#2}%
+        \@afterheading
+    \fi
+}
+
+% list of figures without indentation
+\renewcommand*{\l@figure}[2]{%
+  \@dottedtocline{1}{0em}{2.5em}{#1}{#2}%
+}
+
+% list of tables without indentation
+\renewcommand*{\l@table}[2]{%
+  \@dottedtocline{1}{0em}{2.5em}{#1}{#2}%
+}
+
+% list of listings without indentation
+\renewcommand*{\l@lstlisting}[2]{%
+  \@dottedtocline{1}{0em}{2.5em}{#1}{#2}%
+}
+
 \makeatother
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% Appendix style
+%%
+%%%%%
+
+\newcommand{\setappendixstyle}{
+   % no entries from appendixes in the table of contents
+   % \setcounter{tocdepth}{0}
+   \renewcommand{\addcontentsline}[3]{}
+
+   % \titleformat{\section}
+   %    {\normalfont\Large\bfseries}  % font
+   %    {}                            % no numbering
+   %    {0pt}                         % no spacing
+   %    {}                            % no label
+   
+   % use arabic numbers for sections, figures, tables, and listings
+   \renewcommand{\thesection}{\arabic{section}}
+   \renewcommand{\thefigure}{\arabic{figure}}
+   \renewcommand{\thetable}{\arabic{table}}
+   \renewcommand{\thelstlisting}{\arabic{lstlisting}}
+
+   % no reference in the table of contents for figures, tables, and listings
+   \captionsetup[figure]{list=false}
+   \captionsetup[table]{list=false}
+}

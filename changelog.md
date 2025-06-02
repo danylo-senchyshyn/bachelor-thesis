@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 
-## [2025.1] - 2025-05-22
+## [2025.1] - 2025-06-03
 - v projekte prace vytvoreny samostatny priecinok `texmf/`, do ktoreho bola presunuta sablona, a v ktorom sa mozu nachadzat dalsie lokalne veci
 - odstraneny priecinok `fonts/`
     - fonty su dostupne ako samostatny balik a boli doinstalovane do docker obrazu
@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 - aktualizovana/opravena dokumentacia
 - drobny refaktoring
 - `dist` priecinok bol nastaveny ako vystupny v konfiguracii `.latexmkrc`
-    - vystupny dokument sa zostavit v priecinku `dist/` a nie v lokalnom priecinku
+    - vystupny dokument sa zostavi v priecinku `dist/` a nie v lokalnom priecinku
 
 
 ## [2024.9] - 2024-09-26
