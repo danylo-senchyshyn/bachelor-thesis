@@ -43,11 +43,22 @@ Ak za príkaz pridáte hviezdičku kapitola nebude číslovaná a ani sa nezobra
 
 Na vkladanie obrázkov sa používa prostredie \texttt{figure}:
 
+\begin{lstlisting}
 \begin{figure}
   \centering
   \includegraphics[width=0.5\textwidth]{figures/tugboat}
   \caption{\LaTeX{} Friendly Zone \label{o:latex_friendly_zone}}
 \end{figure}
+\end{lstlisting}
+
+Výsledkom bude obrázok \ref{o:latex_friendly_zone}.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.5\textwidth]{figures/tugboat}
+  \caption{\LaTeX{} Friendly Zone \label{o:latex_friendly_zone}}
+\end{figure}
+
 
 Na samotné vloženie obrázka sa používa príkaz \verb|\includegraphics{}|. \LaTeX{} podporuje bežné formáty ako PNG a JPEG. Pre vektorovú grafiku je vhodné použiť formát PDF.
 

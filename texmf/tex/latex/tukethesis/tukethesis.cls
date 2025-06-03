@@ -26,7 +26,6 @@
 %%
 %%%%%
 
-
 \RequirePackage{nameref}      %% named references
 \RequirePackage{pdfpages}
 
@@ -84,13 +83,7 @@
 }
 \lstset{style=default}
 
-%% total counters for conditional showing of lists
-% must be defined after all packages with required counters
-\RequirePackage[
-    figure,
-    table,
-    lstlisting
-]{totalcount}
+
 
 %% for professional-looking tables
 \usepackage{booktabs}
@@ -828,8 +821,13 @@
    \renewcommand{\thefigure}{\arabic{figure}}
    \renewcommand{\thetable}{\arabic{table}}
    \renewcommand{\thelstlisting}{\arabic{lstlisting}}
-
-   % no reference in the table of contents for figures, tables, and listings
-   \captionsetup[figure]{list=false}
-   \captionsetup[table]{list=false}
 }
+
+
+%% total counters for conditional showing of lists
+% must be defined after all packages with required counters
+\RequirePackage[
+    figure,
+    table,
+    lstlisting
+]{totalcount}

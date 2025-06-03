@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - obsah obrázkov, tabuliek a výpisov
     - bola odstránená vertikálna medzera oddeľujúca položky z rozličných kapitol
     - bola odstranena aj horizontalna medzera, ktorá odsadzovala položky viac vpravo (keďže sa položky číslujú s prefixom kapitoly, do ktorej patria)
+    - nezobrazujú sa ani prázdne obsahy, ak sa obrázky, tabuľky a výpisy nachádzajú len v prílohách
 - z obsahu boli vyhodené prílohy a ich obsah
 - podkapitoly príloh je možné číslovať:
     - bez prefixu prílohy, alebo
