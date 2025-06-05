@@ -2,6 +2,20 @@
 All notable changes to this project will be documented in this file.
 
 
+## [2025.2] - 2025-06-05
+- priecinok `appendixes/` bol premenovany na `appendices/`
+- navrat ku prekladu pomocou _LuaLaTeX_
+  - refaktoring `Makefile` suboru v Docker obraze 
+  - aktualizacia aj konfiguracneho suboru `.latexmkrc`
+- overenie, ci je preklad v rezime `printable` sa presunul do sablony
+  - priznak `\printable` bol presunuty do metadat spolu s komentarom ako a preco ho pouzivat
+- text cestneho vyhlasenia v metadatach je zakomentovany a je v zenskom rode
+  - text v sablone je v muzskom rode
+  - student si podla toho upravi/pouzije ten, ktory mu vyhovuje a nebude tam ziadne _vypracoval(a)_
+- do sablony pridana podpora pre balik `luavlna`
+  - v Docker obraze sa instaluje prislusny balik `texlive-luavlna`
+
+
 ## [2025.1] - 2025-06-03
 - v projekte prace vytvoreny samostatny priecinok `texmf/`, do ktoreho bola presunuta sablona, a v ktorom sa mozu nachadzat dalsie lokalne veci
 - odstraneny priecinok `fonts/`

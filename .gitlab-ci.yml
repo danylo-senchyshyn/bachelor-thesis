@@ -1,17 +1,18 @@
 variables:
-  MAIN_TEX_FILE: thesis
+  OUTPUT: thesis-printable
+  TEXMFHOME: ./texmf/
 
 pdf:
   stage: build
-  image: git.kpi.fei.tuke.sk:4567/kpi/latex:2024.09.2
+  # image: git.kpi.fei.tuke.sk:4567/kpi/latex
+  image: bletvaska/thesis:latest
   # Documentation for LaTex docker image: https://git.kpi.fei.tuke.sk/kpi/latex
-  before_script:
-    - /entrypoint.bash  # Install packages specified in `packages` file
   script:
-    - latexmk -interaction=nonstopmode $MAIN_TEX_FILE
+    # - latexmk -pdf -interaction=nonstopmode $MAIN_TEX_FILE
+    - make --makefile=/app/Makefile printable
   artifacts:
     paths:
-      - $MAIN_TEX_FILE.pdf
+      - "dist/${OUTPUT}.pdf"
     expire_in: 2 days
   only:
     - master

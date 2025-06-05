@@ -9,7 +9,7 @@
 %%
 %%%%%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{tukethesis}[2025/05/22 TUKE Thesis Class, v2025.1]
+\ProvidesClass{tukethesis}[2025/05/22 TUKE Thesis Class, v2025.2]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -84,7 +84,6 @@
 \lstset{style=default}
 
 
-
 %% for professional-looking tables
 \usepackage{booktabs}
 
@@ -113,8 +112,8 @@
    pdftoolbar=true,
    pdfmenubar=true,
    pdfwindowui=true,
-   pdfproducer={Moje zostavenie LaTeX}, % nepomáha vo všetkých prípadoch
-   pdfcreator={XeLaTeX (moja konfigurácia)},
+   pdfproducer={TUKE Thesis v2025.2},
+   pdfcreator={LuaLaTeX},
    bookmarksopenlevel={0},
    bookmarksnumbered,
    bookmarksopen,
@@ -125,7 +124,7 @@
    linkcolor=magenta,
    filecolor=magenta,
    urlcolor=magenta,
-   baseurl={https://kpi.fei.tuke.sk/}
+%    baseurl={https://kpi.fei.tuke.sk/}
 ]{hyperref}
 
 
@@ -321,7 +320,7 @@
 
 % DOCVAR: declaration text
 \newcommand{\@declaration@en}{I hereby declare that this thesis is my own work and effort. Where other sources of information have been used, they have been acknowledged.}
-\newcommand{\@declaration@sk}{Vyhlasujem, že som záverečnú prácu vypracoval(a) samostatne s~použitím uvedenej odbornej literatúry.}
+\newcommand{\@declaration@sk}{Vyhlasujem, že som záverečnú prácu vypracoval samostatne s~použitím uvedenej odbornej literatúry.}
 \newcommand{\@declaration}{\@declaration@en}
 \newcommand{\declaration}[1]{
     \renewcommand{\@declaration@en}{#1}
@@ -733,6 +732,11 @@
         \renewcommand{\lstlistlistingname}{Zoznam výpisov}
         \renewcommand{\figurename}{Obrázok}
     }
+
+    % Disable color links in the final version (define \printable in metadata.tex)       
+    \ifdefined\printable
+        \hypersetup{hidelinks}
+    \fi
 }
 
 % Polyglossia sets the language only in \AfterEndPreambule

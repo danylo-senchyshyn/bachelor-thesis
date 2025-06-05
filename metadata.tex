@@ -3,22 +3,19 @@
 %% The location of your Assignment Statement (scanned as image)
 % \thesisspec{figures/thesisspec.png}
 
-%% Uncomment the following line for the final version without colored links
-% \def\printable{}
-
 \title{Šablóna záverečnej práce}{Šablóna záverečnej práce}
 %\thesis{Master thesis}{Diplomová práca}  % typ prace
 
 \author[Ing.]{Janko}{Hraško}[PhD.]
-\supervisor{Donald E. Knuth}  % veduci prace
-% \consultant{Leslie Lamport}  % konzultant
+\supervisor{Leslie Lamport}   % thesis supervisor
+\consultant{Donald E. Knuth}  % thesis consultant
 % \college{University of Žilina}{Žilinská univerzita}  % univerzita
 % \faculty{Faculty of Electrical Engineering and informatics}{Fakulta elektrotechniky a informatiky}  % fakulta
 % \department{Department of Computers and Informatics}{Katedra počítačov a informatiky}  % katedra
 % \departmentacr{DCI}{KPI}  % skratka katedry
 \submissiondate{13}{5}{2024}
 % \fieldofstudy{Informatika}
-% \studyprogramme{Informatika}
+% \studyprogramme{Informatika}  % iba názov bez číselného kódu
 % \city{Košice}  % mesto
 
 \keywords{%
@@ -29,7 +26,9 @@
   \LaTeX, programovanie, sadzba textu
 }
 
-\declaration{Vyhlasujem, že som záverečnú prácu vypracoval(a) samostatne s~použitím uvedenej odbornej literatúry.}
+% \declaration{
+%     Vyhlasujem, že som záverečnú prácu vypracovala samostatne s použitím uvedenej odbornej literatúry.
+% }
 
 \abstract{%
   % english
@@ -40,7 +39,14 @@
 }
 
 \acknowledgment{%
-Na tomto mieste by som rád poďakoval svojmu vedúcemu práce za jeho čas a odborné vedenie počas riešenia mojej záverečnej práce.
-Rovnako by som sa rád poďakoval svojim rodičom a priateľom za ich podporu a povzbudzovanie počas celého môjho štúdia.
+  Na tomto mieste by som sa rád poďakoval svojmu vedúcemu práce za jeho čas a odborné vedenie počas riešenia mojej záverečnej práce.
+  Rovnako by som sa rád poďakoval svojim rodičom a priateľom za ich podporu a povzbudzovanie počas celého môjho štúdia.
 }
+
+
+% Uncomment the following line for the printer-friendly version of the thesis.
+% When defined, final PDF will not contain colored links, which is useful for printing.
+% WARNING: Uncomment ONLY when used manually without the Docker image for building the thesis. By uncommenting this line, you will manually override the printable flag and behavior of the Docker image will not work as expected.
+% If you want to use the Docker image for building the document, please do not uncomment this line.
+%\def\printable{}
 
