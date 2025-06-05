@@ -718,10 +718,10 @@
         \renewcommand{\departmentname}{Školiace pracovisko}
         \renewcommand{\supervisorname}{Školiteľ}
         \renewcommand{\consultantname}{Konzultant}
-        \renewcommand{\abstractname}{Abstrakt v SJ}
-        \renewcommand{\keywordsname}{Kľúčové slová v SJ}
-        \renewcommand{\secondabstractname}{Abstrakt v AJ}
-        \renewcommand{\secondkeywordsname}{Kľúčové slová v AJ}
+        \renewcommand{\abstractname}{Abstrakt v slovenčine}
+        \renewcommand{\keywordsname}{Kľúčové slová v slovenčine}
+        \renewcommand{\secondabstractname}{Abstrakt v angličtine}
+        \renewcommand{\secondkeywordsname}{Kľúčové slová v angličtine}
         \renewcommand{\bibcitationname}{Bibliografická citácia}
         \renewcommand{\supervisorcitationname}{Vedúci práce}
         \renewcommand{\acrlistname}{Zoznam skratiek}
@@ -731,6 +731,7 @@
         \renewcommand{\lstlistingname}{Výpis}
         \renewcommand{\lstlistlistingname}{Zoznam výpisov}
         \renewcommand{\figurename}{Obrázok}
+        \renewcommand{\glossaryname}{Slovník termínov}
     }
 
     % Disable color links in the final version (define \printable in metadata.tex)       

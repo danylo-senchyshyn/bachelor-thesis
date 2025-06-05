@@ -1,4 +1,5 @@
 # Change Log
+
 All notable changes to this project will be documented in this file.
 
 
@@ -7,13 +8,20 @@ All notable changes to this project will be documented in this file.
 - navrat ku prekladu pomocou _LuaLaTeX_
   - refaktoring `Makefile` suboru v Docker obraze 
   - aktualizacia aj konfiguracneho suboru `.latexmkrc`
+- refaktoring pravidiel v `Makefile`
+  - aktualne sa `latexmk` pouziva aj na preklad veci, kde sa zapina `\printable`
+  - cely cas bol problem s escapovanim lomitok :-)
 - overenie, ci je preklad v rezime `printable` sa presunul do sablony
-  - priznak `\printable` bol presunuty do metadat spolu s komentarom ako a preco ho pouzivat
+  - priznak `\printable` bol presunuty do metadat spolu s komentarom ako a preco a kedy ho pouzivat
 - text cestneho vyhlasenia v metadatach je zakomentovany a je v zenskom rode
   - text v sablone je v muzskom rode
   - student si podla toho upravi/pouzije ten, ktory mu vyhovuje a nebude tam ziadne _vypracoval(a)_
 - do sablony pridana podpora pre balik `luavlna`
   - v Docker obraze sa instaluje prislusny balik `texlive-luavlna`
+- pridaný preklad `\glossaryname` na `Slovník termínov`
+  - pôvodne bol len `Slovník`
+  - preklad je podľa _Katuščáka_, alternatívou môže byť `Slovník pojmov`
+- skratky AJ a SJ pri abstrakte a klucovych slovach boli prepisane na _angličtina_ a _slovenčina_
 
 
 ## [2025.1] - 2025-06-03
@@ -22,7 +30,6 @@ All notable changes to this project will be documented in this file.
     - fonty su dostupne ako samostatny balik a boli doinstalovane do docker obrazu
     - zo sablony vyhodena informacia o ich umiestneni na disku
 - aktualizovana/opravena dokumentacia
-- drobny refaktoring
 - `dist` priecinok bol nastaveny ako vystupny v konfiguracii `.latexmkrc`
     - vystupny dokument sa zostavi v priecinku `dist/` a nie v lokalnom priecinku
 - obsah obrázkov, tabuliek a výpisov
