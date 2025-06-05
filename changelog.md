@@ -22,6 +22,9 @@ All notable changes to this project will be documented in this file.
   - pôvodne bol len `Slovník`
   - preklad je podľa _Katuščáka_, alternatívou môže byť `Slovník pojmov`
 - skratky AJ a SJ pri abstrakte a klucovych slovach boli prepisane na _angličtina_ a _slovenčina_
+- pocet strán v bibliografickej citácii
+  - pridaná medzera medzi počtom strán a skratkou (zrejme aj podľa štandardu ISO 690, https://ippr.sk/c/204-citacie-parafrazy-bibliograficke-odkazy-iso-690)
+  - pridaný anglický a slovenský preklad
 
 
 ## [2025.1] - 2025-06-03

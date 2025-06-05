@@ -9,7 +9,7 @@
 %%
 %%%%%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{tukethesis}[2025/05/22 TUKE Thesis Class, v2025.2]
+\ProvidesClass{tukethesis}[2025/06/05 TUKE Thesis Class, v2025.2]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -88,6 +88,7 @@
 \usepackage{booktabs}
 
 \RequirePackage{polyglossia}
+
 %% Numeric citations and sorting by citation order
 \RequirePackage{csquotes}
 \RequirePackage[
@@ -386,6 +387,7 @@
 \newcommand{\supervisorcitationname}{No Language Selected}
 \newcommand{\acrlistname}{No Language Selected}
 \newcommand{\appendixlistname}{No Language Selected}
+\newcommand{\pageabbr}{No Language Selected}
 
 
 % right page number aligment from 2nd page in table of content
@@ -546,7 +548,7 @@
 
     \subsection*{\bibcitationname}
 
-    \MakeUppercase\@author@lastname, \@author@firstname. {\itshape \@title}. \@college@city: \@college, \@faculty, \@submissionyear. \pageref{theend}s. \supervisorcitationname: \@supervisor
+    \MakeUppercase\@author@lastname, \@author@firstname. {\itshape \@title}. \@college@city: \@college, \@faculty, \@submissionyear. \pageref{theend}~\pageabbr{} \supervisorcitationname: \@supervisor
 
     \newpage
 
@@ -695,10 +697,11 @@
         \renewcommand{\bibcitationname}{Bibliographic Citation}
         \renewcommand{\supervisorcitationname}{Supervisor}
         \renewcommand{\acrlistname}{List of Abbreviations}
-        \renewcommand{\appendixlistname}{List of Appendixes}
+        \renewcommand{\appendixlistname}{List of Appendices}
         \renewcommand{\lstlistingname}{Listing}
         \renewcommand{\lstlistlistingname}{List of \lstlistingname s}
         \renewcommand{\figurename}{Figure}
+        \renewcommand{\pageabbr}{p.}
     }
     \addto\captionsslovak{
         \renewcommand{\@title}{\@title@sk}
@@ -732,6 +735,7 @@
         \renewcommand{\lstlistlistingname}{Zoznam výpisov}
         \renewcommand{\figurename}{Obrázok}
         \renewcommand{\glossaryname}{Slovník termínov}
+        \renewcommand{\pageabbr}{s.}
     }
 
     % Disable color links in the final version (define \printable in metadata.tex)       
