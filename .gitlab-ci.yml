@@ -1,5 +1,5 @@
 variables:
-  OUTPUT: thesis-printable
+  OUTPUT: thesis
   TEXMFHOME: ./texmf/
 
 pdf:
@@ -9,10 +9,12 @@ pdf:
   # Documentation for LaTex docker image: https://git.kpi.fei.tuke.sk/kpi/latex
   script:
     # - latexmk -pdf -interaction=nonstopmode $MAIN_TEX_FILE
-    - make --makefile=/app/Makefile printable
+    - make --makefile=/app/Makefile dist
+    - mv dist/*.pdf .
   artifacts:
     paths:
-      - "dist/${OUTPUT}.pdf"
+      - "${OUTPUT}-printable.pdf"
+      - "${OUTPUT}-ebook.pdf"
     expire_in: 2 days
   only:
     - master
