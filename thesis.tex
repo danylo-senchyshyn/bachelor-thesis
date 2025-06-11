@@ -1,9 +1,9 @@
-%% !TEX program = xelatex
+%% !TEX program = lualatex
 %% -----------------------------------------------------------------
 %% This file uses UTF-8 encoding
 %%
 %% For compilation use following command:
-%% latexmk -xelatex -pvc -bibtex thesis
+%% $ latexmk -pdf -pvc -pdflatex="lualatex %O %S" thesis
 %%
 %% -----------------------------------------------------------------
 %%                                     _     _
@@ -15,16 +15,13 @@
 %%
 %% -----------------------------------------------------------------
 
-\documentclass{tukethesis}
-
-\setdefaultlanguage{slovak}
-\setotherlanguage{english}
-%% For thesis written in English just swap the main and other languages:
-% \setdefaultlanguage{english}
-% \setotherlanguage{slovak}
+\documentclass[
+    mainlanguage=slovak,    % Main language of the thesis
+    otherlanguage=english   % Other language of the thesis
+]{tukethesis}
 
 % Additional packages
-%\usepackage{luavlna}
+\usepackage{luavlna}
 
 \addbibresource{bibliography.bib}   % Location of file with bibliography resources
 \input{acronyms}                    % Load acronyms

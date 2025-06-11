@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.3] - 2025-06-10
+- do triedy `tukethesis` boli pridané dve možnosti pre jazyk:
+  - `mainlanguage` - pre hlavný jazyk práce
+  - `otherlanguage` - pre druhý jazyk práce
+  - predvolene je hlavný jazyk slovenčina a druhý jazyk je angličtina
+
 
 ## [2025.2] - 2025-06-05
 - priecinok `appendixes/` bol premenovany na `appendices/`
@@ -52,7 +58,7 @@ All notable changes to this project will be documented in this file.
 - Set Source Code Pro as a monospace font and bundle the font files.
 - Improve `.latexmkrc` configuration.
 - Disable colorful syntax highlighting of listings.
-- Move Makefile and Docker configuration to [kpi/latex](https://git.kpi.fei.tuke.sk/kpi/latex) project.
+- Move `Makefile` and _Docker_ configuration to [kpi/latex](https://git.kpi.fei.tuke.sk/kpi/latex) project.
 - Move example thesis text to [kpi/thesis.example](https://git.kpi.fei.tuke.sk/kpi/thesis.example) project.
 
 
@@ -92,7 +98,7 @@ All notable changes to this project will be documented in this file.
 ## [2024.1] - 2024-04-14
 - vypustené čestné vyhlásenie z práce
 - pridaný súbor `Makefile` na zostavovanie práce
-- prvá verzia bakalárskej práce o Robotovi Karlovi
+- prvá verzia bakalárskej práce o _Robotovi Karlovi_
 - pridaný preklad pre balík `listings` ako "Výpis"
 - osamostatnenie premenných pre definovanie metadát práce do samostatného súboru `metadata.tex`
 - skratka obrázku "Obr." bola premenovaná na plný "Obrázok" po vzore tabuliek a výpisov
@@ -144,9 +150,9 @@ All notable changes to this project will be documented in this file.
 
 ## [2018.1] - 2018-10-07
 - pridaná podpora iso960
-- názov kapitoly Literatúra sa dostal do šablóny
+- názov kapitoly _Literatúra_ sa dostal do šablóny
 - pridaná nová štruktúra práce na základe článku: https://www.scss.tcd.ie/joeran.beel/blog/2010/03/02/how-to-write-a-phd-thesis/
-- vytvorený priečinok dist/, kde sa nachádza šablóna
+- vytvorený priečinok `dist/`, kde sa nachádza šablóna
 
 
 ## [2017.7] - 2017-12-19
@@ -187,7 +193,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2017.2] - 2017-03-18
 - opravený problém s číslovaním literatúry
-    - v súbore thesis.tex došlo k prehodeniu riadkov pri umiestňovaní literatúry kvôli nesprávnej strane v obsahu. z pôvodného
+    - v súbore `thesis.tex` došlo k prehodeniu riadkov pri umiestňovaní literatúry kvôli nesprávnej strane v obsahu. z pôvodného
     ```latex
     \printbibliography[title={Literatúra}]
     \addcontentsline{toc}{chapter}{Literatúra}

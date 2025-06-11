@@ -9,15 +9,53 @@
 %%
 %%%%%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{tukethesis}[2025/06/05 TUKE Thesis Class, v2025.2]
+\ProvidesClass{tukethesis}[2025/06/08 TUKE Thesis Class, v2025.3]
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-%% Using report class as base.
+%% Class options
+%%
+%% Class is based on the report class, so it accepts all of it's options.
+%% Additional options are for the main and other languages of the thesis.
+%%
+%% Example usage:
+%%
+%%     \documentclass[mainlanguage=english,otherlanguage=slovak]{tukethesis}
 %%
 %%%%%
+
+\RequirePackage{kvoptions}
+\RequirePackage{xstring}
+
+% definition of class options
+\SetupKeyvalOptions{
+  family=tukethesis,
+  prefix=tukethesis@
+}
+
+% set default options
+\DeclareStringOption[slovak]{mainlanguage}
+\DeclareStringOption[english]{otherlanguage}
+
+% process keyval options
+\ProcessKeyvalOptions*
+
+% validation: mainlanguage ≠ otherlanguage
+\IfStrEq{\tukethesis@mainlanguage}{\tukethesis@otherlanguage}{%
+  \ClassError{tukethesis}
+    {mainlanguage and otherlanguage must be different}
+    {You set both languages to '\tukethesis@mainlanguage', but they must be different.}
+}{}
+
+% use report class as base.
 \PassOptionsToClass{a4paper,12pt,oneside}{report}
 \LoadClass{report}
+
+% set language options
+\RequirePackage{polyglossia}
+\setmainlanguage{\tukethesis@mainlanguage}
+\setotherlanguage{\tukethesis@otherlanguage}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,26 +89,22 @@
 \RequirePackage{graphicx}
 \DeclareGraphicsExtensions{.pdf,.png,.jpg,.eps}
 
-% not needed for lualatex
-% \RequirePackage[utf8]{inputenc}
-% \RequirePackage[T1]{fontenc}
-
 %% for printing source code
 % See for details: https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings
 % GitHub colors (https://gist.github.com/maelquerre/b625bda6cab11c1b0ae67a2be86f027e)
-\definecolor{GitHubBlue}{HTML}{005CC5}
-\definecolor{GitHubDarkBlue}{HTML}{032F62}
-\definecolor{GitHubGray}{HTML}{6A737D}
-\definecolor{GitHubGreen}{HTML}{22863A}
-\definecolor{GitHubOrange}{HTML}{E36209}
-\definecolor{GitHubPurple}{HTML}{6F42C1}
-\definecolor{GitHubRed}{HTML}{D73A49}
+% \definecolor{GitHubBlue}{HTML}{005CC5}
+% \definecolor{GitHubDarkBlue}{HTML}{032F62}
+% \definecolor{GitHubGray}{HTML}{6A737D}
+% \definecolor{GitHubGreen}{HTML}{22863A}
+% \definecolor{GitHubOrange}{HTML}{E36209}
+% \definecolor{GitHubPurple}{HTML}{6F42C1}
+% \definecolor{GitHubRed}{HTML}{D73A49}
 
-\colorlet{Keyword}{GitHubRed}
-\colorlet{Function}{GitHubBlue}
-\colorlet{Method}{GitHubPurple}
-\colorlet{String}{GitHubDarkBlue}
-\colorlet{Comment}{GitHubGray}
+% \colorlet{Keyword}{GitHubRed}
+% \colorlet{Function}{GitHubBlue}
+% \colorlet{Method}{GitHubPurple}
+% \colorlet{String}{GitHubDarkBlue}
+% \colorlet{Comment}{GitHubGray}
 
 \RequirePackage{listings}
 \lstdefinestyle{default}{
@@ -87,7 +121,7 @@
 %% for professional-looking tables
 \usepackage{booktabs}
 
-\RequirePackage{polyglossia}
+
 
 %% Numeric citations and sorting by citation order
 \RequirePackage{csquotes}
@@ -103,7 +137,7 @@
 \DefineBibliographyStrings{slovak}{%
     bibliography = {Zoznam použitej literatúry}
 }
-% \def\refname{Zoznam použitej literatúry} % TODO replaced by biblatex stuff, should be \bibname either
+% \def\bibname{Zoznam použitej literatúry} % TODO replaced by biblatex stuff, should be \bibname either
 
 \RequirePackage[
    unicode,
@@ -113,7 +147,7 @@
    pdftoolbar=true,
    pdfmenubar=true,
    pdfwindowui=true,
-   pdfproducer={TUKE Thesis v2025.2},
+   pdfproducer={TUKE Thesis v2025.3},
    pdfcreator={LuaLaTeX},
    bookmarksopenlevel={0},
    bookmarksnumbered,
@@ -197,8 +231,7 @@
 %%
 %%      \abstract{This is my abstract.}
 %%
-%% See below (in the comments starting with 'DOCVAR: ') for a list of all
-% variables
+%% See below (in the comments starting with 'DOCVAR: ') for a list of all variables
 %% the thesis writer is expected to use.
 %%
 %%%%%
@@ -210,21 +243,22 @@
     \thispagestyle{empty}
     \vspace*{\fill}
     \begin{center}
-    \iflanguage{slovak}{
-        Tu vložte zadávací list pomocou príkazu\\
-        {\texttt{\textbackslash{}thesisspec\{cesta/k/suboru/so/zadavacim.listom\}}}\\
-        v preambule dokumentu.
+        \iflanguage{slovak}{
+            Tu vložte zadávací list pomocou príkazu\\
+            {\texttt{\textbackslash{}thesisspec\{cesta/k/suboru/so/zadavacim.listom\}}}\\
+            v preambule dokumentu.
 
-        Kópiu zadávacieho listu skenujte čiernobielo (v odtieňoch sivej) na $200$ až $300$ DPI!
-        Nezabudnite do jednej práce vložiť originál zadávacieho listu!
-    }{
-        Here insert the assignment statement using the command\\
-        {\tt{\textbackslash{}thesisspec\{path/to/the/filw/with/assignment.statement\}}}\\
-        in the preamble of the document.
+            Kópiu zadávacieho listu skenujte čiernobielo (v odtieňoch sivej) na $200$ až $300$ DPI!
+            Nezabudnite do jednej práce vložiť originál zadávacieho listu!
+        }{}
+        \iflanguage{english}{
+            Here insert the assignment statement using the command\\
+            {\tt{\textbackslash{}thesisspec\{path/to/the/filw/with/assignment.statement\}}}\\
+            in the preamble of the document.
 
-        Copy of the assignment statement should be scanned black\&white (grayscale) using DPI from $200$ to $300$!
-        Don't forget to insert the original assignment statement into one of the theses copies.
-    }
+            Copy of the assignment statement should be scanned black\&white (grayscale) using DPI from $200$ to $300$!
+            Don't forget to insert the original assignment statement into one of the theses copies.
+        }{}
     \end{center}
     \vspace*{\fill}
     \newpage
@@ -364,31 +398,6 @@
 }
 \newcommand{\acknowledgment}[1]{\renewcommand{\@acknowledgment}{#1}}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
-%% Translations of strings used in the thesis
-%%
-%%%%%
-
-% Default empty declarations
-\newcommand{\declarationname}{No Language Selected}
-\newcommand{\signaturename}{No Language Selected}
-\newcommand{\acknowledgementname}{No Language Selected}
-\renewcommand{\lstlistingname}{No Language Selected}
-\newcommand{\studyprogrammename}{No Language Selected}
-\newcommand{\fieldofstudyname}{No Language Selected}
-\newcommand{\departmentname}{No Language Selected}
-\newcommand{\supervisorname}{No Language Selected}
-\newcommand{\consultantname}{No Language Selected}
-\newcommand{\keywordsname}{No Language Selected}
-\newcommand{\secondabstractname}{No Language Selected}
-\newcommand{\secondkeywordsname}{No Language Selected}
-\newcommand{\bibcitationname}{No Language Selected}
-\newcommand{\supervisorcitationname}{No Language Selected}
-\newcommand{\acrlistname}{No Language Selected}
-\newcommand{\appendixlistname}{No Language Selected}
-\newcommand{\pageabbr}{No Language Selected}
-
 
 % right page number aligment from 2nd page in table of content
 \fancypagestyle{plain}{%
@@ -409,6 +418,7 @@
 %% Place and date of publication and publishers (and other info by them).
 %%
 %%%%%
+
 \newcommand{\frontmatter}{
     \pagenumbering{roman}
     \pagestyle{empty}  % no page numbers until TOC
@@ -505,7 +515,6 @@
 %% Abstract component
 %%
 %%%%%
-
 \newcommand{\abstractpage}{
     \def\br{}
 
@@ -670,72 +679,98 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% Translations of strings used in the thesis
+%%
+%%%%%
+
+% Default empty declarations
+\newcommand{\declarationname}{No Language Selected}
+\newcommand{\signaturename}{No Language Selected}
+\newcommand{\acknowledgementname}{No Language Selected}
+\renewcommand{\lstlistingname}{No Language Selected}
+\newcommand{\studyprogrammename}{No Language Selected}
+\newcommand{\fieldofstudyname}{No Language Selected}
+\newcommand{\departmentname}{No Language Selected}
+\newcommand{\supervisorname}{No Language Selected}
+\newcommand{\consultantname}{No Language Selected}
+\newcommand{\keywordsname}{No Language Selected}
+\newcommand{\secondabstractname}{No Language Selected}
+\newcommand{\secondkeywordsname}{No Language Selected}
+\newcommand{\bibcitationname}{No Language Selected}
+\newcommand{\supervisorcitationname}{No Language Selected}
+\newcommand{\acrlistname}{No Language Selected}
+\newcommand{\appendixlistname}{No Language Selected}
+\newcommand{\pageabbr}{No Language Selected}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \AtBeginDocument{
     \addto\captionsenglish{
-        \renewcommand{\@title}{\@title@en}
         \renewcommand{\@abstract}{\@abstract@en}
-        \renewcommand{\@keywords}{\@keywords@en}
         \renewcommand{\@college}{\@college@en}
+        \renewcommand{\@declaration}{\@declaration@en}
         \renewcommand{\@department}{\@department@en}
         \renewcommand{\@departmentacr}{\@departmentacr@en}
         \renewcommand{\@faculty}{\@faculty@en}
+        \renewcommand{\@keywords}{\@keywords@en}
         \renewcommand{\@thesis}{\@thesis@en}
-        \renewcommand{\@declaration}{\@declaration@en}
-        \renewcommand{\declarationname}{Declaration}
-        \renewcommand{\signaturename}{Signature}
-        \renewcommand{\acknowledgementname}{Acknowledgement}
-        \renewcommand{\studyprogrammename}{Study Programme}
-        \renewcommand{\fieldofstudyname}{Field of Study}
-        \renewcommand{\departmentname}{Department}
-        \renewcommand{\supervisorname}{Supervisor}
-        \renewcommand{\consultantname}{Consultant}
+        \renewcommand{\@title}{\@title@en}
         \renewcommand{\abstractname}{Abstract in English}
-        \renewcommand{\keywordsname}{Keywords in English}
-        \renewcommand{\secondabstractname}{Abstract in Slovak}
-        \renewcommand{\secondkeywordsname}{Keywords in Slovak}
-        \renewcommand{\bibcitationname}{Bibliographic Citation}
-        \renewcommand{\supervisorcitationname}{Supervisor}
+        \renewcommand{\acknowledgementname}{Acknowledgement}
         \renewcommand{\acrlistname}{List of Abbreviations}
         \renewcommand{\appendixlistname}{List of Appendices}
+        \renewcommand{\bibcitationname}{Bibliographic Citation}
+        \renewcommand{\consultantname}{Consultant}
+        \renewcommand{\declarationname}{Declaration}
+        \renewcommand{\departmentname}{Department}
+        \renewcommand{\fieldofstudyname}{Field of Study}
+        \renewcommand{\figurename}{Figure}
+        \renewcommand{\keywordsname}{Keywords in English}
         \renewcommand{\lstlistingname}{Listing}
         \renewcommand{\lstlistlistingname}{List of \lstlistingname s}
-        \renewcommand{\figurename}{Figure}
         \renewcommand{\pageabbr}{p.}
+        \renewcommand{\signaturename}{Signature}
+        \renewcommand{\studyprogrammename}{Study Programme}
+        \renewcommand{\supervisorname}{Supervisor}
+        \renewcommand{\secondabstractname}{Abstract in Slovak}
+        \renewcommand{\secondkeywordsname}{Keywords in Slovak}
+        \renewcommand{\supervisorcitationname}{Supervisor}
     }
     \addto\captionsslovak{
-        \renewcommand{\@title}{\@title@sk}
         \renewcommand{\@abstract}{\@abstract@sk}
-        \renewcommand{\@keywords}{\@keywords@sk}
         \renewcommand{\@college}{\@college@sk}
+        \renewcommand{\@declaration}{\@declaration@sk}
         \renewcommand{\@department}{\@department@sk}
         \renewcommand{\@departmentacr}{\@departmentacr@sk}
         \renewcommand{\@faculty}{\@faculty@sk}
+        \renewcommand{\@keywords}{\@keywords@sk}
         \renewcommand{\@thesis}{\@thesis@sk}
-        \renewcommand{\@declaration}{\@declaration@sk}
-        \renewcommand{\declarationname}{Čestné vyhlásenie}
-        \renewcommand{\signaturename}{Vlastnoručný podpis}
-        \renewcommand{\acknowledgementname}{Poďakovanie}
-        \renewcommand{\studyprogrammename}{Študijný program}
-        \renewcommand{\fieldofstudyname}{Študijný odbor}
-        \renewcommand{\departmentname}{Školiace pracovisko}
-        \renewcommand{\supervisorname}{Školiteľ}
-        \renewcommand{\consultantname}{Konzultant}
+        \renewcommand{\@title}{\@title@sk}
         \renewcommand{\abstractname}{Abstrakt v slovenčine}
-        \renewcommand{\keywordsname}{Kľúčové slová v slovenčine}
-        \renewcommand{\secondabstractname}{Abstrakt v angličtine}
-        \renewcommand{\secondkeywordsname}{Kľúčové slová v angličtine}
-        \renewcommand{\bibcitationname}{Bibliografická citácia}
-        \renewcommand{\supervisorcitationname}{Vedúci práce}
+        \renewcommand{\acknowledgementname}{Poďakovanie}
         \renewcommand{\acrlistname}{Zoznam skratiek}
         \renewcommand{\appendixlistname}{Zoznam príloh}
         \renewcommand{\appendixname}{Príloha}
         \renewcommand{\appendixautorefname}{Príloha}
-        \renewcommand{\lstlistingname}{Výpis}
-        \renewcommand{\lstlistlistingname}{Zoznam výpisov}
+        \renewcommand{\bibcitationname}{Bibliografická citácia}
+        \renewcommand{\consultantname}{Konzultant}
+        \renewcommand{\declarationname}{Čestné vyhlásenie}
+        \renewcommand{\departmentname}{Školiace pracovisko}
+        \renewcommand{\fieldofstudyname}{Študijný odbor}
         \renewcommand{\figurename}{Obrázok}
         \renewcommand{\glossaryname}{Slovník termínov}
+        \renewcommand{\keywordsname}{Kľúčové slová v slovenčine}
+        \renewcommand{\lstlistingname}{Výpis}
+        \renewcommand{\lstlistlistingname}{Zoznam výpisov}
         \renewcommand{\pageabbr}{s.}
+        \renewcommand{\secondabstractname}{Abstrakt v angličtine}
+        \renewcommand{\secondkeywordsname}{Kľúčové slová v angličtine}
+        \renewcommand{\signaturename}{Vlastnoručný podpis}
+        \renewcommand{\studyprogrammename}{Študijný program}
+        \renewcommand{\supervisorname}{Školiteľ}
+        \renewcommand{\supervisorcitationname}{Vedúci práce}
     }
 
     % Disable color links in the final version (define \printable in metadata.tex)       
