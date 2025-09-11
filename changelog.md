@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.4] - 2025-09-11
+- Návrat k použitiu XeLaTeX namiesto luaTeX (je rýchlejší)
+- Znovu pridanie fontov SourceCodePro (jednoduchšia inštalácia aj bez Dockeru)
+- Presunutie štýlov a tried naspäť do koreňového adresára, takže nie je nutné meniť premenné prostredia
+
+
 ## [2025.3] - 2025-06-10
 - do triedy `tukethesis` boli pridané dve možnosti pre jazyk:
   - `mainlanguage` - pre hlavný jazyk práce

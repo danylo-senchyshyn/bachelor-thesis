@@ -9,7 +9,7 @@
 %%
 %%%%%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{tukethesis}[2025/06/08 TUKE Thesis Class, v2025.3]
+\ProvidesClass{tukethesis}[2025/09/11 TUKE Thesis Class, v2025.4]
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,7 +72,7 @@
 \titleformat{\chapter}
     {\huge\bfseries}                        % font
     {\thechapter}                           % numbering
-    {20pt}                                  % spacing 
+    {20pt}                                  % spacing
     {\huge\bfseries}[{\titlerule[0.8pt]}]   % label
 
 % sets the document geometry
@@ -147,8 +147,8 @@
    pdftoolbar=true,
    pdfmenubar=true,
    pdfwindowui=true,
-   pdfproducer={TUKE Thesis v2025.3},
-   pdfcreator={LuaLaTeX},
+   pdfproducer={TUKE Thesis v2025.4},
+   pdfcreator={XeLaTeX},
    bookmarksopenlevel={0},
    bookmarksnumbered,
    bookmarksopen,
@@ -656,12 +656,14 @@
 \setmainfont{TeX Gyre Pagella}   % \rmfamily{}
 \setsansfont{TeX Gyre Heros}[Scale=MatchLowercase]   % \rmfamily{}
 \setmonofont[
-    UprightFont = *,
-    BoldFont = * Bold,
-    ItalicFont = * Italic,
-    BoldItalicFont = * Bold Italic,
+    Path = fonts/,
+    Extension = .otf,
+    UprightFont = *-Regular,
+    BoldFont = *-Bold,
+    ItalicFont = *-It,
+    BoldItalicFont = *-BoldIt,
     Scale=MatchLowercase
-]{Source Code Pro}   % \ttfamily{}
+]{SourceCodePro}   % \ttfamily{}
 
 % Set math font
 \RequirePackage{unicode-math}
@@ -773,7 +775,7 @@
         \renewcommand{\supervisorcitationname}{Vedúci práce}
     }
 
-    % Disable color links in the final version (define \printable in metadata.tex)       
+    % Disable color links in the final version (define \printable in metadata.tex)
     \ifdefined\printable
         \hypersetup{hidelinks}
     \fi
@@ -815,7 +817,7 @@
     \fi
     \chaptermark{#1}%
     \def\@currentlabelname{#2}%
-    % \addtocontents{lof}{\protect\addvspace{10\p@}}% 
+    % \addtocontents{lof}{\protect\addvspace{10\p@}}%
     % \addtocontents{lot}{\protect\addvspace{10\p@}}%
     \if@twocolumn
         \@topnewpage[\@makechapterhead{#2}]%
@@ -859,7 +861,7 @@
         {\thechapter}                           % numbering
         {20pt}                                  % spacing
         {\huge\bfseries}[{\titlerule[0.8pt]}]   % label
-   
+
    % use arabic numbers for sections, figures, tables, and listings
    \renewcommand{\thesection}{\arabic{section}}
    \renewcommand{\thefigure}{\arabic{figure}}
