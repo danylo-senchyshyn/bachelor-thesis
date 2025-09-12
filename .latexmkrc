@@ -19,8 +19,8 @@ if (! -d 'build') {
 if (! -d 'build/chapters') {
     mkdir 'build/chapters' or die "Cannot create build/chapters directory: $!";
 }
-if (! -d 'build/appendixes') {
-    mkdir 'build/appendixes' or die "Cannot create build/appendixes directory: $!";
+if (! -d 'build/appendices') {
+    mkdir 'build/appendices' or die "Cannot create build/appendices directory: $!";
 }
 
 # $emulate_aux = 1;
