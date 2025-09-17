@@ -28,11 +28,20 @@ _minted*
 
 dist/
 build/
-/thesis.pdf
-/ethesis.pdf
-/thesis-watch.pdf
+/thesis*.pdf
 
 *SAVE-ERROR
 
-.bash*
+# Common IDEs and editors
+.vscode/
+*.code-workspace
+*.idea/
+*.sublime-project
+*.sublime-workspace
+*.sw?
+.zed/
 
+# OS generated files
+*~
+.DS_Store
+Thumbs.db
