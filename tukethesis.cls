@@ -215,6 +215,7 @@
 % good linebraking of bibtex url
 \setcounter{biburllcpenalty}{7000}
 \setcounter{biburlucpenalty}{8000}
+\setcounter{biburlnumpenalty}{7000}
 
 
 % continue footnote numbering over pages and chapters
