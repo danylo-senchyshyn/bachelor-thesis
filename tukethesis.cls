@@ -249,7 +249,7 @@
             \makebox[\linewidth]{%
                 \parbox{\linewidth}{%
                     Na túto stranu vložte zadávací list. To urobíte nasledovne:
-                    
+
                     \begin{enumerate}
                         \item Zadávací list naskenujte v odtieňoch sivej (čiernobielo) na $200$ až $300$ DPI.
                         \item Sken uložte do priečinku \texttt{figures/}.
@@ -344,6 +344,15 @@
 % DOCVAR: consultant (name of the thesis writer's consultant)
 \newcommand{\@consultant}{}
 \newcommand{\consultant}[1]{\renewcommand{\@consultant}{#1}}
+
+% DOCVAR: consultant's workplace
+\newcommand{\@consultantsaffiliation@en}{}
+\newcommand{\@consultantsaffiliation@sk}{}
+\newcommand{\@consultantsaffiliation}{\@consultantsaffiliation@en}
+\newcommand{\consultantsaffiliation}[2]{
+    \renewcommand{\@consultantsaffiliation@en}{#1}
+    \renewcommand{\@consultantsaffiliation@sk}{#2}
+}
 
 % DOCVAR: field of study
 \newcommand{\@fieldofstudy}{Informatika}
@@ -635,12 +644,13 @@
     \vfill
 
     \noindent
-    \begin{tabular}{@{}p{.26\textwidth}p{.7\textwidth}}
+    \begin{tabular}{@{}p{.32\textwidth}p{.7\textwidth}}
         \studyprogrammename:& \@studyprogramme \\
         \fieldofstudyname:& \@fieldofstudy \\
-        \departmentname:& \@department~(\@departmentacr) \\
         \supervisorname:& \@supervisor \\
+        \departmentname:& \@department~(\@departmentacr) \\
         \if\@consultant\empty\else\consultantname:& \@consultant \\ \fi
+        \if\@consultantsaffiliation\empty\else\consultantsaffiliationname:& \@consultantsaffiliation \\ \fi
     \end{tabular}
 
     \vspace{2\baselineskip}
@@ -705,6 +715,7 @@
 \newcommand{\departmentname}{No Language Selected}
 \newcommand{\supervisorname}{No Language Selected}
 \newcommand{\consultantname}{No Language Selected}
+\newcommand{\consultantsaffiliationname}{No Language Selected}
 \newcommand{\keywordsname}{No Language Selected}
 \newcommand{\secondabstractname}{No Language Selected}
 \newcommand{\secondkeywordsname}{No Language Selected}
@@ -721,6 +732,7 @@
     \addto\captionsenglish{
         \renewcommand{\@abstract}{\@abstract@en}
         \renewcommand{\@college}{\@college@en}
+        \renewcommand{\@consultantsaffiliation}{\@consultantsaffiliation@en}
         \renewcommand{\@declaration}{\@declaration@en}
         \renewcommand{\@department}{\@department@en}
         \renewcommand{\@departmentacr}{\@departmentacr@en}
@@ -734,8 +746,9 @@
         \renewcommand{\appendixlistname}{List of Appendices}
         \renewcommand{\bibcitationname}{Bibliographic Citation}
         \renewcommand{\consultantname}{Consultant}
+        \renewcommand{\consultantsaffiliationname}{Consultant's Affiliation}
         \renewcommand{\declarationname}{Declaration}
-        \renewcommand{\departmentname}{Department}
+        \renewcommand{\departmentname}{Supervising Department}
         \renewcommand{\fieldofstudyname}{Field of Study}
         \renewcommand{\figurename}{Figure}
         \renewcommand{\keywordsname}{Keywords in English}
@@ -752,6 +765,7 @@
     \addto\captionsslovak{
         \renewcommand{\@abstract}{\@abstract@sk}
         \renewcommand{\@college}{\@college@sk}
+        \renewcommand{\@consultantsaffiliation}{\@consultantsaffiliation@sk}
         \renewcommand{\@declaration}{\@declaration@sk}
         \renewcommand{\@department}{\@department@sk}
         \renewcommand{\@departmentacr}{\@departmentacr@sk}
@@ -767,6 +781,7 @@
         \renewcommand{\appendixautorefname}{Príloha}
         \renewcommand{\bibcitationname}{Bibliografická citácia}
         \renewcommand{\consultantname}{Konzultant}
+        \renewcommand{\consultantsaffiliationname}{Pracovisko konzultanta}
         \renewcommand{\declarationname}{Čestné vyhlásenie}
         \renewcommand{\departmentname}{Školiace pracovisko}
         \renewcommand{\fieldofstudyname}{Študijný odbor}
