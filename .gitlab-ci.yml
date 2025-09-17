@@ -1,38 +1,34 @@
-variables:
-  OUTPUT: thesis
-  TEXMFHOME: ./texmf/
+# Documentation for LaTex docker image: https://git.kpi.fei.tuke.sk/kpi/latex
+image: git.kpi.fei.tuke.sk:4567/kpi/latex:2025.09.1
 
 stages:
   - build
 
-printable:
-  stage: build
-  # image: git.kpi.fei.tuke.sk:4567/kpi/latex
-  image: bletvaska/thesis:latest
-  # Documentation for LaTex docker image: https://git.kpi.fei.tuke.sk/kpi/latex
-  script:
-    # - latexmk -pdf -interaction=nonstopmode $MAIN_TEX_FILE
-    - make --makefile=/app/Makefile printable
-    - mv dist/*pdf .
+default:
+  interruptible: true
   artifacts:
     paths:
-      - "${OUTPUT}-printable.pdf"
-    expire_in: 2 days
+      - dist/
+    expire_in: 7 days
+
+pdf:
+  stage: build
+  script:
+    - make --makefile=/app/Makefile pdf
+
+printable:
+  stage: build
+  script:
+    - make --makefile=/app/Makefile printable
   only:
     - master
 
-ebook:
+diff:
   stage: build
-  # image: git.kpi.fei.tuke.sk:4567/kpi/latex
-  image: bletvaska/thesis:latest
-  # Documentation for LaTex docker image: https://git.kpi.fei.tuke.sk/kpi/latex
+  allow_failure: true
   script:
-    # - latexmk -pdf -interaction=nonstopmode $MAIN_TEX_FILE
-    - make --makefile=/app/Makefile ebook
-    - mv dist/*pdf .
+    - make --makefile=/app/Makefile diff
   artifacts:
-    paths:
-      - "${OUTPUT}-ebook.pdf"
-    expire_in: 2 days
+    when: always
   only:
     - master
