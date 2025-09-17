@@ -244,12 +244,21 @@
     \vspace*{\fill}
     \begin{center}
         \iflanguage{slovak}{
-            Tu vložte zadávací list pomocou príkazu\\
-            {\texttt{\textbackslash{}thesisspec\{cesta/k/suboru/so/zadavacim.listom\}}}\\
-            v preambule dokumentu.
 
-            Kópiu zadávacieho listu skenujte čiernobielo (v odtieňoch sivej) na $200$ až $300$ DPI!
-            Nezabudnite do jednej práce vložiť originál zadávacieho listu!
+            \noindent
+            \makebox[\linewidth]{%
+                \parbox{\linewidth}{%
+                    Na túto stranu vložte zadávací list. To urobíte nasledovne:
+                    
+                    \begin{enumerate}
+                        \item Zadávací list naskenujte v odtieňoch sivej (čiernobielo) na $200$ až $300$ DPI.
+                        \item Sken uložte do priečinku \texttt{figures/}.
+                        \item V súbore \texttt{metadata.tex} zadajte umiestnenie súboru pomocou príkazu {\texttt{\textbackslash{}thesisspec\{figures/zadavaci.list\}}}
+                    \end{enumerate}
+
+                    {\bf Do jednej kópie práce však nezabudnite vložiť originál zadávacieho listu!}
+                }%
+            }
         }{}
         \iflanguage{english}{
             Here insert the assignment statement using the command\\
