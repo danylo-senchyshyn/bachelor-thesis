@@ -7,12 +7,12 @@ Warning! The encoding of all documents is set to _UTF-8_! So don't forget to set
 ## Structure
 
 
-* [thesis.tex](./thesis.tex) is the main file of the thesis. Use it to include additional chapters or appendixes and to use any additional LaTeX packages or macros.
+* [thesis.tex](./thesis.tex) is the main file of the thesis. Use it to include additional chapters or appendices and to use any additional LaTeX packages or macros.
 * [metadata.tex](./metadata.tex) contains the title of the thesis, author's name, and all other metadata.
 * [bibliography.bib](./bibliography.bib) with the bibliography entries.
 * [chapters/](./chapters/) contains files with the main parts of your thesis. You should add more as needed.
-* [appendixes/](./appendixes/) contains appendixes, manuals, and other supplementary materials.
-  * [appendixes/00-list.tex](./appendixes/00-list.tex) is a list of appendixes.
+* [appendices/](./appendices/) contains appendices, manuals, and other supplementary materials.
+  * [appendices/00-list.tex](./appendices/00-list.tex) is a list of appendices.
 * [glossary.tex](./glossary.tex) is a list of terms and their descriptions.
 * [acronyms.tex](./acronyms.tex) contains acronyms and their meanings.
 
@@ -73,6 +73,7 @@ $ sudo dnf install \
     texlive-collection-fontsrecommended \
     texlive-collection-langczechslovak \
     texlive-biblatex-iso690 \
+    texlive-totalcount \
     texlive-glossaries \
     latexmk
 ```
