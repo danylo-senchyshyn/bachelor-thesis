@@ -14,12 +14,7 @@ default:
 pdf:
   stage: build
   script:
-    - make --makefile=/app/Makefile pdf
-
-printable:
-  stage: build
-  script:
-    - make --makefile=/app/Makefile printable
+    - make --makefile=/app/Makefile printable thesis
   only:
     - master
 
