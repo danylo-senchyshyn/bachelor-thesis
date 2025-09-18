@@ -23,11 +23,14 @@ if (! -d 'build/appendices') {
 }
 
 # Store resulting PDFs in dist/, auxiliary files in build/
-$out2_dir   = 'dist';
+$out_dir    = 'dist';
 $aux_dir    = 'build';
 
 $pdf_mode   = 5;      # compile to pdf using xelatex
 
-# Set the typesetting engine to XeLaTeX because Overleaf does not correctly read $pdf_mode and outputs compilation error.
-$pdflatex = 'xelatex';
+# XeLaTeX command used for building
+# %O and %P placeholders are required (%P for passing \printable macro in CI)
+$xelatex = 'xelatex %O %P';
 
+# If you want to use Minted for code highlighting, replace above with
+# $xelatex = 'xelatex -shell-escape %O %P';
