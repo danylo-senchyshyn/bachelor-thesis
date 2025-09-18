@@ -1,29 +1,30 @@
 # Documentation for LaTex docker image: https://git.kpi.fei.tuke.sk/kpi/latex
-image: git.kpi.fei.tuke.sk:4567/kpi/latex:2025.09.1
+image: git.kpi.fei.tuke.sk:4567/kpi/latex:2025.09.3
 
 stages:
   - build
 
 default:
   interruptible: true
+  before_script:
+    - /entrypoint.bash  # install additional packages
   artifacts:
     paths:
-      - dist/
+      - dist/*.pdf
     expire_in: 7 days
 
+# Build PDFs (both ebook thesis and pritable version)
 pdf:
   stage: build
   script:
-    - make --makefile=/app/Makefile printable thesis
+    - make --makefile=/app/Makefile thesis printable
   only:
     - master
 
+# Build diff PDF compared to latest tag
 diff:
   stage: build
-  allow_failure: true
-  script:
-    - make --makefile=/app/Makefile diff
-  artifacts:
-    when: always
+  script:  # latexdiff is unreliable, so just ignore failures
+    - make --makefile=/app/Makefile diff || true
   only:
     - master
