@@ -25,6 +25,7 @@ _minted*
 *.te~
 *(busy)
 *.swp
+*.xdv
 
 dist/
 build/
@@ -38,7 +39,6 @@ build/
 *.idea/
 *.sublime-project
 *.sublime-workspace
-*.sw?
 .zed/
 
 # OS generated files
