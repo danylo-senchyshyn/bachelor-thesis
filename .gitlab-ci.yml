@@ -1,5 +1,5 @@
 # Documentation for LaTex docker image: https://git.kpi.fei.tuke.sk/kpi/latex
-image: git.kpi.fei.tuke.sk:4567/kpi/latex:2025.09.3
+image: git.kpi.fei.tuke.sk:4567/kpi/latex:2025.09.4
 
 stages:
   - build
