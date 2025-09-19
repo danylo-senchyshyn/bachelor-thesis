@@ -9,7 +9,7 @@
 %%
 %%%%%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{tukethesis}[2025/09/11 TUKE Thesis Class, v2025.4]
+\ProvidesClass{tukethesis}[2025/09/19 TUKE Thesis Class, v2025.4]
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
