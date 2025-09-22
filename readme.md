@@ -29,7 +29,21 @@ $ docker container run --rm -it \
     make pdf
 ```
 
-If you are using Linux OS, for making things easier you can create an alias:
+If you are using Linux OS or WSL, you can use prepared shell script, which is located in this repository, by typing:
+
+```bash
+$ ./mkthesis.sh
+```
+
+The basic workflow for writing can be used with following targets:
+
+```bash
+$ ./mkthesis.sh clean watch
+```
+
+Your thesis will be watched for changes. If there will be any change, your PDF file will be recompiled automatically. Resulting PDF file will be located in the `dist/` directory.
+
+Alternatively, you can create an alias in your shell configuration file (e.g. `~/.bashrc` or `~/.zshrc`):
 
 ```bash
 $ alias mkthesis='docker container run --rm -it \
@@ -45,20 +59,6 @@ Then you can run your build simply with command:
 ```bash
 $ mkthesis 
 ```
-
-Otherwise you can use prepared shell script, which is located in this repository, by typing:
-
-```bash
-$ ./mkthesis.sh
-```
-
-The basic workflow for writing can be used with following targets:
-
-```bash
-$ ./mkthesis.sh clean watch
-```
-
-Your thesis will be watched for changes. If there will be any change, your PDF file will be recompiled automatically.
 
 
 ## Install Locally
