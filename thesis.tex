@@ -37,23 +37,21 @@
 %%
 %% -----------------------------------------------------------------
 
+% Fix for TeX Gyre fonts not found by XeLaTeX on macOS
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
 \begin{document}
 
 %% Title page, abstract, declaration etc.:
 \frontmatter{}
 
 %% List of thesis chapters in required order
-% \include{chapters/00-preface}
 \include{chapters/01-introduction}
-%% Include other chapters here, e.g.:
-% \include{chapters/02-current-state}
-% \include{chapters/03-existing-solutions}
-% ...
-\include{chapters/08-evaluation}
-\include{chapters/09-summary}
+\include{chapters/02-analytics}
 
 %% Bibliography, glossary, acronyms
 \backmatter{}
+\include{glossary}
 
 
 %% -----------------------------------------------------------------

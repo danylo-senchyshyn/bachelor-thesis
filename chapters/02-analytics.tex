@@ -1,0 +1,169 @@
+% !TEX root = ../thesis.tex
+\chapter{Analytická časť}
+
+\section{Úvod do analytickej časti}
+Analytická časť predstavuje podrobnú technickú analýzu problému a možností jeho riešenia. Cieľom tejto kapitoly je zmapovať súčasnú monolitickú implementáciu aplikácie hry Dáma, identifikovať jej silné a slabé stránky, definovať funkčné a nefunkčné požiadavky a navrhnúť architektonické a technologické riešenia pre mikroservisnú verziu. Na základe tejto analýzy budú stanovené metriky a metodika porovnania oboch prístupov v implementačnej a vyhodnocovacej časti práce.
+
+Táto časť sa sústreďuje na analýzu moderných technológií, ktoré sú vhodné pre návrh a implementáciu mikroservisnej architektúry. Spring Boot umožňuje rýchly vývoj REST API a poskytuje robustný ekosystém knižníc pre prácu s databázami, bezpečnosťou a webovým rozhraním. PostgreSQL poskytuje spoľahlivé ACID transakcie a dlhodobé ukladanie údajov. 
+
+Redis je vhodný pre rýchle ukladanie stavu používateľov počas relácie a podporuje horizontálne škálovanie. Docker a Docker Compose zjednodušujú izoláciu služieb a lokálne nasadzovanie. Spring Cloud Gateway umožňuje centralizované smerovanie požiadaviek, autentifikáciu a aplikáciu bezpečnostných politík. Thymeleaf umožňuje server-side rendering pre rýchlu integráciu frontendu.
+
+Okrem toho je možné teoreticky zvážiť použitie Kubernetes pre orchestráciu kontajnerov, Kafka/RabbitMQ pre asynchrónnu komunikáciu, Prometheus a Grafana pre monitoring a ELK Stack alebo Jaeger/Zipkin pre centralizované logovanie a trasovanie požiadaviek. Táto analýza demonštruje možnosti výberu technológií a ich využitie pri návrhu robustného, škálovateľného a modulárneho systému.
+
+\section{Analýza existujúcej monolitickej implementácie}
+
+\subsection{Popis existujúceho riešenia}
+Existujúca implementácia webovej aplikácie hry Dáma je monolitická Spring Boot aplikácia, ktorá kombinuje serverovú logiku, prezentáciu (Thymeleaf) a prístup k perzistentným dátam (PostgreSQL) v rámci jedného procesu. Interakcia používateľa prebieha cez HTML rozhranie generované Thymeleaf šablónami a JavaScript, pričom herná logika je implementovaná priamo v backendových triedach (napr. trieda \texttt{CheckersField} a súvisiace komponenty).
+
+Pri spustení hry používateľ zadá mená (nicky) a vyberie avatary; tieto hodnoty sú počas relácie uložené v kontexte session pomocou \texttt{WebApplicationContext.SCOPE\_SESSION}. Záznamy o výsledkoch, komentároch a hodnoteniach sú perzistentne ukladané v PostgreSQL tabuľkách \texttt{score}, \texttt{comment} a \texttt{rating} s jednoduchou štruktúrou (stĺpce: \texttt{game}, \texttt{player}, \texttt{points/rating/comment}, \texttt{playedOn/commentOn/ratedOn}, \texttt{avatar}). Hry sú zobrazené a ovládané pre dvoch hráčov na jednom zariadení, pričom logika vykonávania ťahov, validácií a aktualizácií skóre beží synchronne v rámci požiadavky obsluhovanej jedným servletovým vláknom.
+
+\subsection{Prevádzkové správanie a vlastnosti}
+\begin{itemize}
+  \item \textbf{Ukladanie session:} nicky a avatary sú viazané na HTTP session, čo je jednoduché riešenie pre lokálne sedenie dvoch hráčov na jednom prehliadači; nevýhodou je však silné viazanie stavu do procesu aplikácie.
+  \item \textbf{Perzistencia výsledkov:} po ukončení hry sa volá service (napr. \texttt{scoreService.addScore(...)}), ktorá persistuje výsledok do tabuľky \texttt{score}. \texttt{Comment} a \texttt{rating} sú udržiavané analógicky.
+  \item \textbf{Jednovláknová konzistencia:} všetky operácie sú vykonávané v kontexte jedného procesu a databázové transakcie (ak sú použité) zabezpečujú perzistentnú konzistenciu zápisov.
+  \item \textbf{Dev/Ops zjednodušenie:} monolit je ľahšie spustiť lokálne (jeden JAR súbor), debugging je jednoduchší, avšak infraštruktúrne možnosti sú obmedzené.
+\end{itemize}
+
+\subsection{Identifikované limity a problémy}
+\begin{itemize}
+  \item Škálovanie: pri náraste zaťaženia je potrebné škálovať celý monolit, čo je neefektívne.
+  \item Odolnosť voči chybám: chyba v jednom module môže spôsobiť zlyhanie celej aplikácie.
+  \item Vývojová súbežnosť: viacerí vývojári môžu naraziť na konflikty v kóde.
+  \item Závislosť na session: komplikuje horizontálne škálovanie.
+  \item Testovateľnosť: ťažšie izolovať moduly.
+  \item Nasadzovanie: každá zmena vyžaduje redeploy celého systému.
+\end{itemize}
+
+\section{Požiadavky na riešenie}
+\subsection{Funkčné požiadavky}
+\begin{enumerate}
+  \item Základná hra Dáma – implementácia pravidiel hry.
+  \item Správa hráčov – zadanie niku a avatara.
+  \item Ukladanie výsledkov – persistencia výsledkov, komentárov a hodnotení.
+  \item Front-end rozhranie – stránky pre hru a leaderboard.
+  \item Lokálny režim – podpora hry dvoch hráčov na jednom zariadení.
+\end{enumerate}
+
+\subsection{Nefunkčné požiadavky}
+\begin{enumerate}
+  \item Výkon – rýchla odozva.
+  \item Udržiavateľnosť – modulárny kód.
+  \item Nasadzovanie – spustenie cez Docker Compose.
+  \item Monitorovanie a logovanie – základné metriky.
+  \item Bezpečnosť – opatrenia na strane API.
+  \item Rozšíriteľnosť – možnosť doplniť ďalšie komponenty.
+  \item Sledovanie výkonu – podpora Prometheus a Grafana.
+\end{enumerate}
+
+\section{Návrh mikroservisnej architektúry}
+\subsection{Rozdelenie na služby}
+\begin{itemize}
+  \item \textbf{frontend (Thymeleaf)} – prezentácia a UI.
+  \item \textbf{gateway-service} – vstupný bod, CORS, routing.
+  \item \textbf{user-service} – správa hráčov, Redis + PostgreSQL.
+  \item \textbf{game-service} – logika hry a správa herného poľa.
+  \item \textbf{score-service} – správa bodov hráčov.
+  \item \textbf{comment-service} – správa komentárov.
+  \item \textbf{rating-service} – správa hodnotení.
+  \item \textbf{analytics-service (voliteľne)} – agregácia štatistík.
+\end{itemize}
+
+\subsection{Komunikácia medzi službami}
+\begin{itemize}
+  \item Synchrónny REST pre okamžité volania.
+  \item Asynchrónne udalosti pomocou RabbitMQ/Kafka.
+  \item API kontrakty zabezpečujú nezávislosť.
+\end{itemize}
+
+\subsection{Správa stavu hry}
+Herné pole je spracovávané v pamäti aplikácie; výsledky sa po ukončení zapisujú do PostgreSQL.
+
+\subsection{Konzistencia a transakcie}
+Používa sa \emph{eventual consistency}, v zložitých prípadoch SAGA pattern.
+
+\subsection{Bezpečnosť a politika prístupu}
+\begin{itemize}
+  \item Gateway rieši bezpečnostné politiky.
+  \item Input validation na každej vrstve.
+  \item Princíp least privilege pre databázy.
+\end{itemize}
+
+\section{Technologická analýza}
+\subsection{Hlavný technologický stack}
+\begin{itemize}
+  \item \textbf{Spring Boot} – backend framework.
+  \item \textbf{PostgreSQL} – relačná databáza.
+  \item \textbf{Redis} – in-memory úložisko.
+  \item \textbf{Docker a Docker Compose} – kontajnerizácia.
+  \item \textbf{Spring Cloud Gateway} – API Gateway.
+  \item \textbf{Thymeleaf} – server-side rendering.
+\end{itemize}
+
+\subsection{Teoretické rozšírenia}
+\begin{itemize}
+  \item Kubernetes – orchestrácia kontajnerov.
+  \item Kafka/RabbitMQ – messaging systémy.
+  \item Prometheus + Grafana – monitoring.
+  \item ELK Stack – centralizované logovanie.
+  \item Jaeger/Zipkin – distribuované trasovanie.
+\end{itemize}
+
+\section{Testovanie a meranie výkonnosti}
+\subsection{Testovacia stratégia}
+\begin{itemize}
+  \item Jednotkové testy – JUnit + Mockito.
+  \item Integračné testy – Testcontainers.
+  \item Kontraktové testy – overenie API.
+  \item End-to-end testy – simulácia používateľa.
+\end{itemize}
+
+\subsection{Metodika merania výkonu}
+Merania budú prebiehať v kontrolovanom prostredí s rovnakým hardvérom. Scenáre: otvorenie hry, vykonanie ťahov, ukončenie hry, zápis výsledkov. Sledujú sa časy odozvy, zápisu a spotreba zdrojov.
+
+\subsection{Očakávania}
+\begin{itemize}
+  \item Monolit – nižšia latencia, horšia modularita.
+  \item Mikroservisy – lepšia modularita, mierny overhead.
+\end{itemize}
+
+\section{Porovnanie architektúr – analytické zhrnutie}
+\begin{table}[!ht]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Kritérium} & \textbf{Monolit} & \textbf{Mikroservisy} \\
+\midrule
+Škálovateľnosť & Celý systém & Samostatné služby \\
+Výkon & Nižšia latencia & Vyššia modularita \\
+Údržba & Ťažkopádna & Jednoduchšie rozdelenie \\
+Nasadenie & Jednoduché & Zložitejšie, flexibilnejšie \\
+Monitorovanie & Minimálne & Prometheus/Grafana \\
+Konzistencia & ACID & Eventual consistency \\
+Komunikácia & Interná & REST / Messaging \\
+Bezpečnosť & Lokálna & Centrálna v Gateway \\
+Odolnosť & Nízka & Izolované zlyhania \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Riziká a mitigácia}
+\subsection{Hlavné riziká}
+\begin{itemize}
+  \item Komplexita infraštruktúry.
+  \item Konzistencia dát medzi službami.
+  \item Chyby v logike hry.
+  \item Časové obmedzenia implementácie.
+\end{itemize}
+
+\subsection{Návrhy mitigácie}
+\begin{itemize}
+  \item Iteratívna implementácia – MVP.
+  \item Základné monitorovanie a logovanie.
+  \item Testovanie logiky a dát.
+\end{itemize}
+
+\section{Zhrnutie analytickej časti}
+Analytická časť identifikovala hlavné obmedzenia monolitickej architektúry (ťažké škálovanie, slabá modularita, závislosť na session) a navrhla moderné mikroservisné riešenie založené na Spring Boot, PostgreSQL, Redis, Docker, Spring Cloud Gateway a Thymeleaf. Okrem toho bola analyzovaná možnosť využitia Kubernetes, Kafka, Prometheus, Grafana a ELK pre produkčné prostredie.
+
+Navrhnutá architektúra je modulárna, rozšíriteľná a vhodná pre objektívne porovnanie s monolitom podľa výkonových a údržbových metrík. Výsledky tejto analýzy budú základom pre implementačnú časť práce.
