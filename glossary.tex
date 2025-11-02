@@ -22,12 +22,107 @@
 % * https://en.wikibooks.org/wiki/LaTeX/Glossary
 %
 
-\newglossaryentry{microworld}{
-     name={Mikrosvet},
-     description={je zjednodušené, samostatné prostredie navrhnuté tak, aby pomáhalo študentom skúmať a porozumieť špecifickým konceptom prostredníctvom priamej interakcie a experimentovania}
+\newglossaryentry{microservice}{
+    name={Mikroservis},
+    description={je malá, nezávislá služba v rámci systému, ktorá implementuje konkrétnu funkcionalitu a komunikuje s ostatnými službami prostredníctvom API}
 }
 
-\newglossaryentry{primitive}{
-     name={Primitíva},
-     description={je samostatný príkaz pre Robota Karla}
+\newglossaryentry{monolith}{
+    name={Monolitická architektúra},
+    description={je architektonický prístup, v ktorom je celá aplikácia vyvíjaná a nasadzovaná ako jeden celok so spoločnou kódovou základňou}
+}
+
+\newglossaryentry{springboot}{
+    name={Spring Boot},
+    description={je open-source Java framework určený na rýchlu tvorbu webových aplikácií a mikroservisov s minimálnou konfiguráciou}
+}
+
+\newglossaryentry{docker}{
+    name={Docker},
+    description={je platforma na kontajnerizáciu aplikácií, ktorá umožňuje izolované spúšťanie služieb a jednoduché nasadzovanie v rôznych prostrediach}
+}
+
+\newglossaryentry{dockercompose}{
+    name={Docker Compose},
+    description={je nástroj na definovanie a spúšťanie viacerých Docker kontajnerov prostredníctvom jedného konfiguračného súboru}
+}
+
+\newglossaryentry{redis}{
+    name={Redis},
+    description={je in-memory dátový úložný systém používaný na rýchle ukladanie a načítanie dočasných údajov, napríklad relácií používateľov}
+}
+
+\newglossaryentry{postgresql}{
+    name={PostgreSQL},
+    description={je relačný databázový systém s podporou ACID transakcií, používaný na dlhodobé a spoľahlivé ukladanie údajov}
+}
+
+\newglossaryentry{api}{
+    name={API (Application Programming Interface)},
+    description={je rozhranie, ktoré umožňuje komunikáciu medzi jednotlivými službami alebo komponentmi aplikácie}
+}
+
+\newglossaryentry{restapi}{
+    name={REST API},
+    description={je štýl architektúry webových služieb založený na HTTP požiadavkách na získavanie alebo modifikáciu údajov medzi klientom a serverom}
+}
+
+\newglossaryentry{gateway}{
+    name={API Gateway},
+    description={je centrálny vstupný bod systému, ktorý sprostredkúva požiadavky medzi klientom a mikroservismi a zabezpečuje autentifikáciu a smerovanie}
+}
+
+\newglossaryentry{apigateway}{
+    name={API Gateway (všeobecne)},
+    description={je architektonický komponent, ktorý slúži ako jednotný vstupný bod pre všetky požiadavky klientov do systému. Riadi smerovanie, autentifikáciu, autorizáciu a aglomeráciu odpovedí z viacerých mikroservisov}
+}
+
+\newglossaryentry{springcloudgateway}{
+    name={Spring Cloud Gateway},
+    description={je komponent rámca Spring Cloud, ktorý poskytuje implementáciu API Gateway pre smerovanie a bezpečnostné politiky medzi mikroservismi}
+}
+
+\newglossaryentry{thymeleaf}{
+    name={Thymeleaf},
+    description={je server-side Java templating engine používaný na generovanie HTML stránok v aplikáciách založených na Spring Boot}
+}
+
+\newglossaryentry{kubernetes}{
+    name={Kubernetes},
+    description={je open-source systém na orchestráciu kontajnerov, ktorý automatizuje nasadzovanie, škálovanie a správu kontajnerizovaných aplikácií}
+}
+
+\newglossaryentry{apachekafka}{
+    name={Apache Kafka},
+    description={je distribuovaná platforma pre streamovanie dát a asynchrónnu komunikáciu medzi službami}
+}
+
+\newglossaryentry{rabbitmq}{
+    name={RabbitMQ},
+    description={je open-source message broker, ktorý umožňuje asynchrónnu komunikáciu medzi komponentmi systému}
+}
+
+\newglossaryentry{prometheus}{
+    name={Prometheus},
+    description={je systém pre zber, ukladanie a dotazovanie metrik z aplikácií a infraštruktúry}
+}
+
+\newglossaryentry{grafana}{
+    name={Grafana},
+    description={je open-source nástroj na vizualizáciu a analýzu dát, často používaný spolu s Prometheus na monitoring}
+}
+
+\newglossaryentry{elkstack}{
+    name={ELK Stack},
+    description={je sada nástrojov (Elasticsearch, Logstash, Kibana) na zber, spracovanie a vizualizáciu logov v distribuovaných systémoch}
+}
+
+\newglossaryentry{jaeger}{
+    name={Jaeger},
+    description={je nástroj pre distribuované trasovanie požiadaviek v mikroservisných systémoch}
+}
+
+\newglossaryentry{zipkin}{
+    name={Zipkin},
+    description={je systém na sledovanie a analýzu latencie v distribuovaných aplikáciách}
 }

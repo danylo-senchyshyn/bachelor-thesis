@@ -1,21 +1,21 @@
 % !TEX root = ../thesis.tex
-\chapter{Analytická časť}
+\chapter{Analytická časť}\label{ch:analytics}
 
 \section{Úvod do analytickej časti}
-Analytická časť predstavuje podrobnú technickú analýzu problému a možností jeho riešenia. Cieľom tejto kapitoly je zmapovať súčasnú monolitickú implementáciu aplikácie hry Dáma, identifikovať jej silné a slabé stránky, definovať funkčné a nefunkčné požiadavky a navrhnúť architektonické a technologické riešenia pre mikroservisnú verziu. Na základe tejto analýzy budú stanovené metriky a metodika porovnania oboch prístupov v implementačnej a vyhodnocovacej časti práce.
+Analytická časť predstavuje podrobnú technickú analýzu problému a možností jeho riešenia. Cieľom tejto kapitoly je zmapovať súčasnú monolitickú implementáciu aplikácie hry Dáma, identifikovať jej silné a slabé stránky, definovať funkčné a nefunkčné požiadavky a navrhnúť architektonické a technologické riešenia pre \glslink{microservice}{mikroservisnú verziu}. Na základe tejto analýzy budú stanovené metriky a metodika porovnania oboch prístupov v implementačnej a vyhodnocovacej časti práce.
 
-Táto časť sa sústreďuje na analýzu moderných technológií, ktoré sú vhodné pre návrh a implementáciu mikroservisnej architektúry. Spring Boot umožňuje rýchly vývoj REST API a poskytuje robustný ekosystém knižníc pre prácu s databázami, bezpečnosťou a webovým rozhraním. PostgreSQL poskytuje spoľahlivé ACID transakcie a dlhodobé ukladanie údajov. 
+Táto časť sa sústreďuje na analýzu moderných technológií, ktoré sú vhodné pre návrh a implementáciu \glslink{microservice}{mikroservisnej architektúry}. \glslink{springboot}{Spring Boot} umožňuje rýchly vývoj \glslink{restapi}{REST API} a poskytuje robustný ekosystém knižníc pre prácu s databázami, bezpečnosťou a webovým rozhraním. \glslink{postgresql}{PostgreSQL} poskytuje spoľahlivé ACID transakcie a dlhodobé ukladanie údajov. 
 
-Redis je vhodný pre rýchle ukladanie stavu používateľov počas relácie a podporuje horizontálne škálovanie. Docker a Docker Compose zjednodušujú izoláciu služieb a lokálne nasadzovanie. Spring Cloud Gateway umožňuje centralizované smerovanie požiadaviek, autentifikáciu a aplikáciu bezpečnostných politík. Thymeleaf umožňuje server-side rendering pre rýchlu integráciu frontendu.
+\glslink{redis}{Redis} je vhodný pre rýchle ukladanie stavu používateľov počas relácie a podporuje horizontálne škálovanie. \glslink{docker}{Docker} a Docker Compose zjednodušujú izoláciu služieb a lokálne nasadzovanie. \glslink{springcloudgateway}{Spring Cloud Gateway} umožňuje centralizované smerovanie požiadaviek, autentifikáciu a aplikáciu bezpečnostných politík. \glslink{thymeleaf}{Thymeleaf} umožňuje server-side rendering pre rýchlu integráciu frontendu.
 
-Okrem toho je možné teoreticky zvážiť použitie Kubernetes pre orchestráciu kontajnerov, Kafka/RabbitMQ pre asynchrónnu komunikáciu, Prometheus a Grafana pre monitoring a ELK Stack alebo Jaeger/Zipkin pre centralizované logovanie a trasovanie požiadaviek. Táto analýza demonštruje možnosti výberu technológií a ich využitie pri návrhu robustného, škálovateľného a modulárneho systému.
+Okrem toho je možné teoreticky zvážiť použitie \glslink{kubernetes}{Kubernetes} pre orchestráciu kontajnerov, \glslink{apachekafka}{Kafka}/RabbitMQ pre asynchrónnu komunikáciu, \glslink{prometheus}{Prometheus} a \glslink{grafana}{Grafana} pre monitoring a \glslink{elkstack}{ELK Stack} alebo \glslink{jaeger}{Jaeger}/\glslink{zipkin}{Zipkin} pre centralizované logovanie a trasovanie požiadaviek. Táto analýza demonštruje možnosti výberu technológií a ich využitie pri návrhu robustného, škálovateľného a modulárneho systému.
 
 \section{Analýza existujúcej monolitickej implementácie}
 
 \subsection{Popis existujúceho riešenia}
-Existujúca implementácia webovej aplikácie hry Dáma je monolitická Spring Boot aplikácia, ktorá kombinuje serverovú logiku, prezentáciu (Thymeleaf) a prístup k perzistentným dátam (PostgreSQL) v rámci jedného procesu. Interakcia používateľa prebieha cez HTML rozhranie generované Thymeleaf šablónami a JavaScript, pričom herná logika je implementovaná priamo v backendových triedach (napr. trieda \texttt{CheckersField} a súvisiace komponenty).
+Existujúca implementácia webovej aplikácie hry Dáma je monolitická \glslink{springboot}{Spring Boot} aplikácia, ktorá kombinuje serverovú logiku, prezentáciu (\glslink{thymeleaf}{Thymeleaf}) a prístup k perzistentným dátam (\glslink{postgresql}{PostgreSQL}) v rámci jedného procesu. Interakcia používateľa prebieha cez HTML rozhranie generované \glslink{thymeleaf}{Thymeleaf} šablónami a JavaScript, pričom herná logika je implementovaná priamo v backendových triedach (napr. trieda \texttt{CheckersField} a súvisiace komponenty).
 
-Pri spustení hry používateľ zadá mená (nicky) a vyberie avatary; tieto hodnoty sú počas relácie uložené v kontexte session pomocou \texttt{WebApplicationContext.SCOPE\_SESSION}. Záznamy o výsledkoch, komentároch a hodnoteniach sú perzistentne ukladané v PostgreSQL tabuľkách \texttt{score}, \texttt{comment} a \texttt{rating} s jednoduchou štruktúrou (stĺpce: \texttt{game}, \texttt{player}, \texttt{points/rating/comment}, \texttt{playedOn/commentOn/ratedOn}, \texttt{avatar}). Hry sú zobrazené a ovládané pre dvoch hráčov na jednom zariadení, pričom logika vykonávania ťahov, validácií a aktualizácií skóre beží synchronne v rámci požiadavky obsluhovanej jedným servletovým vláknom.
+Pri spustení hry používateľ zadá mená (nicky) a vyberie avatary; tieto hodnoty sú počas relácie uložené v kontexte session pomocou \texttt{WebApplicationContext.SCOPE\_SESSION}. Záznamy o výsledkoch, komentároch a hodnoteniach sú perzistentne ukladané v \glslink{postgresql}{PostgreSQL} tabuľkách \texttt{score}, \texttt{comment} a \texttt{rating} s jednoduchou štruktúrou (stĺpce: \texttt{game}, \texttt{player}, \texttt{points/rating/comment}, \texttt{playedOn/commentOn/ratedOn}, \texttt{avatar}). Hry sú zobrazené a ovládané pre dvoch hráčov na jednom zariadení, pričom logika vykonávania ťahov, validácií a aktualizácií skóre beží synchronne v rámci požiadavky obsluhovanej jedným servletovým vláknom.
 
 \subsection{Prevádzkové správanie a vlastnosti}
 \begin{itemize}
@@ -49,19 +49,19 @@ Pri spustení hry používateľ zadá mená (nicky) a vyberie avatary; tieto hod
 \begin{enumerate}
   \item Výkon – rýchla odozva.
   \item Udržiavateľnosť – modulárny kód.
-  \item Nasadzovanie – spustenie cez Docker Compose.
+  \item Nasadzovanie – spustenie cez \glslink{docker}{Docker Compose}.
   \item Monitorovanie a logovanie – základné metriky.
   \item Bezpečnosť – opatrenia na strane API.
   \item Rozšíriteľnosť – možnosť doplniť ďalšie komponenty.
-  \item Sledovanie výkonu – podpora Prometheus a Grafana.
+  \item Sledovanie výkonu – podpora \glslink{prometheus}{Prometheus} a \glslink{grafana}{Grafana}.
 \end{enumerate}
 
 \section{Návrh mikroservisnej architektúry}
 \subsection{Rozdelenie na služby}
 \begin{itemize}
-  \item \textbf{frontend (Thymeleaf)} – prezentácia a UI.
+  \item \textbf{frontend (\glslink{thymeleaf}{Thymeleaf})} – prezentácia a UI.
   \item \textbf{gateway-service} – vstupný bod, CORS, routing.
-  \item \textbf{user-service} – správa hráčov, Redis + PostgreSQL.
+  \item \textbf{user-service} – správa hráčov, \glslink{redis}{Redis} + \glslink{postgresql}{PostgreSQL}.
   \item \textbf{game-service} – logika hry a správa herného poľa.
   \item \textbf{score-service} – správa bodov hráčov.
   \item \textbf{comment-service} – správa komentárov.
@@ -71,13 +71,13 @@ Pri spustení hry používateľ zadá mená (nicky) a vyberie avatary; tieto hod
 
 \subsection{Komunikácia medzi službami}
 \begin{itemize}
-  \item Synchrónny REST pre okamžité volania.
-  \item Asynchrónne udalosti pomocou RabbitMQ/Kafka.
+  \item Synchrónny \glslink{restapi}{REST} pre okamžité volania.
+  \item Asynchrónne udalosti pomocou \glslink{rabbitmq}{RabbitMQ}/\glslink{apachekafka}{Kafka}.
   \item API kontrakty zabezpečujú nezávislosť.
 \end{itemize}
 
 \subsection{Správa stavu hry}
-Herné pole je spracovávané v pamäti aplikácie; výsledky sa po ukončení zapisujú do PostgreSQL.
+Herné pole je spracovávané v pamäti aplikácie; výsledky sa po ukončení zapisujú do \glslink{postgresql}{PostgreSQL}.
 
 \subsection{Konzistencia a transakcie}
 Používa sa \emph{eventual consistency}, v zložitých prípadoch SAGA pattern.
@@ -92,21 +92,21 @@ Používa sa \emph{eventual consistency}, v zložitých prípadoch SAGA pattern.
 \section{Technologická analýza}
 \subsection{Hlavný technologický stack}
 \begin{itemize}
-  \item \textbf{Spring Boot} – backend framework.
-  \item \textbf{PostgreSQL} – relačná databáza.
-  \item \textbf{Redis} – in-memory úložisko.
-  \item \textbf{Docker a Docker Compose} – kontajnerizácia.
-  \item \textbf{Spring Cloud Gateway} – API Gateway.
-  \item \textbf{Thymeleaf} – server-side rendering.
+  \item \textbf{\glslink{springboot}{Spring Boot}} – backend framework.
+  \item \textbf{\glslink{postgresql}{PostgreSQL}} – relačná databáza.
+  \item \textbf{\glslink{redis}{Redis}} – in-memory úložisko.
+  \item \textbf{\glslink{docker}{Docker a Docker Compose}} – kontajnerizácia.
+  \item \textbf{\glslink{springcloudgateway}{Spring Cloud Gateway}} – API Gateway.
+  \item \textbf{\glslink{thymeleaf}{Thymeleaf}} – server-side rendering.
 \end{itemize}
 
 \subsection{Teoretické rozšírenia}
 \begin{itemize}
-  \item Kubernetes – orchestrácia kontajnerov.
-  \item Kafka/RabbitMQ – messaging systémy.
-  \item Prometheus + Grafana – monitoring.
-  \item ELK Stack – centralizované logovanie.
-  \item Jaeger/Zipkin – distribuované trasovanie.
+  \item \glslink{kubernetes}{Kubernetes} – orchestrácia kontajnerov.
+  \item \glslink{apachekafka}{Kafka}/\glslink{rabbitmq}{RabbitMQ} – messaging systémy.
+  \item \glslink{prometheus}{Prometheus} + \glslink{grafana}{Grafana} – monitoring.
+  \item \glslink{elkstack}{ELK Stack} – centralizované logovanie.
+  \item \glslink{jaeger}{Jaeger}/\glslink{zipkin}{Zipkin} – distribuované trasovanie.
 \end{itemize}
 
 \section{Testovanie a meranie výkonnosti}
@@ -138,9 +138,9 @@ Merania budú prebiehať v kontrolovanom prostredí s rovnakým hardvérom. Scen
 Výkon & Nižšia latencia & Vyššia modularita \\
 Údržba & Ťažkopádna & Jednoduchšie rozdelenie \\
 Nasadenie & Jednoduché & Zložitejšie, flexibilnejšie \\
-Monitorovanie & Minimálne & Prometheus/Grafana \\
+Monitorovanie & Minimálne & \glslink{prometheus}{Prometheus}/\glslink{grafana}{Grafana} \\
 Konzistencia & ACID & Eventual consistency \\
-Komunikácia & Interná & REST / Messaging \\
+Komunikácia & Interná & \glslink{restapi}{REST} / Messaging \\
 Bezpečnosť & Lokálna & Centrálna v Gateway \\
 Odolnosť & Nízka & Izolované zlyhania \\
 \bottomrule
@@ -164,6 +164,6 @@ Odolnosť & Nízka & Izolované zlyhania \\
 \end{itemize}
 
 \section{Zhrnutie analytickej časti}
-Analytická časť identifikovala hlavné obmedzenia monolitickej architektúry (ťažké škálovanie, slabá modularita, závislosť na session) a navrhla moderné mikroservisné riešenie založené na Spring Boot, PostgreSQL, Redis, Docker, Spring Cloud Gateway a Thymeleaf. Okrem toho bola analyzovaná možnosť využitia Kubernetes, Kafka, Prometheus, Grafana a ELK pre produkčné prostredie.
+Analytická časť identifikovala hlavné obmedzenia monolitickej architektúry (ťažké škálovanie, slabá modularita, závislosť na session) a navrhla moderné \glslink{microservice}{mikroservisné riešenie} založené na \glslink{springboot}{Spring Boot}, \glslink{postgresql}{PostgreSQL}, \glslink{redis}{Redis}, \glslink{docker}{Docker}, \glslink{springcloudgateway}{Spring Cloud Gateway} a \glslink{thymeleaf}{Thymeleaf}. Okrem toho bola analyzovaná možnosť využitia \glslink{kubernetes}{Kubernetes}, \glslink{apachekafka}{Kafka}, \glslink{prometheus}{Prometheus}, \glslink{grafana}{Grafana} a \glslink{elkstack}{ELK} pre produkčné prostredie.
 
 Navrhnutá architektúra je modulárna, rozšíriteľná a vhodná pre objektívne porovnanie s monolitom podľa výkonových a údržbových metrík. Výsledky tejto analýzy budú základom pre implementačnú časť práce.
