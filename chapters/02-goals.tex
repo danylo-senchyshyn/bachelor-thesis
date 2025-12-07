@@ -1,0 +1,18 @@
+% !TEX root = ../thesis.tex
+\chapter{Ciele}\label{ch:goals}
+
+Hlavným cieľom práce je navrhnúť, implementovať a analyzovať dve architektonicky odlišné verzie tej istej webovej aplikácie – \glslink{monolith}{monolitickú} a \glslink{microservice}{mikroservisnú} – a skúmať ich správanie z hľadiska technických, prevádzkových a údržbových vlastností.
+
+Na dosiahnutie tohto cieľa sú stanovené nasledujúce podciele:
+\begin{itemize}
+    \item podrobný návrh a dokumentácia interného usporiadania \glslink{monolith}{monolitickej} verzie aplikácie vrátane opisov modulov, vrstiev a dátových tokov;
+    \item návrh \glslink{microservice}{mikroservisnej architektúry} s jasným rozdelením doménových zodpovedností a definíciou \glslink{api}{API} kontraktov;
+    \item implementácia oboch verzií s použitím identického technologického stacku (\glslink{react}{React}, \glslink{springboot}{Spring Boot 3}, \glslink{postgresql}{PostgreSQL}, \glslink{dockercompose}{Docker Compose}), aby bola zabezpečená objektívna porovnateľnosť;
+    \item návrh a realizácia experimentov v kontrolovaných podmienkach na meranie odozvy systému, latencie pri interakcii s hernou doskou, spotreby systémových prostriedkov, priebehu spracovania požiadaviek a správania pri rôznych úrovniach záťaže;
+    \item hodnotenie kvalitatívnych vlastností, ako sú modularita, čitateľnosť kódu, testovateľnosť, jednoduchosť údržby a operačná náročnosť;
+    \item formulácia praktických odporúčaní, ktoré môžu pomôcť vývojárom pri rozhodovaní, kedy voliť \glslink{monolith}{monolit} a kedy \glslink{microservice}{mikroservisnú architektúru}.
+\end{itemize}
+
+Ciele sú definované tak, aby výsledok práce mohol slúžiť ako referenčná štúdia pre menšie a stredné projekty, kde rozhodnutia o architektúre výrazne ovplyvňujú náklady, škálovanie a dlhodobú udržateľnosť.
+
+Popri technických cieľoch má práca aj širšie vzdelávacie a metodické ambície. Jedným z čiastkových cieľov je ukázať, že architektonické rozhodnutia nemožno hodnotiť izolovane, ale vždy v kontexte konkrétneho projektu, tímu a infraštruktúrnych možností. Pre malé projekty môže byť \glslink{monolith}{monolit} s dobre navrhnutou vnútornou štruktúrou plne postačujúci, kým pre väčšie systémy s vyššími nárokmi na škálovateľnosť a nezávislé nasadzovanie je vhodnejšia \glslink{microservice}{mikroservisná architektúra}. Výsledky práce by preto mali pomôcť nielen pri voľbe konkrétnej technológie, ale aj pri formovaní spôsobu uvažovania o architektúre ako o súbore kompromisov, ktoré je potrebné explicitne pomenovať a zdôvodniť.
