@@ -7,7 +7,7 @@ Analytická časť predstavuje detailnú technickú analýzu problému, aktuáln
 
 \section{Analýza technologického kontextu}
 
-Moderné webové aplikácie využívajú škálovateľné architektúry, automatizované nasadzovanie a kontajnerové riešenia. V tejto práci sa preto používa technologický stack založený na frameworku \glslink{springboot}{Spring Boot 3} pre tvorbu \glslink{restapi}{REST API}, relačnej databáze \glslink{postgresql}{PostgreSQL} pre perzistenciu dát, knižnici \glslink{react}{React} pre implementáciu single-page aplikácie a nástrojoch \glslink{docker}{Docker} a \glslink{dockercompose}{Docker Compose} pre kontajnerizáciu a reprodukovateľné vývojové prostredie. \glslink{api}{APIs} sú centralizované cez \glslink{springcloudgateway}{Spring Cloud Gateway}, ktorý poskytuje jednotný vstupný bod a základné bezpečnostné a smerovacie mechanizmy \cite{SpringBootDocs,SpringWebDocs,PostgreSQLDocs,ReactDocs,DockerArticle,DockerComposeDocs,SpringCloudGatewayDocs}. Tento stack je vhodný pre obe architektúry – \glslink{monolith}{monolitickú} aj \glslink{microservice}{mikroservisnú} – a umožňuje ich férové porovnanie v rovnakých technologických podmienkach.
+Moderné webové aplikácie využívajú škálovateľné architektúry, automatizované nasadzovanie a kontajnerové riešenia. V tejto práci sa preto používa technologický stack založený na frameworku \glslink{springboot}{Spring Boot 3} pre tvorbu \glslink{restapi}{REST API}, relačnej databáze \glslink{postgresql}{PostgreSQL} pre perzistenciu dát, knižnici \glslink{react}{React} pre implementáciu single-page aplikácie a nástrojoch \glslink{docker}{Docker} a \glslink{dockercompose}{Docker Compose} pre kontajnerizáciu a reprodukovateľné vývojové prostredie \cite{SpringBootDocs2025,SpringWebRESTDocs2025,PostgreSQLDocs2025,ReactDocs2025,Merkel2014Docker,DockerCompose2025}. \glslink{api}{APIs} sú centralizované cez \glslink{springcloudgateway}{Spring Cloud Gateway}, ktorý poskytuje jednotný vstupný bod a základné bezpečnostné a smerovacie mechanizmy \cite{SpringCloudGateway2025}. Tento stack je vhodný pre obe architektúry – \glslink{monolith}{monolitickú} aj \glslink{microservice}{mikroservisnú} – a umožňuje ich férové porovnanie v rovnakých technologických podmienkach.
 
 Dôležitou súčasťou technologického kontextu je aj rozdiel medzi lokálnym vývojovým prostredím a potenciálnym produkčným nasadením. V rámci tejto práce je síce cieľom predovšetkým porovnanie architektúr v lokálnom prostredí pomocou \glslink{dockercompose}{Docker Compose}, no už na tejto úrovni je možné sledovať dopady zvoleného prístupu na počet bežiacich kontajnerov, nároky na konfiguráciu a prehľadnosť infraštruktúry. \glslink{monolith}{Monolitické} riešenie typicky vystačí s menším počtom komponentov a jednoduchšou konfiguráciou, zatiaľ čo \glslink{microservice}{mikroservisná architektúra} vedie k väčšiemu množstvu samostatných služieb, ktoré je potrebné konfigurovať, monitorovať a koordinovať. Tieto rozdiely v komplexite sa pri prechode do produkčného prostredia ešte prehlbujú a patria medzi kľúčové faktory pri rozhodovaní o vhodnej architektúre.
 
@@ -112,7 +112,7 @@ Výhodou \glslink{microservice}{mikroservisného} prístupu je lepšia modularit
 
 \begin{itemize}
     \item Synchrónny \glslink{restapi}{REST} – používa sa pre okamžité volania (napr. frontend → \glslink{springcloudgateway}{gateway} → \texttt{game-service}).
-    \item Asynchrónne udalosti (teoreticky) – pomocou message brokeru (napr. \glslink{rabbitmq}{RabbitMQ} alebo \glslink{apachekafka}{Apache Kafka}) pre decoupling a \emph{eventual consistency}.
+    \item Asynchrónne udalosti (teoreticky) – pomocou message brokeru (napr. \glslink{rabbitmq}{RabbitMQ} alebo \glslink{apachekafka}{Apache Kafka}) pre decoupling a \emph{eventual consistency} \cite{KafkaDocs2025}.
     \item \glslink{api}{API} kontrakty – každá služba definuje vlastné DTO, čím sa zabezpečuje nezávislosť a možnosť samostatného vývoja.
 \end{itemize}
 
@@ -139,19 +139,19 @@ Na základe rámcového technologického kontextu uvedeného v predchádzajúcej
 \subsection{Hlavný technologický stack a jeho využitie}
 
 \begin{itemize}
-    \item \glslink{springboot}{Spring Boot} – framework pre backend: umožňuje rýchly vývoj \glslink{restapi}{REST API} a spracovanie logiky \glslink{microservice}{mikroservisov}. V projekte sa používa vo všetkých službách (\texttt{user-service}, \texttt{game-service}, \texttt{score-service} a ďalšie). Poskytuje modulárnu štruktúru, integráciu so Spring Data pre prácu s databázou, Spring Security pre autentifikáciu a autorizáciu a Spring Web pre tvorbu REST endpointov \cite{SpringBootDocs}.
-    \item \glslink{postgresql}{PostgreSQL} – relačná databáza: slúži na perzistentné uchovávanie dát o hráčoch, skóre, komentároch a hodnoteniach. Používa sa pre doménové tabuľky jednotlivých služieb.
-    \item \glslink{docker}{Docker} a \glslink{dockercompose}{Docker Compose} – kontajnerizácia: izolujú jednotlivé služby a uľahčujú lokálne spustenie a testovanie celého systému.
-    \item \glslink{springcloudgateway}{Spring Cloud Gateway} – implementácia \glslink{apigateway}{API Gateway}: centralizované smerovanie požiadaviek, autentifikácia, CORS, rate-limiting.
-    \item \glslink{react}{React} – single-page aplikácia: zabezpečuje interaktívne používateľské rozhranie, renderovanie hernej dosky a komunikáciu cez \glslink{restapi}{REST API}.
+    \item \glslink{springboot}{Spring Boot} – framework pre backend: umožňuje rýchly vývoj \glslink{restapi}{REST API} a spracovanie logiky \glslink{microservice}{mikroservisov}. V projekte sa používa vo všetkých službách (\texttt{user-service}, \texttt{game-service}, \texttt{score-service} a ďalšie). Poskytuje modulárnu štruktúru, integráciu so Spring Data pre prácu s databázou, Spring Security pre autentifikáciu a autorizáciu a Spring Web pre tvorbu REST endpointov \cite{SpringBootDocs2025,SpringWebRESTDocs2025}.
+    \item \glslink{postgresql}{PostgreSQL} – relačná databáza: slúži na perzistentné uchovávanie dát o hráčoch, skóre, komentároch a hodnoteniach. Používa sa pre doménové tabuľky jednotlivých služieb \cite{PostgreSQLDocs2025}.
+    \item \glslink{docker}{Docker} a \glslink{dockercompose}{Docker Compose} – kontajnerizácia: izolujú jednotlivé služby a uľahčujú lokálne spustenie a testovanie celého systému \cite{Merkel2014Docker,DockerCompose2025}.
+    \item \glslink{springcloudgateway}{Spring Cloud Gateway} – implementácia \glslink{apigateway}{API Gateway}: centralizované smerovanie požiadaviek, autentifikácia, CORS, rate-limiting \cite{SpringCloudGateway2025}.
+    \item \glslink{react}{React} – single-page aplikácia: zabezpečuje interaktívne používateľské rozhranie, renderovanie hernej dosky a komunikáciu cez \glslink{restapi}{REST API} \cite{ReactDocs2025}.
 \end{itemize}
 
 \subsection{Teoretické rozšírenie a ďalšie možnosti}
 
 \begin{itemize}
     \item \glslink{kubernetes}{Kubernetes} – orchestrácia kontajnerov: umožňuje automatické nasadzovanie, škálovanie a správu životného cyklu kontajnerov v produkčnom prostredí.
-    \item \glslink{apachekafka}{Apache Kafka} / \glslink{rabbitmq}{RabbitMQ} – messaging systémy pre asynchrónnu komunikáciu medzi \glslink{microservice}{mikroservismi}. Vhodné pre implementáciu event-driven architektúry, kde napríklad \texttt{game-service} po dokončení ťahu hráča vyšle udalosť, ktorú zachytí \texttt{score-service} alebo potenciálny \texttt{analytics-service}.
-    \item \glslink{prometheus}{Prometheus} + \glslink{grafana}{Grafana} – nástroje pre monitoring a vizualizáciu výkonu. \glslink{prometheus}{Prometheus} zbiera metriku z jednotlivých služieb a systému, \glslink{grafana}{Grafana} umožňuje vytvárať prehľadné dashboardy.
+    \item \glslink{apachekafka}{Apache Kafka} / \glslink{rabbitmq}{RabbitMQ} – messaging systémy pre asynchrónnu komunikáciu medzi \glslink{microservice}{mikroservismi}. Vhodné pre implementáciu event-driven architektúry, kde napríklad \texttt{game-service} po dokončení ťahu hráča vyšle udalosť, ktorú zachytí \texttt{score-service} alebo potenciálny \texttt{analytics-service} \cite{KafkaDocs2025}.
+    \item \glslink{prometheus}{Prometheus} + \glslink{grafana}{Grafana} – nástroje pre monitoring a vizualizáciu výkonu. \glslink{prometheus}{Prometheus} zbiera metriku z jednotlivých služieb a systému, \glslink{grafana}{Grafana} umožňuje vytvárať prehľadné dashboardy \cite{PrometheusDocs2025,GrafanaDocs2025}.
     \item \glslink{elkstack}{ELK Stack} (Elasticsearch, Logstash, Kibana) – centralizované logovanie a analýza logov mikroservisov.
     \item \glslink{jaeger}{Jaeger} / \glslink{zipkin}{Zipkin} – nástroje pre distribuované trasovanie požiadaviek. Umožňujú sledovať tok požiadaviek cez všetky mikroservisy a identifikovať úzke miesta alebo problémy s latenciou.
 \end{itemize}
