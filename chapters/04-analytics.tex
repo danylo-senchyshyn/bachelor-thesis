@@ -2,15 +2,15 @@
 
 Analytická časť práce vytvára teoretický a technický základ pre návrh a implementáciu riešenia. Jej cieľom je systematicky analyzovať existujúci stav, identifikovať jeho obmedzenia a na základe toho navrhnúť vhodnú architektúru umožňujúcu porovnanie \gls{monolith} a \gls{microservice} prístupu.
 
-\subsection{Úvod do analytickej časti}
+\section{Úvod do analytickej časti}
 
 Analytická časť predstavuje detailnú technickú analýzu problému, aktuálneho riešenia a možností jeho optimalizácie prostredníctvom alternatívnej architektúry. Cieľom je identifikovať limity existujúcej monolitickej implementácie, definovať funkčné a nefunkčné požiadavky, preskúmať vhodné technológie a navrhnúť mikroservisnú architektúru, ktorá umožní objektívne porovnanie oboch prístupov.
 
-\subsection{Analýza technologického kontextu}
+\section{Analýza technologického kontextu}
 
 Moderné webové aplikácie využívajú škálovateľné architektúry, automatizované nasadzovanie a kontajnerové riešenia. V tejto práci sa preto používa technologický stack založený na frameworku \gls{springboot} 3 pre tvorbu \gls{restapi}, relačnej databáze \gls{postgresql} pre perzistenciu dát, knižnici \gls{react} pre implementáciu single-page aplikácie a nástrojoch \gls{docker} a \gls{dockercompose} pre kontajnerizáciu a reprodukovateľné vývojové prostredie. API sú centralizované cez \gls{springcloudgateway}, ktorý poskytuje jednotný vstupný bod a základné bezpečnostné a smerovacie mechanizmy. Tento stack je vhodný pre obe architektúry – monolitickú aj mikroservisnú – a umožňuje ich férové porovnanie v rovnakých technologických podmienkach.
 
-\subsection{Analýza existujúcej monolitickej implementácie}
+\section{Analýza existujúcej monolitickej implementácie}
 
 V tejto podkapitole je analyzovaná existujúca monolitická implementácia aplikácie hry Dáma. Analýza sa zameriava na architektúru systému, spôsob správy stavu, internú komunikáciu medzi komponentmi a prevádzkové vlastnosti riešenia. Cieľom je identifikovať silné stránky monolitu a zároveň jeho limity z pohľadu škálovateľnosti a dlhodobej udržateľnosti.
 
@@ -49,7 +49,7 @@ Existujúce riešenie pozostáva z monolitickej aplikácie, ku ktorej je v rámc
 
 Napriek uvedeným obmedzeniam zostáva monolitická implementácia dôležitým referenčným bodom pre celé porovnanie. Predstavuje prirodzený „východiskový stav“, ktorý by vznikol aj v mnohých reálnych projektoch, kde je hlavným cieľom čo najrýchlejšie dodať funkčný prototyp. V rámci tejto práce je monolitické riešenie implementované tak, aby bolo čo najčistejšie z pohľadu architektonického členenia (vrstvy kontrolérov, služieb a perzistencie), no zároveň zostáva typickým predstaviteľom jednoduchšej architektúry s jedným nasaditeľným artefaktom. Pri porovnávaní s mikroservisnou verziou tak slúži ako praktická ukážka toho, do akej miery je možné monolit „dotiahnuť“ smerom k dobre štruktúrovanému systému bez nutnosti jeho rozdelenia na samostatné služby.
 
-\subsection{Požiadavky na riešenie}
+\section{Požiadavky na riešenie}
 
 Na základe analýzy domény hry Dáma a očakávaného spôsobu používania boli definované nasledujúce funkčné požiadavky:
 
@@ -80,7 +80,7 @@ Na základe analýzy domény hry Dáma a očakávaného spôsobu používania bo
 
 Tieto nefunkčné požiadavky vychádzajú z cieľa porovnať architektúry nielen z hľadiska funkcionality, ale aj z prevádzkového správania a udržiavateľnosti~\cite{Newman2021,Richardson2018}.
 
-\subsection{Návrh mikroservisnej architektúry}
+\section{Návrh mikroservisnej architektúry}
 
 Systém je rozdelený na samostatné služby:
 \begin{itemize}
@@ -99,7 +99,7 @@ Pri návrhu hraníc medzi jednotlivými službami sa vychádzalo z doménového 
 
 V kontexte hry Dáma to znamená napríklad oddelenie logiky priebehu hry od správy profilov hráčov a evidencie výsledkov. Takýto návrh uľahčuje nielen škálovanie konkrétnych častí systému, ale aj ich samostatný vývoj, testovanie a nasadzovanie.
 
-\subsection{Komunikácia a konzistencia}
+\section{Komunikácia a konzistencia}
 
 Monolit používa ACID transakcie v rámci jednej databázovej schémy; všetky operácie prebiehajú v rámci jedného procesu, čo zjednodušuje udržiavanie konzistencie. V mikroservisnej architektúre je doménová logika oddelená do viacerých služieb. API kontrakty zabezpečujú stabilitu komunikácie a jasne definujú formáty dát.
 
@@ -132,7 +132,7 @@ Pri oddelení perzistentných služieb sa v mikroservisnej architektúre často 
 \item prístup do databáz je nastavený podľa princípu least privilege.
 \end{itemize}
 
-\subsection{Technologická analýza}
+\section{Technologická analýza}
 
 Na základe rámcového technologického kontextu uvedeného v predchádzajúcej podkapitole nasleduje detailnejšia analýza jednotlivých použitých nástrojov a ich vzťahu k nefunkčným požiadavkám systému.
 
@@ -146,7 +146,7 @@ Na základe rámcového technologického kontextu uvedeného v predchádzajúcej
 \item \gls{react} – single-page aplikácia: knižnica slúži ako frontend v oboch verziách systému. Zabezpečuje interaktívne používateľské rozhranie, renderovanie hernej dosky a komunikáciu cez \gls{restapi}~\cite{\gls{react}Docs2025}.
 \end{itemize}
 
-\subsection{Testovanie a meranie výkonnosti}
+\section{Testovanie a meranie výkonnosti}
 
 Testovanie zahŕňa:
 \begin{itemize}
@@ -171,13 +171,13 @@ Merania budú prebiehať v kontrolovanom prostredí (rovnaký hardvér, čisté 
 
 Dôležitým aspektom navrhnutej metodiky je aj opakovateľnosť meraní. Scenáre budú navrhnuté tak, aby bolo možné ich jednoducho spúšťať viackrát pri rovnakých podmienkach a sledovať, do akej miery sú výsledky konzistentné. To je dôležité najmä pri porovnávaní architektúr, kde aj malé rozdiely v konfigurácii alebo záťaži môžu skresliť interpretáciu dát. Zároveň je potrebné mať na pamäti, že výsledky budú ovplyvnené konkrétnym hardvérom, použitou verziou nástrojov a spôsobom nasadenia. Cieľom práce preto nie je dosiahnuť absolútne univerzálne hodnoty, ale skôr jasne zdokumentovaný a reprodukovateľný experiment, na základe ktorého je možné vyvodiť kvalifikované závery o správaní monolitickej a mikroservisnej architektúry v porovnateľných podmienkach.
 
-\subsection{Očakávania}
+\section{Očakávania}
 \begin{itemize}
 \item Monolit: nižšia latencia pri lokálnej hre, jednoduchšie spustenie, ale ťažšie rozšírenie a slabšia modularita.
 \item Mikroservisy: lepšia modularita, možnosť rozširovať samostatné služby, mierny režijný overhead pri lokálnom behu.
 \end{itemize}
 
-\subsection{Porovnanie architektúr – analytické zhrnutie}
+\section{Porovnanie architektúr – analytické zhrnutie}
 
 Nasledujúca tabuľka sumarizuje hlavné rozdiely medzi monolitickou a mikroservisnou architektúrou na základe analyzovaných technických a prevádzkových kritérií. Slúži ako prehľadné zhrnutie poznatkov získaných v analytickej časti práce.
 
@@ -199,7 +199,7 @@ Odolnosť voči chybám & Nízka & Izolované zlyhania \\ \hline
 \caption{Porovnanie monolitickej a mikroservisnej architektúry}
 \end{table}
 
-\subsection{Riziká a mitigácia}
+\section{Riziká a mitigácia}
 
 Hlavné riziká
 \begin{itemize}
@@ -213,7 +213,7 @@ Hlavné riziká
 \item latencia medzi službami môže mierne narásť, najmä pri zvyšujúcej sa záťaži.
 \end{itemize}
 
-\subsection{Návrhy mitigácie}
+\section{Návrhy mitigácie}
 \begin{itemize}
 \item iteratívna implementácia – najprv MVP (game-service + gateway + frontend) pre jednoduchšie testovanie a rozširovanie;
 \item základné monitorovanie a logovanie – kontrola správneho zápisu výsledkov, bodov a ratingov;
@@ -221,7 +221,7 @@ Hlavné riziká
 \item priebežná refaktorizácia a modularizácia kódu, aby bolo možné izolovať problémy a zjednodušiť údržbu.
 \end{itemize}
 
-\subsection{Zhrnutie analytickej časti a premostenie do návrhovej časti}
+\section{Zhrnutie analytickej časti a premostenie do návrhovej časti}
 
 Analytická časť identifikovala hlavné obmedzenia monolitickej architektúry (ťažké škálovanie, slabá modularita, závislosť na jednom procese) a navrhla moderné mikroservisné riešenie založené na \gls{springboot}, \gls{postgresql}, \gls{docker}, Spring Cloud Gateway a \gls{react}.
 

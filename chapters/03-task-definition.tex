@@ -3,11 +3,10 @@
 Úlohou tejto bakalárskej práce je vytvorenie dvoch funkčne ekvivalentných verzií webovej hry Dáma a následné porovnanie ich vlastností z hľadiska implementácie, prevádzky a údržby. Hlavným cieľom je prakticky demonštrovať dopady voľby architektúry na vývojový proces, nasadzovanie a dlhodobú udržateľnosť systému a poskytnúť objektívne závery pre rozhodovanie o vhodnosti architektonického prístupu pri podobných projektoch.
 
 \subsection{Konkrétne požiadavky úlohy sú:}
-
 Táto kapitola konkretizuje zadanie bakalárskej práce a definuje požiadavky kladené na navrhované riešenia. Požiadavky sú formulované tak, aby zabezpečili funkčnú ekvivalenciu oboch architektonických prístupov a umožnili ich objektívne porovnanie z hľadiska implementácie, prevádzky a údržby. Osobitne sú špecifikované požiadavky pre monolitickú a mikroservisnú verziu aplikácie.
 
 \subsection{Monolitická verzia}
-Implementovať architektúru pozostávajúcu z viacerých nezávislých služieb, kde každá rieši konkrétnu doménu (hráči, hra, skóre, komentáre, hodnotenia). Služby komunikujú cez REST API a prístup k nim je centralizovaný cez API Gateway. Tento prístup zabezpečuje nezávislé nasadzovanie, lepšiu odolnosť voči chybám a možnosť škálovať jednotlivé časti systému, pričom zvyšuje komplexitu konfigurácie, orchestrácie a monitorovania.
+Implementovať aplikáciu ako jeden nasaditeľný artefakt, v ktorom sú sústredené všetky komponenty – frontend, backend a perzistencia dát. Tento prístup umožňuje jednoduchšie nasadenie, rýchlu internú komunikáciu a minimálne infraštruktúrne nároky. Výzvou je udržať kód prehľadný a modulárny napriek tomu, že všetky funkcionality sú integrované v jednom celku. Aplikácia musí podporovať správu hráčov, vykonávanie ťahov, validáciu pravidiel, ukončenie partie a perzistentné ukladanie výsledkov a komentárov.
 
 \subsection{Mikroservisná verzia}
 Implementovať architektúru pozostávajúcu z viacerých nezávislých služieb, kde každá rieši konkrétnu doménu (hráči, hra, skóre, komentáre, hodnotenia). Služby komunikujú cez REST API a prístup k nim je centralizovaný cez API Gateway. Tento prístup zabezpečuje nezávislé nasadzovanie, lepšiu odolnosť voči chybám a možnosť škálovať jednotlivé časti systému, pričom zvyšuje komplexitu konfigurácie, orchestrácie a monitorovania.
