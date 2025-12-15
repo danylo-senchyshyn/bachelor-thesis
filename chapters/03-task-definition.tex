@@ -2,25 +2,25 @@
 
 Úlohou tejto bakalárskej práce je vytvorenie dvoch funkčne ekvivalentných verzií webovej hry Dáma a následné porovnanie ich vlastností z hľadiska implementácie, prevádzky a údržby. Hlavným cieľom je prakticky demonštrovať dopady voľby architektúry na vývojový proces, nasadzovanie a dlhodobú udržateľnosť systému a poskytnúť objektívne závery pre rozhodovanie o vhodnosti architektonického prístupu pri podobných projektoch.
 
-\subsection{Konkrétne požiadavky úlohy sú:}
+\section{Konkrétne požiadavky úlohy sú:}
 Táto kapitola konkretizuje zadanie bakalárskej práce a definuje požiadavky kladené na navrhované riešenia. Požiadavky sú formulované tak, aby zabezpečili funkčnú ekvivalenciu oboch architektonických prístupov a umožnili ich objektívne porovnanie z hľadiska implementácie, prevádzky a údržby. Osobitne sú špecifikované požiadavky pre monolitickú a mikroservisnú verziu aplikácie.
 
-\subsection{Monolitická verzia}
+\section{Monolitická verzia}
 Implementovať aplikáciu ako jeden nasaditeľný artefakt, v ktorom sú sústredené všetky komponenty – frontend, backend a perzistencia dát. Tento prístup umožňuje jednoduchšie nasadenie, rýchlu internú komunikáciu a minimálne infraštruktúrne nároky. Výzvou je udržať kód prehľadný a modulárny napriek tomu, že všetky funkcionality sú integrované v jednom celku. Aplikácia musí podporovať správu hráčov, vykonávanie ťahov, validáciu pravidiel, ukončenie partie a perzistentné ukladanie výsledkov a komentárov.
 
-\subsection{Mikroservisná verzia}
+\section{Mikroservisná verzia}
 Implementovať architektúru pozostávajúcu z viacerých nezávislých služieb, kde každá rieši konkrétnu doménu (hráči, hra, skóre, komentáre, hodnotenia). Služby komunikujú cez REST API a prístup k nim je centralizovaný cez API Gateway. Tento prístup zabezpečuje nezávislé nasadzovanie, lepšiu odolnosť voči chybám a možnosť škálovať jednotlivé časti systému, pričom zvyšuje komplexitu konfigurácie, orchestrácie a monitorovania.
 
-\subsection{Funkčná ekvivalencia}
+\section{Funkčná ekvivalencia}
 Obe riešenia musia poskytovať totožnú používateľskú skúsenosť. Frontend je v oboch prípadoch implementovaný ako React SPA, ktorý zobrazuje hraciu dosku, spracúva ťahy, komunikuje s backendom a zobrazuje leaderboard, profil hráčov či komentáre.
 
-\subsection{Dátový model a API kontrakty}
+\section{Dátový model a API kontrakty}
 Monolit používa jednu databázovú schému. Mikroservisy využívajú spoločnú databázu PostgreSQL, avšak každá služba pracuje s vlastnými tabuľkami v rámci oddelených domén. API kontrakty definujú presnú podobu komunikácie, formáty JSON odpovedí, chybové stavy a validačné pravidlá.
 
-\subsection{Spustenie a testovanie}
+\section{Spustenie a testovanie}
 Obe verzie musia byť spustiteľné cez Docker Compose. Súčasťou úlohy je navrhnúť testovacie scenáre, pripraviť jednotkové a integračné testy a následne vykonať merania výkonnosti.
 
-\subsection{Porovnávacia analýza}
+\section{Porovnávacia analýza}
 Na základe testov a meraní bude vypracovaná porovnávacia štúdia, ktorá zhodnotí výhody a nevýhody oboch prístupov z hľadiska výkonu, modularity, prevádzky, škálovateľnosti a údržby.
 
 Popri technických cieľoch má práca aj širšie vzdelávacie a metodické ambície. Jedným z čiastkových cieľov je ukázať, že architektonické rozhodnutia nemožno hodnotiť izolovane, ale vždy v kontexte konkrétneho projektu, tímu a infraštruktúrnych možností. Pre malé projekty môže byť monolit s dobre navrhnutou vnútornou štruktúrou plne postačujúci, kým pre väčšie systémy s vyššími nárokmi na škálovateľnosť a nezávislé nasadzovanie je vhodnejšia mikroservisná architektúra. Výsledky práce by preto mali pomôcť nielen pri voľbe konkrétnej technológie, ale aj pri formovaní spôsobu uvažovania o architektúre ako o súbore kompromisov, ktoré je potrebné explicitne pomenovať a zdôvodniť.
