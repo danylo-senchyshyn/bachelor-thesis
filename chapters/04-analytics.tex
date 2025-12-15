@@ -1,6 +1,6 @@
 \chapter{Analytická časť}\label{ch:analytics}
 
-Analytická časť práce vytvára teoretický a technický základ pre návrh a implementáciu riešenia. Jej cieľom je systematicky analyzovať existujúci stav, identifikovať jeho obmedzenia a na základe toho navrhnúť vhodnú architektúru umožňujúcu porovnanie monolitického a mikroservisného prístupu.
+Analytická časť práce vytvára teoretický a technický základ pre návrh a implementáciu riešenia. Jej cieľom je systematicky analyzovať existujúci stav, identifikovať jeho obmedzenia a na základe toho navrhnúť vhodnú architektúru umožňujúcu porovnanie \gls{monolith} a \gls{microservice} prístupu.
 
 \subsection{Úvod do analytickej časti}
 
@@ -8,7 +8,7 @@ Analytická časť predstavuje detailnú technickú analýzu problému, aktuáln
 
 \subsection{Analýza technologického kontextu}
 
-Moderné webové aplikácie využívajú škálovateľné architektúry, automatizované nasadzovanie a kontajnerové riešenia. V tejto práci sa preto používa technologický stack založený na frameworku \gls{springboot} pre tvorbu \gls{restapi}, relačnej databáze \gls{postgresql} pre perzistenciu dát, knižnici \gls{react} pre implementáciu single-page aplikácie a nástrojoch \gls{docker} a \gls{dockercompose} pre kontajnerizáciu a reprodukovateľné vývojové prostredie. APIs sú centralizované cez \gls{springcloudgateway}, ktorý poskytuje jednotný vstupný bod a základné bezpečnostné a smerovacie mechanizmy. Tento stack je vhodný pre obe architektúry – \gls{monolith} aj \gls{microservice} – a umožňuje ich férové porovnanie v rovnakých technologických podmienkach.
+Moderné webové aplikácie využívajú škálovateľné architektúry, automatizované nasadzovanie a kontajnerové riešenia. V tejto práci sa preto používa technologický stack založený na frameworku \gls{springboot} 3 pre tvorbu \gls{restapi}, relačnej databáze \gls{postgresql} pre perzistenciu dát, knižnici \gls{react} pre implementáciu single-page aplikácie a nástrojoch \gls{docker} a \gls{dockercompose} pre kontajnerizáciu a reprodukovateľné vývojové prostredie. API sú centralizované cez \gls{springcloudgateway}, ktorý poskytuje jednotný vstupný bod a základné bezpečnostné a smerovacie mechanizmy. Tento stack je vhodný pre obe architektúry – monolitickú aj mikroservisnú – a umožňuje ich férové porovnanie v rovnakých technologických podmienkach.
 
 \subsection{Analýza existujúcej monolitickej implementácie}
 
@@ -16,7 +16,7 @@ V tejto podkapitole je analyzovaná existujúca monolitická implementácia apli
 
 \subsubsection{Architektúra}
 
-Monolitická verzia pozostáva z jedného backendového modulu implementovaného v Spring Boot~3. Aplikácia obsahuje vrstvu kontrolérov, vrstvu služieb pre spracovanie hernej logiky (validácia ťahov, povinné bije, kráľovanie), vrstvu pre ukladanie dát pomocou Spring Data JPA a databázy PostgreSQL. Frontend je samostatná React SPA aplikácia komunikujúca cez REST API.
+\gls{monolith} pozostáva z jedného backendového modulu implementovaného v \gls{springboot} 3. Aplikácia obsahuje vrstvu kontrolérov, vrstvu služieb pre spracovanie hernej logiky (validácia ťahov, povinné bije, kráľovanie), vrstvu pre ukladanie dát pomocou Spring Data JPA a \gls{postgresql}. Frontend je samostatná \gls{react} SPA aplikácia komunikujúca cez \gls{restapi}.
 
 \subsubsection{Stav a interná komunikácia}
 
@@ -24,13 +24,13 @@ Všetky komponenty zdieľajú ten istý runtime a databázu. To umožňuje veľm
 
 \subsubsection{Popis existujúceho riešenia}
 
-Existujúce riešenie pozostáva z monolitickej aplikácie, ku ktorej je v rámci práce navrhnutá a implementovaná aj mikroservisná verzia. Obe verzie používajú frontend implementovaný v Reacte a backend postavený na Spring Boote s databázou PostgreSQL. Všetky údaje (nicky, avatary, priebeh hry, výsledky, komentáre a hodnotenia) sa načítavajú cez HTTP požiadavky na backend. Interakcia prebieha medzi dvoma hráčmi na jednom zariadení, pričom frontend aplikácia v Reacte zabezpečuje celú vizuálnu časť.
+Existujúce riešenie pozostáva z monolitickej aplikácie, ku ktorej je v rámci práce navrhnutá a implementovaná aj mikroservisná verzia. Obe verzie používajú frontend implementovaný v prostredí \gls{react} a backend postavený na platforme \gls{springboot} s databázou \gls{postgresql}. Všetky údaje (nicky, avatary, priebeh hry, výsledky, komentáre a hodnotenia) sa načítavajú cez HTTP požiadavky na backend. Interakcia prebieha medzi dvoma hráčmi na jednom zariadení, pričom frontend aplikácia v \gls{react}e zabezpečuje celú vizuálnu časť.
 
 \subsubsection{Prevádzkové správanie a vlastnosti}
 
 \begin{itemize}
-\item práca s používateľskými údajmi: frontend načítava všetky potrebné údaje (nicky, avatary, výsledky) cez REST API;
-\item perzistencia výsledkov: výsledky sú ukladané cez služby monolitu do PostgreSQL;
+\item práca s používateľskými údajmi: frontend načítava všetky potrebné údaje (nicky, avatary, výsledky) cez \gls{restapi};
+\item perzistencia výsledkov: výsledky sú ukladané cez služby monolitu do \gls{postgresql};
 \item jednovláknová konzistencia: všetky operácie bežia v jednom backendovom procese;
 \item Dev/Ops zjednodušenie: monolit je ľahko spustiteľný lokálne – samostatný backend a samostatný frontend.
 \end{itemize}
@@ -59,7 +59,7 @@ Na základe analýzy domény hry Dáma a očakávaného spôsobu používania bo
 \item Základná hra Dáma – implementácia pravidiel hry (pohyb, povinné bije, kráľovanie, počítanie skóre).
 \item Správa hráčov – zadanie niku a avatara pri začiatku hry, perzistentné ukladanie výsledkov.
 \item Ukladanie výsledkov – persistencia výsledkov, komentárov a hodnotení v databáze.
-\item Frontend rozhranie – React SPA aplikácia pre spustenie hry, zobrazenie dosky, zápis ťahov a leaderboard.
+\item Frontend rozhranie – \gls{react} SPA aplikácia pre spustenie hry, zobrazenie dosky, zápis ťahov a leaderboard.
 \item Lokálny režim – aplikácia musí podporovať lokálnu hru dvoch hráčov na jednom zariadení.
 \end{enumerate}
 
@@ -69,30 +69,39 @@ Na základe analýzy domény hry Dáma a očakávaného spôsobu používania bo
 \item Výkon – rýchla odozva pri interakcii s hernou doskou, minimálne latencie pri vykresľovaní ťahov.
 \item Udržiavateľnosť – kód má byť modulárny, dobre testovateľný a dokumentovaný.
 \item Nasadzovanie a automatizácia – možnosť ľahkého spustenia lokálne cez Docker Compose a príprava na automatizované nasadzovanie.
-\item Monitorovanie a observabilita predstavujú kľúčové nefunkčné požiadavky moderných distribuovaných systémov. Nástroje ako Prometheus a Grafana umožňujú sledovanie výkonnostných metrík, včasnú detekciu problémov a analýzu správania systému v produkčnom prostredí~\cite{PrometheusDocs2025,GrafanaDocs2025}.
+\item Monitorovanie a observabilita predstavujú kľúčové nefunkčné požiadavky moderných distribuovaných systémov. Nástroje ako \gls{prometheus} a \gls{grafana} umožňujú sledovanie výkonnostných metrík, včasnú detekciu problémov a analýzu správania systému v produkčnom prostredí~\cite{PrometheusDocs2025,GrafanaDocs2025}.
 \item Bezpečnosť – základné opatrenia na strane API (CORS, input validation) a princíp minimálnych oprávnení pri prístupe k databáze.
 \item Rozšíriteľnosť a izolácia domén – architektúra musí umožniť jednoduché doplnenie ďalších komponentov a v prípade mikroservisov minimalizovať coupling medzi doménami.
 \item Škálovateľnosť – možnosť horizontálneho rozširovania častí systému podľa potreby.
 \item Spoľahlivosť – dostupnosť služby aj pri zlyhaní iných komponentov.
 \end{enumerate}
 
+Špecifikácia nefunkčných požiadaviek zároveň vytvára rámec pre neskoršiu interpretáciu výsledkov meraní. Napríklad požiadavka na výkon neznamená len čo najnižšiu latenciu, ale aj predvídateľné správanie systému pri raste záťaže. Požiadavka na udržiavateľnosť nesúvisí iba s počtom riadkov kódu, ale aj so zrozumiteľnosťou modulov, mierou ich vzájomného prepojenia a jednoduchosťou nasadenia zmien. V prípade mikroservisnej architektúry sa navyše objavujú nové typy nefunkčných požiadaviek, ako je potreba koordinovaného monitorovania viacerých služieb či správy distribuovaných logov. Všetky tieto aspekty budú pri vyhodnocovaní riešenia zohľadnené spolu s kvantitatívnymi výsledkami meraní.
+
 Tieto nefunkčné požiadavky vychádzajú z cieľa porovnať architektúry nielen z hľadiska funkcionality, ale aj z prevádzkového správania a udržiavateľnosti~\cite{Newman2021,Richardson2018}.
 
 \subsection{Návrh mikroservisnej architektúry}
 
-Systém je rozdelený na samostatné služby: user-service – používateľské profily, nicky, avatary; game-service – celá herná logika vrátane validácie ťahov; score-service – záznam výsledkov; comment-service – komentáre; rating-service – hodnotenia; gateway-service – centrálny vstupný bod; frontend – React SPA.
+Systém je rozdelený na samostatné služby:
+\begin{itemize}
+\item user-service – používateľské profily, nicky, avatary;
+\item game-service – celá herná logika vrátane validácie ťahov;
+\item score-service – záznam výsledkov;
+\item comment-service – komentáre;
+\item rating-service – hodnotenia;
+\item gateway-service – centrálny vstupný bod;
+\item frontend – \gls{react} SPA.
+\end{itemize}
 
-Služby komunikujú synchrónne cez REST a využívajú spoločnú databázu PostgreSQL, pričom každá služba pracuje len s tabuľkami vlastnej domény.
+Služby komunikujú synchrónne cez \gls{restapi} a využívajú spoločnú databázu \gls{postgresql}, pričom každá služba pracuje len s tabuľkami vlastnej domény.
 
-Pri návrhu hraníc medzi jednotlivými službami sa vychádzalo z doménového členenia aplikácie a zo snahy minimalizovať závislosti medzi službami. Každá služba je zodpovedná za svoju časť domény a vystavuje rozhranie, ktoré je možné ďalej rozširovať bez nutnosti meniť vnútornú implementáciu iných služieb. Toto rozdelenie odráža odporúčania uvádzané v literatúre~\cite{Newman2021,Richardson2018}, podľa ktorých by mikroservisy mali rešpektovať hranice biznis domén a nemali by zdieľať vnútorné dátové štruktúry.
+Pri návrhu hraníc medzi jednotlivými službami sa vychádzalo z doménového členenia aplikácie a zo snahy minimalizovať závislosti medzi službami. Každá služba je zodpovedná za svoju časť domény a vystavuje rozhranie, ktoré je možné ďalej rozširovať bez nutnosti meniť vnútornú implementáciu iných služieb. Toto rozdelenie odráža odporúčania uvádzané v literatúre~\cite{Newman2021,Richardson2018}, podľa ktorých by mikroservisy mali rešpektovať hranice biznis domén a nemali by zdieľať vnútorné dátové štruktúry.  
 
 V kontexte hry Dáma to znamená napríklad oddelenie logiky priebehu hry od správy profilov hráčov a evidencie výsledkov. Takýto návrh uľahčuje nielen škálovanie konkrétnych častí systému, ale aj ich samostatný vývoj, testovanie a nasadzovanie.
 
 \subsection{Komunikácia a konzistencia}
 
-Monolit používa ACID transakcie v rámci jednej databázovej schémy; všetky operácie prebiehajú v rámci jedného procesu, čo zjednodušuje udržiavanie konzistencie.
-
-V mikroservisnej architektúre je doménová logika oddelená do viacerých služieb. API kontrakty zabezpečujú stabilitu komunikácie a jasne definujú formáty dát.
+Monolit používa ACID transakcie v rámci jednej databázovej schémy; všetky operácie prebiehajú v rámci jedného procesu, čo zjednodušuje udržiavanie konzistencie. V mikroservisnej architektúre je doménová logika oddelená do viacerých služieb. API kontrakty zabezpečujú stabilitu komunikácie a jasne definujú formáty dát.
 
 Pri zápise výsledkov prebieha typická sekvencia:
 
@@ -100,22 +109,20 @@ frontend → gateway → game-service → score-service → databáza.
 
 Výhodou mikroservisného prístupu je lepšia modularita a možnosť samostatne rozvíjať jednotlivé domény, nevýhodou je mierne zvýšená latencia a potreba riešiť konzistenciu v distribuovanom prostredí.
 
-Komunikácia medzi službami
+\subsubsection{Komunikácia medzi službami}
 \begin{itemize}
-\item Synchrónny REST – používa sa pre okamžité volania (napr. frontend → gateway → game-service).
-\item Asynchrónne udalosti (teoreticky) – pomocou message brokeru (napr. RabbitMQ alebo Apache Kafka) pre decoupling a eventual consistency.
-\item API kontrakty – každá služba definuje vlastné DTO, čím sa zabezpečuje nezávislosť a možnosť samostatného vývoja.
+\item Synchrónny \gls{restapi} – používa sa pre okamžité volania (napr. frontend → gateway → game-service).
+\item Asynchrónne udalosti (teoreticky) – pomocou message brokeru (napr. \gls{rabbitmq} alebo \gls{apachekafka}) pre decoupling a eventual consistency.
+\item \gls{api} kontrakty – každá služba definuje vlastné DTO, čím sa zabezpečuje nezávislosť a možnosť samostatného vývoja.
 \end{itemize}
 
 \subsubsection{Správa stavu hry}
 
-Herné pole a logika hry sú spracovávané v pamäti aplikácie pomocou objektov. Po ukončení hry game-service zapíše výsledok do PostgreSQL (score, rating, comment).
+Herné pole a logika hry sú spracovávané v pamäti aplikácie pomocou objektov. Po ukončení hry game-service zapíše výsledok do \gls{postgresql} (score, rating, comment).
 
 \subsubsection{Konzistencia a transakcie}
 
-Pri oddelení perzistentných služieb sa v mikroservisnej architektúre často uprednostňuje model eventual consistency, ktorý umožňuje vyššiu odolnosť systému a lepšiu škálovateľnosť za cenu dočasnej nekonzistencie dát~\cite{Richardson2018,KafkaDocs2025}.
-
-Napríklad po ukončení hry game-service vyšle udalosť na score-service. Pre zložitejšie viackrokové transakcie sa v distribuovaných systémoch často používa SAGA pattern, ktorý umožňuje riadenie transakcií bez potreby globálnych ACID transakcií. Tento prístup je detailne popísaný v literatúre zameranej na návrh mikroservisných architektúr~\cite{Richardson2018}.
+Pri oddelení perzistentných služieb sa v mikroservisnej architektúre často uprednostňuje model eventual consistency, ktorý umožňuje vyššiu odolnosť systému a lepšiu škálovateľnosť za cenu dočasnej nekonzistencie dát~\cite{Richardson2018}. Napríklad po ukončení hry game-service vyšle udalosť na score-service. Pre zložitejšie viackrokové transakcie sa v distribuovaných systémoch často používa SAGA pattern, ktorý umožňuje riadenie transakcií bez potreby globálnych ACID transakcií. Tento prístup je detailne popísaný v literatúre zameranej na návrh mikroservisných architektúr~\cite{Richardson2018}.
 
 \subsubsection{Bezpečnosť a politika prístupu}
 
@@ -132,27 +139,94 @@ Na základe rámcového technologického kontextu uvedeného v predchádzajúcej
 \subsubsection{Hlavný technologický stack a jeho využitie}
 
 \begin{itemize}
-\item Spring Boot – framework pre backend: umožňuje rýchly vývoj REST API a spracovanie logiky mikroservisov. V projekte sa používa vo všetkých službách (user-service, game-service, score-service a ďalšie). Poskytuje modulárnu štruktúru, integráciu so Spring Data pre prácu s databázou, Spring Security pre autentifikáciu a autorizáciu a Spring Web pre tvorbu REST endpointov~\cite{SpringBootDocs2025,SpringWebRESTDocs2025}.
-\item PostgreSQL – relačná databáza: slúži na perzistentné uchovávanie dát o hráčoch, skóre, komentároch a hodnoteniach. Používa sa pre doménové tabuľky jednotlivých služieb~\cite{PostgreSQLDocs2025}.
+\item \gls{springboot} – framework pre backend: umožňuje rýchly vývoj \gls{restapi} a spracovanie logiky mikroservisov. V projekte sa používa vo všetkých službách (user-service, game-service, score-service a ďalšie). Poskytuje modulárnu štruktúru, integráciu so Spring Data pre prácu s databázou, Spring Security pre autentifikáciu a autorizáciu a Spring Web pre tvorbu REST endpointov~\cite{SpringBootDocs2025,SpringWebRESTDocs2025}.
+\item \gls{postgresql} – relačná databáza: slúži na perzistentné uchovávanie dát o hráčoch, skóre, komentároch a hodnoteniach. Používa sa pre doménové tabuľky jednotlivých služieb~\cite{PostgreSQLDocs2025}.
 \item Docker a Docker Compose – kontajnerizácia: izolujú jednotlivé služby a uľahčujú lokálne spustenie a testovanie celého systému~\cite{Merkel2014Docker,DockerCompose2025}.
 \item Spring Cloud Gateway – API Gateway: centralizované smerovanie požiadaviek, autentifikácia, CORS, rate-limiting~\cite{SpringCloudGateway2025}.
-\item React – single-page aplikácia: React slúži ako frontend v oboch verziách systému. Zabezpečuje interaktívne používateľské rozhranie, renderovanie hernej dosky a komunikáciu cez REST API~\cite{ReactDocs2025}.
+\item \gls{react} – single-page aplikácia: knižnica slúži ako frontend v oboch verziách systému. Zabezpečuje interaktívne používateľské rozhranie, renderovanie hernej dosky a komunikáciu cez \gls{restapi}~\cite{\gls{react}Docs2025}.
 \end{itemize}
 
 \subsection{Testovanie a meranie výkonnosti}
 
-Testovanie zahŕňa jednotkové testy (JUnit 5 + Mockito), integračné testy (Spring Test + Testcontainers), validačné testy API kontraktov (Pact) a end-to-end scenáre simulujúce reálnu hru.
+Testovanie zahŕňa:
+\begin{itemize}
+\item jednotkové testy (JUnit 5 + Mockito);
+\item integračné testy (Spring Test + Testcontainers);
+\item validačné testy API kontraktov (Pact);
+\item end-to-end scenáre simulujúce reálnu hru.
+\end{itemize}
 
-Výkonnostné testy zahŕňajú reakčnú dobu pri vykreslení ťahu, rýchlosť zápisu výsledku, spotrebu CPU/RAM počas ťahov a odozvu systému pri simultánnych hrách.
+
+Výkonnostné testy zahŕňajú:
+\begin{itemize}
+\item reakčnú dobu pri vykreslení ťahu;
+\item rýchlosť zápisu výsledku;
+\item spotrebu CPU/RAM počas ťahov;
+\item odozvu systému pri simultánnych hrách.
+\end{itemize}
 
 \subsubsection{Metodika merania výkonu}
 
-Merania budú prebiehať v kontrolovanom prostredí (rovnaký hardvér, čisté inštancie). Scenáre zahŕňajú otvorenie hry, vykonanie všetkých možných ťahov, ukončenie hry a zápis výsledkov do databázy. Metriky zahŕňajú čas odozvy pri vykresľovaní ťahov a aktualizácii herného poľa, čas zápisu výsledkov a spotrebu CPU a pamäte počas hry. Použité nástroje zahŕňajú systémové metriky (Docker stats, htop).
+Merania budú prebiehať v kontrolovanom prostredí (rovnaký hardvér, čisté inštancie). Scenáre: otvorenie hry, vykonanie všetkých možných ťahov, ukončenie hry, zápis výsledkov do databázy. Metriky: čas odozvy pri vykresľovaní ťahov a aktualizácii herného poľa, čas zápisu výsledkov, spotreba CPU a pamäte počas hry. Nástroje: systémové metriky (Docker stats, htop). Okrem kvantitatívnych ukazovateľov sa zhodnotí aj zložitosť údržby, čitateľnosť kódu a modularita.
 
-Okrem kvantitatívnych ukazovateľov sa zhodnotí aj zložitosť údržby, čitateľnosť kódu a modularita.
+Dôležitým aspektom navrhnutej metodiky je aj opakovateľnosť meraní. Scenáre budú navrhnuté tak, aby bolo možné ich jednoducho spúšťať viackrát pri rovnakých podmienkach a sledovať, do akej miery sú výsledky konzistentné. To je dôležité najmä pri porovnávaní architektúr, kde aj malé rozdiely v konfigurácii alebo záťaži môžu skresliť interpretáciu dát. Zároveň je potrebné mať na pamäti, že výsledky budú ovplyvnené konkrétnym hardvérom, použitou verziou nástrojov a spôsobom nasadenia. Cieľom práce preto nie je dosiahnuť absolútne univerzálne hodnoty, ale skôr jasne zdokumentovaný a reprodukovateľný experiment, na základe ktorého je možné vyvodiť kvalifikované závery o správaní monolitickej a mikroservisnej architektúry v porovnateľných podmienkach.
+
+\subsection{Očakávania}
+\begin{itemize}
+\item Monolit: nižšia latencia pri lokálnej hre, jednoduchšie spustenie, ale ťažšie rozšírenie a slabšia modularita.
+\item Mikroservisy: lepšia modularita, možnosť rozširovať samostatné služby, mierny režijný overhead pri lokálnom behu.
+\end{itemize}
+
+\subsection{Porovnanie architektúr – analytické zhrnutie}
+
+Nasledujúca tabuľka sumarizuje hlavné rozdiely medzi monolitickou a mikroservisnou architektúrou na základe analyzovaných technických a prevádzkových kritérií. Slúži ako prehľadné zhrnutie poznatkov získaných v analytickej časti práce.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+Kritérium & Monolit & Mikroservisy \\ \hline
+Škálovateľnosť & Celý systém & Samostatné služby \\ \hline
+Výkon & Nižšia latencia & Vyššia modularita \\ \hline
+Údržba & Ťažkopádna & Jednoduchšie rozdelenie \\ \hline
+Nasadenie & Jednoduché & Zložitejšie, flexibilnejšie \\ \hline
+Monitorovanie & Minimálne & Podpora Prometheus/Grafana \\ \hline
+Konzistencia & ACID & Eventual consistency \\ \hline
+Komunikácia & Interná & REST / Messaging \\ \hline
+Bezpečnosť & Lokálna & Centrálna v Gateway \\ \hline
+Odolnosť voči chybám & Nízka & Izolované zlyhania \\ \hline
+\end{tabular}
+\caption{Porovnanie monolitickej a mikroservisnej architektúry}
+\end{table}
+
+\subsection{Riziká a mitigácia}
+
+Hlavné riziká
+\begin{itemize}
+\item komplexita infraštruktúry – aj pri lokálnom spustení môže byť náročné správne nastaviť viacero mikroservisov cez Docker Compose;
+\item konzistencia dát medzi službami – je potrebné zabezpečiť správny zápis a načítanie výsledkov, bodov a hodnotení;
+\item chyby pri implementácii logiky hry – napríklad nesprávne vykreslenie herného poľa alebo nesprávne výpočty skóre a ratingov;
+\item časové obmedzenia implementácie – dokončenie všetkých služieb a testovanie v rámci stanoveného termínu;
+\item distribuované prostredie vyžaduje detailný monitoring a dobrú observabilitu;
+\item gateway je „single point of entry“ – musí byť stabilná a správne škálovaná;
+\item spoločná databáza vyžaduje dôsledné oddelenie tabuľiek a prístupových práv;
+\item latencia medzi službami môže mierne narásť, najmä pri zvyšujúcej sa záťaži.
+\end{itemize}
+
+\subsection{Návrhy mitigácie}
+\begin{itemize}
+\item iteratívna implementácia – najprv MVP (game-service + gateway + frontend) pre jednoduchšie testovanie a rozširovanie;
+\item základné monitorovanie a logovanie – kontrola správneho zápisu výsledkov, bodov a ratingov;
+\item dôkladné testovanie logiky hry a konzistencie dát – overenie správneho vykreslenia herného poľa, skóre a hodnotení;
+\item priebežná refaktorizácia a modularizácia kódu, aby bolo možné izolovať problémy a zjednodušiť údržbu.
+\end{itemize}
 
 \subsection{Zhrnutie analytickej časti a premostenie do návrhovej časti}
 
-Analytická časť identifikovala hlavné obmedzenia monolitickej architektúry a navrhla moderné mikroservisné riešenie založené na Spring Boot, PostgreSQL, Docker, Spring Cloud Gateway a React.
+Analytická časť identifikovala hlavné obmedzenia monolitickej architektúry (ťažké škálovanie, slabá modularita, závislosť na jednom procese) a navrhla moderné mikroservisné riešenie založené na \gls{springboot}, \gls{postgresql}, \gls{docker}, Spring Cloud Gateway a \gls{react}.
 
-Navrhnutá architektúra je modulárna, rozšíriteľná a prispôsobená pre objektívne porovnanie s monolitom podľa výkonových a údržbových metrík. Výsledky tejto analýzy budú tvoriť základ pre implementačnú časť práce, kde budú definované konkrétne API kontrakty, dátové modely, Docker Compose konfigurácie a testovacie scenáre.
+Okrem praktických komponentov bola analyzovaná aj možnosť využitia technológií ako Kubernetes, Kafka, Prometheus, Grafana a ELK, ktoré by umožnili škálovanie a monitorovanie systému v produkčnom prostredí.
+
+Navrhnutá architektúra je modulárna, rozšíriteľná a prispôsobená pre objektívne porovnanie s monolitom podľa výkonových a údržbových metrík. Výsledky tejto analýzy budú tvoriť základ pre implementačnú časť práce, kde budú definované konkrétne API kontrakty, dátové modely, Docker Compose konfigurácie a testovacie scenáre. Analytická časť tak vytvára východisko pre návrhovú a implementačnú časť práce, v ktorej budú tieto koncepty pretavené do konkrétnych architektonických rozhodnutí, API kontraktov a implementačných detailov.
+
+V ďalších častiach práce bude na tieto zistenia nadviazané konkrétnym návrhom vnútorného usporiadania oboch verzií aplikácie, detailným popisom použitých dátových modelov a štruktúry API. Analytická časť tak nepredstavuje izolovanú teoretickú úvahu, ale priamo ovplyvňuje rozhodnutia v syntetickej a implementačnej fáze. Zvolená architektúra, rozdelenie služieb, návrh databázových schém aj testovacia metodika budú vychádzať z požiadaviek a obmedzení identifikovaných v tejto kapitole. Tým sa zabezpečí, že finálne porovnanie \gls{monolith} a \gls{microservice} prístupu bude nielen technicky korektné, ale aj metodicky podložené a opreté o jasne formulovaný kontext.
