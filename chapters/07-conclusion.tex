@@ -1,0 +1,18 @@
+% !TEX root = ../thesis.tex
+\chapter{Záver}\label{ch:conclusion}
+
+Táto práca sa zamerala na porovnanie monolitickej a mikroservisnej architektúry na konkrétnej implementácii rezervačného systému v technologickom prostredí Java/Spring Boot a PostgreSQL. Zvolený prípad umožnil analyzovať rozdiely medzi lokálnou transakciou v jednom procese a distribuovaným spracovaním založeným na udalostiach, ktoré prirodzene vedie k eventual consistency.
+
+Monolitická verzia demonštrovala výhody jednoduchosti: jednotná transakčná hranica, priamočiare spracovanie toku, jednoduchšie lokálne spustenie a ladenie. Zároveň sa ukázali typické limity monolitu — hrubozrnné škálovanie a riziko rastúcej prepojenosti pri rozširovaní systému. Mikroservisná verzia naopak preukázala silné stránky doménovej dekompozície, izolácie služieb a možnosti nezávislého nasadenia, avšak za cenu vyššej prevádzkovej zložitosti a potreby riešiť spoľahlivosť komunikácie, idempotenciu a chybové scenáre v asynchrónnom spracovaní. Použitie mechanizmov transactional outbox a dead letter topic ukázalo praktické prístupy, ktoré sú dôležité pre robustnú prevádzku event-driven systému.
+
+\section{Vyhodnotenie riešenia}
+
+Porovnanie ukázalo, že monolitická architektúra dosahuje výrazne nižšiu E2E latenciu a nižšiu prevádzkovú zložitosť, zatiaľ čo mikroservisná architektúra prináša lepšiu izoláciu zodpovedností, nezávislé škálovanie a odolnosť voči čiastočným výpadkom za cenu vyššej infraštruktúrnej náročnosti. Výkonnostné merania potvrdili teoretické očakávania: najvýraznejší rozdiel nebol v priepustnosti, ale v end-to-end čase spracovania — výsledok priamo podmienený asynchrónnym modelom koordinácie.
+
+Výber architektúry nie je technická otázka s univerzálne správnou odpoveďou, ale kontextové rozhodnutie závislé od veľkosti tímu, požiadaviek na škálovanie a akceptovateľnej miery prevádzkovej zložitosti. Oba prístupy majú svoje oprávnené miesto, pričom pochopenie ich kompromisov je dôležitejšie než hľadanie absolútne lepšieho riešenia.
+
+\section{Opis prínosov}
+
+Prínosom práce sú dva funkčné a porovnateľné prototypy nad rovnakou doménou, ktoré umožňujú priamo pozorovať dopady architektonickej voľby na štruktúru systému, konzistenciu dát a prevádzkovú náročnosť. Mikroservisný prototyp demonštruje praktickú implementáciu vzoru transactional outbox, choreografie sagy a mechanizmov odolnosti voči chybám — vzory odporúčané literatúrou, tu ukázané na konkrétnom príklade.
+
+Práca zároveň prináša reprodukovateľnú metodiku porovnania a ukazuje, že dominantným faktorom end-to-end latencie mikroservisnej verzie je konfigurácia outbox schedulera — poznatok s priamym dopadom na návrh podobných systémov v praxi. Ako ďalší krok je možné rozšíriť porovnanie o distribuované trasovanie, autentifikáciu a testovanie failover scenárov pre úplnejší obraz produkčného nasadenia.

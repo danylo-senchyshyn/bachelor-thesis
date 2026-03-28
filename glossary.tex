@@ -1,99 +1,94 @@
 \newglossaryentry{microservice}{
     name={Mikroservis},
-    description={je malá, nezávislá služba v rámci systému, ktorá implementuje konkrétnu funkcionalitu a komunikuje s ostatnými službami prostredníctvom API}
+    description={malá, nezávislá služba v rámci systému, ktorá implementuje konkrétnu funkcionalitu a komunikuje s ostatnými službami prostredníctvom API alebo udalostí}
 }
 
 \newglossaryentry{monolith}{
     name={Monolitická architektúra},
-    description={je architektonický prístup, v ktorom je celá aplikácia vyvíjaná a nasadzovaná ako jeden celok so spoločnou kódovou základňou}
+    description={architektonický prístup, v ktorom je celá aplikácia vyvíjaná a nasadzovaná ako jeden celok so spoločnou kódovou základňou, jedným runtimeom a typicky jednou databázou}
 }
 
 \newglossaryentry{springboot}{
     name={Spring Boot},
-    description={je open-source Java framework určený na rýchlu tvorbu webových aplikácií a mikroservisov s minimálnou konfiguráciou}
-}
-
-\newglossaryentry{react}{
-    name={React},
-    description={JavaScript knižnica na tvorbu interaktívneho používateľského rozhrania, umožňuje vytváranie single-page aplikácií (SPA) s rýchlou odozvou a modulárnou štruktúrou komponentov}
+    description={open-source Java framework určený na rýchlu tvorbu backendových aplikácií a mikroservisov s minimálnou konfiguráciou}
 }
 
 \newglossaryentry{docker}{
     name={Docker},
-    description={je platforma na kontajnerizáciu aplikácií, ktorá umožňuje izolované spúšťanie služieb a jednoduché nasadzovanie v rôznych prostrediach}
+    description={platforma na kontajnerizáciu aplikácií, ktorá umožňuje izolované spúšťanie služieb a jednoduché nasadzovanie v rôznych prostrediach}
 }
 
 \newglossaryentry{dockercompose}{
     name={Docker Compose},
-    description={je nástroj na definovanie a spúšťanie viacerých Docker kontajnerov prostredníctvom jedného konfiguračného súboru}
+    description={nástroj na deklaratívne definovanie a spúšťanie viacerých Docker kontajnerov prostredníctvom jedného konfiguračného súboru}
 }
 
 \newglossaryentry{postgresql}{
     name={PostgreSQL},
-    description={je relačný databázový systém s podporou ACID transakcií, používaný na dlhodobé a spoľahlivé ukladanie údajov}
+    description={relačný databázový systém s podporou ACID transakcií, používaný na dlhodobé a spoľahlivé ukladanie údajov}
 }
 
 \newglossaryentry{api}{
     name={API (Application Programming Interface)},
-    description={je rozhranie, ktoré umožňuje komunikáciu medzi jednotlivými službami alebo komponentmi aplikácie}
+    description={rozhranie, ktoré umožňuje komunikáciu medzi jednotlivými službami alebo komponentmi aplikácie}
 }
 
 \newglossaryentry{restapi}{
     name={REST API},
-    description={je štýl architektúry webových služieb založený na HTTP požiadavkách na získavanie alebo modifikáciu údajov medzi klientom a serverom}
+    description={štýl architektúry webových služieb založený na HTTP požiadavkách na získavanie alebo modifikáciu údajov medzi klientom a serverom}
 }
 
 \newglossaryentry{gateway}{
     name={API Gateway},
-    description={je centrálny vstupný bod systému, ktorý sprostredkúva požiadavky medzi klientom a mikroservismi a zabezpečuje autentifikáciu a smerovanie}
-}
-
-\newglossaryentry{apigateway}{
-    name={API Gateway (všeobecne)},
-    description={je architektonický komponent, ktorý slúži ako jednotný vstupný bod pre všetky požiadavky klientov do systému. Riadi smerovanie, autentifikáciu, autorizáciu a aglomeráciu odpovedí z viacerých mikroservisov}
+    description={centrálny vstupný bod systému, ktorý sprostredkúva požiadavky medzi klientom a mikroservismi a zabezpečuje smerovanie, autentifikáciu a rate limiting}
 }
 
 \newglossaryentry{springcloudgateway}{
     name={Spring Cloud Gateway},
-    description={je komponent rámca Spring Cloud, ktorý poskytuje implementáciu API Gateway pre smerovanie a bezpečnostné politiky medzi mikroservismi}
-}
-
-\newglossaryentry{kubernetes}{
-    name={Kubernetes},
-    description={je open-source systém na orchestráciu kontajnerov, ktorý automatizuje nasadzovanie, škálovanie a správu kontajnerizovaných aplikácií}
+    description={komponent rámca Spring Cloud, ktorý poskytuje implementáciu API Gateway pre smerovanie a bezpečnostné politiky medzi mikroservismi}
 }
 
 \newglossaryentry{apachekafka}{
     name={Apache Kafka},
-    description={je distribuovaná platforma pre streamovanie dát a asynchrónnu komunikáciu medzi službami}
+    description={distribuovaná platforma pre streamovanie dát a asynchrónnu komunikáciu medzi službami, navrhnutá pre vysokú priepustnosť a spoľahlivosť}
 }
 
 \newglossaryentry{rabbitmq}{
     name={RabbitMQ},
-    description={je open-source message broker, ktorý umožňuje asynchrónnu komunikáciu medzi komponentmi systému}
+    description={open-source message broker orientovaný na doručovanie správ prostredníctvom frontov s podporou flexibilného routingu medzi producentmi a konzumentmi}
 }
 
-\newglossaryentry{prometheus}{
-    name={Prometheus},
-    description={je systém pre zber, ukladanie a dotazovanie metrik z aplikácií a infraštruktúry}
+\newglossaryentry{transactionaloutbox}{
+    name={Transactional Outbox},
+    description={návrhový vzor, ktorý zabezpečuje spoľahlivé publikovanie udalostí uložením udalosti do outbox tabuľky v rámci rovnakej databázovej transakcie ako zmena stavu, s následnou asynchrónnou publikáciou do message brokera}
 }
 
-\newglossaryentry{grafana}{
-    name={Grafana},
-    description={je open-source nástroj na vizualizáciu a analýzu dát, často používaný spolu s Prometheus na monitoring}
+\newglossaryentry{saga}{
+    name={Saga},
+    description={návrhový vzor pre koordináciu viac-krokových biznis procesov v distribuovanom prostredí; existuje vo forme orchestrácie (centrálny koordinátor) alebo choreografie (služby reagujú na udalosti)}
 }
 
-\newglossaryentry{elkstack}{
-    name={ELK Stack},
-    description={je sada nástrojov (Elasticsearch, Logstash, Kibana) na zber, spracovanie a vizualizáciu logov v distribuovaných systémoch}
+\newglossaryentry{eventualconsistency}{
+    name={Eventual Consistency},
+    description={model konzistencie v distribuovaných systémoch, kde sa stav systému stabilizuje v čase po sérii asynchrónnych operácií, nie okamžite v rámci jednej transakcie}
 }
 
-\newglossaryentry{jaeger}{
-    name={Jaeger},
-    description={je nástroj pre distribuované trasovanie požiadaviek v mikroservisných systémoch}
+\newglossaryentry{dlt}{
+    name={Dead Letter Topic (DLT)},
+    description={špeciálny Kafka topic, do ktorého sa presúvajú správy, ktoré sa nepodarilo spracovať ani po niekoľkých opakovaných pokusoch; slúži na archiváciu a neskoršiu analýzu chybových udalostí}
 }
 
-\newglossaryentry{zipkin}{
-    name={Zipkin},
-    description={je systém na sledovanie a analýzu latencie v distribuovaných aplikáciách}
+\newglossaryentry{dto}{
+    name={DTO (Data Transfer Object)},
+    description={dátový objekt určený na prenos údajov medzi jednotlivými časťami systému; zapuzdruje iba tie dáta, ktoré sú potrebné na komunikáciu, bez implementácie business logiky}
+}
+
+\newglossaryentry{acid}{
+    name={ACID},
+    description={súbor vlastností databázových transakcií: Atomicity (atomicita), Consistency (konzistentnosť), Isolation (izolácia), Durability (trvalosť); garantuje spoľahlivé spracovanie transakcií}
+}
+
+\newglossaryentry{kubernetes}{
+    name={Kubernetes},
+    description={open-source systém na orchestráciu kontajnerov, ktorý automatizuje nasadzovanie, škálovanie a správu kontajnerizovaných aplikácií}
 }

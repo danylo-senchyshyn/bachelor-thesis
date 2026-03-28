@@ -30,13 +30,13 @@ Na základe uvedenej štruktúry môžete abstrakt napísať tak, že každý bo
 
 \section*{Predhovor}
 
-Táto práca sa venuje analýze a praktickej realizácii prechodu webovej aplikácie z monolitickej architektúry na mikroservisný ekosystém, ktorý reflektuje aktuálne trendy v oblasti moderného softvérového inžinierstva. Cieľom bolo preskúmať, ako rozdiely v architektonickom návrhu ovplyvňujú škálovateľnosť, údržbu, nasadzovanie a celkovú flexibilitu aplikácie v dlhodobom horizonte.
+Táto práca sa venuje komparatívnej analýze monolitickej a mikroservisnej architektúry na konkrétnej backendovej implementácii rezervačného systému. Cieľom bolo prakticky overiť, ako architektonická voľba ovplyvňuje výkon, konzistenciu dát, prevádzkovú náročnosť a udržiavateľnosť systému — nie iba na teoretickej úrovni, ale na základe reálnych meraní a porovnateľných prototypov.
 
-V rámci práce boli vytvorené dve implementácie rovnakej aplikácie — pôvodná monolitická verzia a nová verzia založená na samostatných, nezávisle nasaditeľných mikroservisoch. Tento prístup umožnil komplexné porovnanie ich správania, prevádzkových vlastností a technických nárokov pri vývoji aj produkčnom nasadení. Zameral som sa najmä na komunikáciu medzi službami, prácu s dátami, oddelenie logiky a možnosti paralelného vývoja jednotlivých komponentov.
+V rámci práce boli vytvorené dve funkčne ekvivalentné implementácie rovnakého systému — monolitická verzia a mikroservisná verzia. Obe pokrývajú rovnakú doménu (správa používateľov, rezervácie, platby, notifikácie) a sú implementované v rovnakom technologickom stacku (Java 17, Spring Boot, PostgreSQL). Mikroservisná verzia navyše využíva Apache Kafka pre asynchrónnu komunikáciu a vzor transactional outbox pre spoľahlivé doručenie udalostí. Tento prístup umožnil objektívne porovnanie dopadov architektonickej voľby bez skreslenia spôsobeného odlišnými technológiami.
 
-Získané výsledky poukazujú na to, že mikroservisná architektúra dokáže výrazne zvýšiť modularitu a umožňuje jednoduchšie škálovanie systému, zatiaľ čo monolitická verzia stále ponúka nižšiu komplexitu a jednoduchší začiatok vývoja. Pre študentov a vývojárov predstavuje mikroservisný prístup cennú skúsenosť, ktorá zahŕňa prácu s kontajnermi, orchestrace služieb, distribuované prostredia a moderné DevOps postupy, čo sú dnes nevyhnutné zručnosti v profesionálnej praxi.
+Výkonnostné merania pomocou nástroja k6 preukázali, že monolitická architektúra dosahuje výrazne nižšiu end-to-end latenciu (5\,ms oproti 5\,210\,ms) a nižšiu spotrebu zdrojov, zatiaľ čo mikroservisná verzia prináša lepšiu izoláciu zodpovedností, odolnosť voči čiastočným výpadkom a potenciál pre izolované škálovanie. Dominantným faktorom rozdielu v E2E latencii nie je surový výpočtový výkon, ale konfigurácia outbox schedulera — poznatok s priamym dopadom na návrh podobných systémov.
 
-Verím, že táto práca poskytne čitateľom nielen ucelený pohľad na rozdiely medzi architektúrami, ale aj praktické poznatky, ktoré môžu pomôcť pri rozhodovaní o návrhu budúcich projektov a pri ďalšom technickom rozvoji v oblasti softvérovej architektúry.
+Verím, že táto práca poskytne čitateľom nielen merateľné porovnanie dvoch architektonických prístupov, ale aj praktické poznatky o vzoroch event-driven systémov (saga, transactional outbox, dead letter topic), ktoré sú dnes štandardom pri návrhu distribuovaných backendových aplikácií.
 
 
 \section*{Úvod}
