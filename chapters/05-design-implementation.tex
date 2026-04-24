@@ -33,7 +33,7 @@ V monolitickej verzii sú tieto oblasti realizované v rámci jedného systému 
 Kľúčovým konceptuálnym rozdielom je transakčný model:
 \begin{itemize}
     \item \textbf{Monolit} — jeden proces, jedna databáza, \acrshort{acid} transakcia pokrývajúca viac krokov.
-    \item \textbf{Mikroservisy} — lokálne transakcie v každej službe, eventual consistency medzi službami, koordinácia cez udalosti~\cite{Vogels2009}.
+    \item \textbf{Mikroservisy} — lokálne transakcie v každej službe, eventual consistency medzi službami, koordinácia cez udalosti.
 \end{itemize}
 
 Pre mikroservisnú verziu je rozhodujúce zavedenie event-driven koordinácie a spoľahlivej publikácie udalostí. Transactional outbox je v tomto kontexte kľúčový mechanizmus, ktorý zabezpečuje, že udalosť nebude „stratená" medzi commitom databázy a publikáciou do Kafka.
@@ -92,13 +92,13 @@ public ReservationResponse createReservation(
 
 \section{Návrh mikroservisnej architektúry}
 
-Mikroservisná architektúra je navrhnutá podľa doménových hraníc a obsahuje samostatné služby pre používateľov, rezervácie, platby a notifikácie, doplnené o gateway-service. Tento návrh zodpovedá odporúčaniam v literatúre, kde sa zdôrazňuje, že mikroservisy by mali rešpektovať hranice domén a minimalizovať zdieľané interné dátové štruktúry~\cite{Newman2021,Richardson2018}.
+Mikroservisná architektúra je navrhnutá podľa doménových hraníc a obsahuje samostatné služby pre používateľov, rezervácie, platby a notifikácie, doplnené o gateway-service. Tento návrh zodpovedá odporúčaniam v literatúre, kde sa zdôrazňuje, že mikroservisy by mali rešpektovať hranice domén a minimalizovať zdieľané interné dátové štruktúry~\cite{Newman2021}.
 
 Gateway-service poskytuje jednotný vstupný bod pre externé volania a zabezpečuje smerovanie požiadaviek na príslušné služby. Služby sú nasaditeľné samostatne a prevádzkované na oddelených portoch. V prototypovej implementácii sú tieto porty explicitne definované pre jednotlivé služby, čo umožňuje jednoznačné spustenie a testovanie v lokálnom prostredí.
 
 \section{Komunikácia a konzistencia}
 
-Konzistencia v distribuovaných systémoch je úzko spojená s kompromisom medzi dostupnosťou a toleranciou voči výpadkom. Zatiaľ čo v monolite je možné spoliehať sa na jednu databázovú transakciu, v mikroservisoch sa konzistencia dosahuje koordináciou medzi službami. To vedie k potrebe riešiť scenáre ako duplicitné správy, oneskorené spracovanie, preusporiadanie udalostí alebo dočasnú nedostupnosť služby. V takomto prostredí sa často uplatňujú princípy idempotencie (bezpečné opakovanie spracovania) a kompenzačných akcií~\cite{Richardson2018,Vogels2009,Brewer2012}.
+Konzistencia v distribuovaných systémoch je úzko spojená s kompromisom medzi dostupnosťou a toleranciou voči výpadkom. Zatiaľ čo v monolite je možné spoliehať sa na jednu databázovú transakciu, v mikroservisoch sa konzistencia dosahuje koordináciou medzi službami. To vedie k potrebe riešiť scenáre ako duplicitné správy, oneskorené spracovanie, preusporiadanie udalostí alebo dočasnú nedostupnosť služby. V takomto prostredí sa často uplatňujú princípy idempotencie (bezpečné opakovanie spracovania) a kompenzačných akcií~\cite{Richardson2018}.
 
 V práci je zvolený prístup choreografie sagy, kde neexistuje centrálny orchestrátor. Výhodou choreografie je nižšia centralizácia a prirodzená autonómia služieb: každá služba reaguje na udalosti a vykonáva vlastné lokálne zmeny. Nevýhodou môže byť zložitejšia diagnostika celého procesu, pretože „riadenie" toku je distribuované. Aj v prototypovom kontexte je preto vhodné zdôrazniť význam konzistentného logovania, korelačných identifikátorov a jasne pomenovaných stavov~\cite{Newman2021}.
 

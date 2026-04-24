@@ -24,6 +24,9 @@
 % \usepackage{algorithm}
 \usepackage{float}
 \usepackage{pdflscape}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
 
 \addbibresource{bibliography.bib}   % Location of file with bibliography resources
 \input{acronyms}                    % Load acronyms
@@ -88,10 +91,7 @@
 \setappendixstyle
 
 
-\include{appendices/user.manual}
 \include{appendices/system.manual}
-\include{appendices/structure}
-\include{appendices/latex.101}
 
 
 % avoid empty lof, lot and lol

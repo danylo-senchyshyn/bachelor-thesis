@@ -43,6 +43,31 @@ Z pohľadu spoľahlivosti je významná aj replikácia partícií medzi viacerý
 
 V kontexte tejto bakalárskej práce je Apache Kafka významná najmä preto, že prirodzene podporuje event-driven prístup k návrhu komunikácie medzi mikroservismi. Služby môžu publikovať udalosti reprezentujúce zmenu stavu alebo vykonanie určitej operácie a ostatné služby na tieto udalosti reagujú nezávisle, bez potreby priamej synchrónnej väzby. Na druhej strane si takýto prístup vyžaduje dôsledné navrhovanie formátu udalostí, kompatibility správ, idempotentného spracovania a riešenie eventual consistency~\cite{KafkaDocs2025}.
 
+\begin{table}[H]
+\centering
+\caption{Prehľad kľúčových konceptov platformy Apache Kafka}
+\begin{tabular}{|l|p{0.65\textwidth}|}
+\hline
+\textbf{Koncept} & \textbf{Popis} \\ \hline
+Topic      & Logický komunikačný kanál; producenti zapisujú správy, konzumenti ich odoberajú \\ \hline
+Partícia   & Usporiadaná sekvencia správ v rámci topicu; umožňuje horizontálne škálovanie \\ \hline
+Offset     & Jedinečné poradové číslo správy v partícii; sleduje stav spracovania konzumenta \\ \hline
+Broker     & Serverový uzol klastra; prijíma, ukladá a doručuje správy \\ \hline
+Replikácia & Každá partícia má lídra a repliky; zabezpečuje odolnosť voči výpadku uzla \\ \hline
+Consumer group & Skupina konzumentov zdieľajúca správy z partícií; základ pre paralelné spracovanie \\ \hline
+\end{tabular}
+\label{tab:kafka-concepts}
+\end{table}
+
+Nasledujúci diagram ilustruje konkrétne usporiadanie týchto konceptov. Topic je rozdelený na tri partície s rôznymi offsetmi; dve consumer groups čítajú správy nezávisle — každá sleduje vlastný offset v každej partícii, čo umožňuje paralelné spracovanie bez vzájomného ovplyvnenia. Consumer Group A obsahuje štyroch konzumentov, pričom každý spracováva správy z jednej priradenej partície, zatiaľ čo Consumer Group B využíva iba dvoch konzumentov — jeden z nich tak obsluhuje viacero partícií súčasne. Táto vlastnosť demonštruje flexibilitu modelu: počet konzumentov v skupine nemusí zodpovedať počtu partícií, Kafka však zaručuje, že každú partíciu v rámci jednej skupiny spracováva vždy najviac jeden konzument. Práve takéto usporiadanie tvorí základ pre škálovateľné a spoľahlivé spracovanie udalostí v mikroservisnej architektúre.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/consumer-groups.png}
+    \caption{Štruktúra Apache Kafka -- topic, partície, offsety a consumer groups}
+    \label{fig:kafka-diagram}
+\end{figure}
+
 \section{RabbitMQ ako alternatíva k Apache Kafka}
 
 Alternatívou k platforme Apache Kafka je RabbitMQ, ktorý taktiež slúži na sprostredkovanie správ medzi jednotlivými časťami systému. Ide o message broker orientovaný predovšetkým na doručovanie správ prostredníctvom frontov, pričom podporuje smerovanie správ, potvrdzovanie ich prijatia a rôzne komunikačné vzory medzi producentmi a konzumentmi. V praxi sa RabbitMQ využíva najmä v systémoch, kde je potrebné spoľahlivé doručenie správ, spracovanie úloh vo frontoch a flexibilné routovanie medzi službami.
@@ -50,6 +75,22 @@ Alternatívou k platforme Apache Kafka je RabbitMQ, ktorý taktiež slúži na s
 V porovnaní s platformou Kafka je RabbitMQ vhodnejší najmä pre tradičnú message-oriented komunikáciu, kde sa dôraz kladie na odovzdanie konkrétnej správy konkrétnemu príjemcovi alebo skupine príjemcov. Kafka je naopak navrhnutá ako distribuovaný log optimalizovaný na spracovanie veľkého objemu udalostí, sekvenčné ukladanie správ, ich opätovné čítanie a paralelné spracovanie prostredníctvom viacerých konzumentských skupín. Zatiaľ čo RabbitMQ je vhodný skôr pre fronty úloh a jemnejšie smerovanie správ, Kafka je vhodnejšia pre event-driven architektúry, dátové toky a asynchrónnu komunikáciu medzi viacerými nezávislými mikroservismi.
 
 Z hľadiska tejto bakalárskej práce je vhodnejšou voľbou práve Apache Kafka, keďže cieľom nie je iba sprostredkovanie jednotlivých správ, ale predovšetkým návrh asynchrónnej komunikácie medzi mikroservismi v prostredí distribuovanej architektúry. Kafka zároveň lepšie podporuje publish-subscribe model, škálovanie prostredníctvom partícií, uchovávanie udalostí počas retenčného obdobia a spätné spracovanie správ, čo je prínosné aj z pohľadu experimentálneho porovnania architektonických prístupov.
+
+\begin{table}[H]
+\centering
+\caption{Porovnanie Apache Kafka a RabbitMQ}
+\begin{tabular}{|l|p{0.35\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Kritérium} & \textbf{Apache Kafka} & \textbf{RabbitMQ} \\ \hline
+Model doručenia   & Publish-subscribe (log-based) & Message queue (push/pull) \\ \hline
+Uloženie správ    & Append-only log, konfigurovateľná retenčná doba & Správy sa mažú po potvrdení príjmu \\ \hline
+Škálovanie        & Horizontálne cez partície a consumer groups & Horizontálne cez fronty a shovel/federation \\ \hline
+Replay správ      & Áno — konzumenti môžu čítať od ľubovoľného offsetu & Nie — správa je dostupná iba raz \\ \hline
+Typické využitie  & Event streaming, event-driven architektúry, dátové toky & Fronty úloh, RPC, jemnejšie smerovanie správ \\ \hline
+Vhodnosť pre prácu & \textbf{Áno} — event-driven mikroservisy, saga choreografia & Menej vhodný — chýba replay a log-based model \\ \hline
+\end{tabular}
+\label{tab:kafka-vs-rabbitmq}
+\end{table}
 
 \section{Hypotézy a očakávané výsledky}
 

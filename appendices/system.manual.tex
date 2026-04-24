@@ -23,6 +23,27 @@ Prototypy boli vyvíjané a testované na počítači s nasledujúcou konfigurá
 
 Záťažové testovanie mikroservisnej verzie bolo realizované v prostredí Docker Compose, pričom Docker Desktop mal nastavené limity zdrojov: 8\,vCPU a 5,786\,GiB RAM. Monolitická verzia bola spúšťaná lokálne príkazom \\ \texttt{mvnw spring-boot:run} mimo Docker prostredia.
 
+\section{Minimálne systémové požiadavky}
+
+Nasledujúca tabuľka uvádza minimálne požiadavky potrebné na spustenie jednotlivých verzií prototypu. Hodnoty vychádzajú z nameranej spotreby zdrojov pri záťažovom testovaní (viď kapitolu~\ref{ch:evaluation}).
+
+\begin{table}[H]
+\centering
+\caption{Minimálne systémové požiadavky}
+\begin{tabular}{|l|p{0.35\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Požiadavka} & \textbf{Monolitická verzia} & \textbf{Mikroservisná verzia} \\ \hline
+Operačný systém  & Linux, macOS alebo Windows s podporou Dockeru & Linux, macOS alebo Windows s podporou Dockeru \\ \hline
+CPU              & 2 jadrá & 4 jadrá (odporúčané 8) \\ \hline
+RAM              & 1\,GiB & 6\,GiB (odporúčané 8\,GiB) \\ \hline
+Voľné miesto     & 1\,GiB & 4\,GiB (obraz Kafka + PostgreSQL + služby) \\ \hline
+Java             & OpenJDK 17+ & nie je potrebná (beží v Docker kontajneroch) \\ \hline
+Maven            & 3.9.x & nie je potrebný (beží v Docker kontajneroch) \\ \hline
+Docker           & Docker Desktop 4.x / Docker Engine 24+ & Docker Desktop 4.x / Docker Engine 24+, Docker Compose v2 \\ \hline
+\end{tabular}
+\label{tab:system-requirements}
+\end{table}
+
 \section{Štruktúra zdrojových súborov}
 
 Zdrojové kódy oboch prototypov sa nachádzajú v priečinku \texttt{listings/} v koreňovom adresári tejto práce.
