@@ -5,15 +5,19 @@ Táto kapitola obsahuje objektívne vyhodnotenie navrhnutých a implementovanýc
 
 \section{Výsledky výkonnostného testovania}
 
+Táto sekcia prezentuje namerané výsledky záťažového testovania oboch prototypov. Merania sú rozdelené do troch oblastí: latencia a priepustnosť HTTP odpovedí, end-to-end čas spracovania celého rezervačného toku a spotreba systémových zdrojov. Výsledky sú interpretované v kontexte architektonických rozdielov identifikovaných v predchádzajúcich kapitolách.
+
 \subsection{Metodika testovania}
 
-Výkonnostné testovanie oboch prototypov bolo realizované pomocou nástroja k6, ktorý je open-source nástrojom na záťažové testovanie HTTP služieb~\cite{k6Docs2025}. Testovanie prebehlo na rovnakom hardvéri v rovnakom čase, aby boli výsledky porovnateľné.
+Výkonnostné testovanie bolo realizované pomocou nástroja k6~\cite{k6Docs2025} na rovnakom hardvéri, aby boli výsledky porovnateľné.
 
-Testovanie bolo štruktúrované do štyroch scenárov s rastúcou záťažou: baseline (1 VU, 30\,s), low\_load (10 VUs, 60\,s), medium\_load (30 VUs, 60\,s) a high\_load (60 VUs, 60\,s). Merané metriky zahŕňali priepustnosť (req/s), latenciu HTTP odpovedí (avg, p50, p90, p95, p99, max) a end-to-end čas spracovania celého rezervačného toku. Mikroservisná verzia bola testovaná v prostredí Docker Compose na macOS (8 vCPU, 5,786\,GiB RAM). Monolitická verzia bola spustená lokálne pomocou \texttt{mvnw spring-boot:run}.
+Testovanie bolo štruktúrované do štyroch scenárov s rastúcou záťažou: baseline (1 VU, 30\,s), low\_load (10 VUs, 60\,s), medium\_load (30 VUs, 60\,s) a high\_load (60 VUs, 60\,s). Merané metriky zahŕňali priepustnosť (req/s), latenciu HTTP odpovedí (avg, p50, p90, p95, p99, max) a end-to-end čas spracovania rezervačného toku. Mikroservisná verzia bola testovaná v Docker Compose na macOS (8 vCPU, 5,786\,GiB RAM), monolitická lokálne pomocou \texttt{mvnw spring-boot:run}.
+
+Spotreba zdrojov (\acrshort{cpu}, \acrshort{ram}) bola sledovaná zásobníkom Prometheus~\cite{PrometheusDocs2025} a Grafana~\cite{GrafanaDocs2025} s nástrojom cAdvisor, ktorý zbiera metriky na úrovni Docker kontajnerov paralelne počas záťažových testov.
 
 \subsection{Latencia a priepustnosť}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{Priepustnosť -- monolitická verzia}
 \begin{tabular}{|l|r|r|r|r|}
@@ -27,7 +31,9 @@ high\_load   & 60 & 60\,s  & 66\,630 & \textasciitilde1\,110 req/s \\ \hline
 \label{tab:eval-throughput-monolith}
 \end{table}
 
-\begin{table}[h]
+Monolitická verzia škálovala lineárne s rastúcim počtom virtuálnych používateľov a pri maximálnej záťaži (60 VUs) dosiahla priepustnosť \textasciitilde1\,110 req/s. Tento výsledok zodpovedá predpokladanému správaniu aplikácie, v ktorej všetky komponenty zdieľajú spoločný adresný priestor a komunikácia medzi nimi nevyžaduje sieťové prenosy. Výsledky mikroservisnej verzie sú uvedené v nasledujúcej tabuľke.
+
+\begin{table}[H]
 \centering
 \caption{Priepustnosť -- mikroservisná verzia}
 \begin{tabular}{|l|r|r|r|r|}
@@ -41,9 +47,18 @@ high\_load   & 60 & 60\,s  & 58\,295 & \textasciitilde972 req/s \\ \hline
 \label{tab:eval-throughput-micro}
 \end{table}
 
-Monolitická verzia dosiahla pri maximálnej záťaži (60 VUs) priepustnosť približne 1\,110 req/s, zatiaľ čo mikroservisná verzia dosiahla 972 req/s — rozdiel 14\,\% v prospech monolitu.
+Mikroservisná verzia dosiahla pri 60 VUs priepustnosť 972 req/s — rozdiel 14\,\% v prospech monolitu. Zníženie priepustnosti je dôsledkom dodatočnej réžie spojenej so sieťovou komunikáciou cez API Gateway a serializáciou správ v Kafka brokerovi, ktoré pri vysokej záťaži vnášajú merateľné oneskorenie do spracovania každej požiadavky. Grafické porovnanie priepustnosti oboch architektúr je znázornené na obrázku~\ref{fig:chart-throughput}.
 
-\begin{table}[h]
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/chart-throughput.png}
+    \caption{Porovnanie priepustnosti -- monolitická vs. mikroservisná verzia}
+    \label{fig:chart-throughput}
+\end{figure}
+
+Latencia HTTP odpovedí bola meraná vo všetkých percentiloch (p50, p90, p95, p99). Namerané hodnoty pre monolitickú verziu sú uvedené v tabuľke~\ref{tab:eval-latency-monolith}.
+
+\begin{table}[H]
 \centering
 \caption{Latencia HTTP odpovedí -- monolitická verzia (ms)}
 \begin{tabular}{|l|r|r|r|r|r|r|}
@@ -57,7 +72,9 @@ high\_load   & 3,8 & 3,3 & 6,0  & 7,4  & 12,2 & 48,7 \\ \hline
 \label{tab:eval-latency-monolith}
 \end{table}
 
-\begin{table}[h]
+Monolitická verzia udržiavala stabilnú latenciu naprieč všetkými scenármi. V tabuľke~\ref{tab:eval-latency-micro} sú pre porovnanie uvedené hodnoty latencie mikroservisnej verzie.
+
+\begin{table}[H]
 \centering
 \caption{Latencia HTTP odpovedí -- mikroservisná verzia (ms)}
 \begin{tabular}{|l|r|r|r|r|r|r|}
@@ -71,13 +88,20 @@ high\_load   & 11,5 & 7,1  & 23,8 & 35,9 & 72,9  & 155,4 \\ \hline
 \label{tab:eval-latency-micro}
 \end{table}
 
-Pri porovnaní latencie je zrejmé, že monolitická verzia dosahuje výrazne nižšie hodnoty vo všetkých percentiloch. Pri 60 VUs má monolit mediánovú latenciu 3,3\,ms oproti 7,1\,ms v mikroservisoch, pričom p95 latencia je 7,4\,ms vs.\ 35,9\,ms — teda 4,9-násobný rozdiel.
+Pri porovnaní latencie je zrejmé, že monolitická verzia dosahuje výrazne nižšie hodnoty vo všetkých percentiloch. Pri 60 VUs má monolit mediánovú latenciu 3,3\,ms oproti 7,1\,ms v mikroservisoch, pričom p95 latencia je 7,4\,ms vs.\ 35,9\,ms — teda 4,9-násobný rozdiel. Toto porovnanie graficky ilustruje obrázok~\ref{fig:chart-latency}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/chart-latency.png}
+    \caption{Porovnanie latencie HTTP odpovedí -- monolitická vs. mikroservisná verzia}
+    \label{fig:chart-latency}
+\end{figure}
 
 \subsection{End-to-end čas spracovania}
 
-End-to-end (E2E) čas spracovania meria celkový čas od vytvorenia rezervácie po jej prechod do terminálneho stavu (PAID). Tento test bol realizovaný s 1 VU a 20 iteráciami.
+End-to-end (\acrshort{e2e}) čas spracovania meria celkový čas od vytvorenia rezervácie po jej prechod do terminálneho stavu (PAID). Tento test bol realizovaný s 1 VU a 20 iteráciami.
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{E2E čas spracovania -- monolitická verzia (ms)}
 \begin{tabular}{|l|r|r|r|r|r|r|}
@@ -90,7 +114,7 @@ e2e\_to\_confirm\_ms & 0,9 & 0,0 & 1,0 & 1,1 & 2,0 & 3,0  \\ \hline
 \label{tab:eval-e2e-monolith}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{E2E čas spracovania -- mikroservisná verzia (s)}
 \begin{tabular}{|l|r|r|r|r|r|r|}
@@ -107,9 +131,18 @@ Najvýraznejší rozdiel medzi oboma architektúrami sa prejavil práve v E2E č
 
 Distribúcia E2E časov mikroservisnej verzie je bimodálna: 12 z 20 iterácií trvalo 4,7–6,0\,s, zvyšných 8 iterácií trvalo 9,8–10,3\,s (udalosť musela čakať ďalší cyklus schedulera).
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/chart-e2e.png}
+    \caption{Porovnanie E2E času spracovania rezervačného toku (logaritmická škála)}
+    \label{fig:chart-e2e}
+\end{figure}
+
 \subsection{Spotreba systémových zdrojov}
 
-\begin{table}[h]
+Spotreba CPU bola v mikroservisnej verzii distribuovaná naprieč siedmimi kontajnermi. Najvyťaženejšie boli reservation-service a Kafka broker, čo zodpovedá ich úlohe v asynchrónnom rezervačnom toku. Namerané hodnoty sú uvedené v tabuľke~\ref{tab:eval-cpu-micro}.
+
+\begin{table}[H]
 \centering
 \caption{Spotreba CPU -- mikroservisná verzia (peak 60 VUs)}
 \begin{tabular}{|l|r|r|}
@@ -126,7 +159,9 @@ user-service         &  0,4\,\% &  41,7\,\% \\ \hline
 \label{tab:eval-cpu-micro}
 \end{table}
 
-\begin{table}[h]
+Monolitická verzia sústredila celú záťaž do jedného procesu. Aplikácia využívala v priemere \textasciitilde70\,\% CPU s peakom pri \textasciitilde98\,\%, zatiaľ čo PostgreSQL zostal takmer nevyťažený (tabuľka~\ref{tab:eval-cpu-monolith}).
+
+\begin{table}[H]
 \centering
 \caption{Spotreba CPU -- monolitická verzia (peak 60 VUs)}
 \begin{tabular}{|l|r|r|}
@@ -138,7 +173,9 @@ postgres     & \textasciitilde1\,\%  & \textasciitilde5\,\%  \\ \hline
 \label{tab:eval-cpu-monolith}
 \end{table}
 
-\begin{table}[h]
+Okrem CPU bola sledovaná aj spotreba operačnej pamäte. Mikroservisná verzia alokuje pamäť pre každú JVM inštanciu samostatne, čo vedie k výraznemu súhrnnému využitiu RAM (tabuľka~\ref{tab:eval-ram-micro}).
+
+\begin{table}[H]
 \centering
 \caption{Spotreba pamäte RAM -- mikroservisná verzia (peak)}
 \begin{tabular}{|l|r|}
@@ -156,7 +193,9 @@ postgres             & 192\,MiB \\ \hline
 \label{tab:eval-ram-micro}
 \end{table}
 
-\begin{table}[h]
+Mikroservisná verzia spotrebovala celkovo \textasciitilde3\,584\,MiB RAM. Pre porovnanie, monolitická verzia potrebovala podstatne menej zdrojov, ako ukazuje tabuľka~\ref{tab:eval-ram-monolith}.
+
+\begin{table}[H]
 \centering
 \caption{Spotreba pamäte RAM -- monolitická verzia (peak)}
 \begin{tabular}{|l|r|r|}
@@ -169,7 +208,14 @@ postgres     & 86\,MiB &  86\,MiB \\ \hline
 \label{tab:eval-ram-monolith}
 \end{table}
 
-Mikroservisná verzia spotrebovala pri maximálnej záťaži \textasciitilde3\,584\,MiB RAM naprieč 7 kontajnermi, zatiaľ čo monolitická verzia potrebovala iba \textasciitilde376\,MiB — 9,5-násobne menej.
+Monolitická verzia potrebovala pri maximálnej záťaži iba \textasciitilde376\,MiB — 9,5-násobne menej ako mikroservisná verzia. Grafické porovnanie spotreby pamäte zobrazuje obrázok~\ref{fig:chart-memory}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/chart-memory.png}
+    \caption{Porovnanie spotreby pamäte RAM -- monolitická vs. mikroservisná verzia}
+    \label{fig:chart-memory}
+\end{figure}
 
 \section{Kvalitatívna analýza architektúr}
 
@@ -181,13 +227,13 @@ Okrem kvantitatívnych metrík boli porovnávané aj kvalitatívne aspekty, ktor
 
 \textbf{Izolácia zlyhaní:} v monolite môže výpadok jednej časti zasiahnuť celú aplikáciu. Mikroservisná architektúra izoluje zlyhania na úroveň jednotlivých služieb. Kafka Dead Letter Topic garantuje, že chybové udalosti nie sú stratené~\cite{Newman2021}.
 
-\textbf{Konzistencia dát:} monolit využíva ACID transakcie s garantovanou silnou konzistenciou. Mikroservisná verzia uplatňuje eventual consistency; vzor transactional outbox garantuje, že žiadna udalosť nebude stratená~\cite{Richardson2018}.
+\textbf{Konzistencia dát:} monolit využíva \acrshort{acid} transakcie s garantovanou silnou konzistenciou. Mikroservisná verzia uplatňuje eventual consistency; vzor transactional outbox garantuje, že žiadna udalosť nebude stratená~\cite{Richardson2018}.
 
 \textbf{Škálovateľnosť:} monolit umožňuje horizontálne škálovanie iba ako celok. Mikroservisy umožňujú izolované škálovanie konkrétnej preťaženej služby, čo je výhodné pri nerovnomerných záťažových profiloch~\cite{Newman2021}.
 
 \section{Súhrnné porovnanie a overenie cieľov}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{Súhrnné porovnanie architektúr (60 VUs)}
 \begin{tabular}{|l|r|r|r|}
@@ -216,3 +262,14 @@ Stanovené ciele práce boli splnené:
 \end{itemize}
 
 Mikroservisná architektúra poskytuje výhody, ktoré tieto testy nezachytávajú: nezávislé nasadenie, izolované škálovanie a garantované doručenie udalostí. Výber architektúry je preto kontextové rozhodnutie, nie otázka s univerzálne správnou odpoveďou~\cite{Blinowski2022,Jaros2025}.
+
+\bigskip
+\noindent\rule{\linewidth}{0.6pt}
+
+\noindent\textbf{Kľúčové zistenie:} Dominantným faktorom E2E latencie mikroservisnej verzie nie je surový výpočtový výkon, ale konfigurácia outbox schedulera (\texttt{fixedDelay=5000\,ms}). Optimalizácia tohto parametra — napríklad skrátením na 100\,ms alebo nahradením mechanizmom CDC (Change Data Capture) — by mohla výrazne znížiť E2E latenciu bez zásahu do základnej architektúry. Monolitická architektúra dosahuje lepší výkon vo všetkých meraných dimenziách, avšak mikroservisná verzia prináša architektonické vlastnosti, ktoré sa kvantitatívnymi meraniami nedajú priamo zachytiť.
+
+\section{Zhrnutie a interpretácia výsledkov}
+
+Porovnanie ukázalo, že monolitická architektúra dosahuje výrazne nižšiu E2E latenciu a nižšiu prevádzkovú zložitosť, zatiaľ čo mikroservisná architektúra prináša lepšiu izoláciu zodpovedností, nezávislé škálovanie a odolnosť voči čiastočným výpadkom za cenu vyššej infraštruktúrnej náročnosti. Výkonnostné merania potvrdili teoretické očakávania: najvýraznejší rozdiel nebol v priepustnosti, ale v end-to-end čase spracovania — výsledok priamo podmienený asynchrónnym modelom koordinácie.
+
+Výber architektúry nie je technická otázka s univerzálne správnou odpoveďou, ale kontextové rozhodnutie závislé od veľkosti tímu, požiadaviek na škálovanie a akceptovateľnej miery prevádzkovej zložitosti. Oba prístupy majú svoje oprávnené miesto, pričom pochopenie ich kompromisov je dôležitejšie než hľadanie absolútne lepšieho riešenia.

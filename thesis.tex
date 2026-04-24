@@ -22,6 +22,8 @@
 
 % Additional packages
 % \usepackage{algorithm}
+\usepackage{float}
+\usepackage{pdflscape}
 
 \addbibresource{bibliography.bib}   % Location of file with bibliography resources
 \input{acronyms}                    % Load acronyms
@@ -40,6 +42,18 @@
 % Fix for TeX Gyre fonts not found by XeLaTeX on macOS
 \usepackage{fontspec}
 \setmainfont{TeX Gyre Pagella}
+
+\hypersetup{linkcolor=magenta}
+
+% Acronym/glossary links shown in magenta
+\renewcommand*{\glstextformat}[1]{\textcolor{magenta}{#1}}
+
+% TOC/LOF/LOT/LOL entries rendered in black
+\addtocontents{toc}{\protect\hypersetup{linkcolor=black}}
+\addtocontents{lof}{\protect\hypersetup{linkcolor=black}}
+\addtocontents{lot}{\protect\hypersetup{linkcolor=black}}
+\addtocontents{lol}{\protect\hypersetup{linkcolor=black}}
+
 \begin{document}
 
 %% Title page, abstract, declaration etc.:

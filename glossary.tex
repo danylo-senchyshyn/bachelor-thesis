@@ -25,70 +25,80 @@
 
 \newglossaryentry{postgresql}{
     name={PostgreSQL},
-    description={relačný databázový systém s podporou ACID transakcií, používaný na dlhodobé a spoľahlivé ukladanie údajov}
-}
-
-\newglossaryentry{api}{
-    name={API (Application Programming Interface)},
-    description={rozhranie, ktoré umožňuje komunikáciu medzi jednotlivými službami alebo komponentmi aplikácie}
+    description={open-source relačný databázový systém s podporou ACID transakcií, rozšírených dátových typov a vysokej spoľahlivosti}
 }
 
 \newglossaryentry{restapi}{
     name={REST API},
-    description={štýl architektúry webových služieb založený na HTTP požiadavkách na získavanie alebo modifikáciu údajov medzi klientom a serverom}
+    description={webové rozhranie navrhnuté podľa princípov REST — bezstavové HTTP volania na čítanie alebo zmenu zdrojov (GET, POST, PUT, DELETE)}
 }
 
 \newglossaryentry{gateway}{
     name={API Gateway},
-    description={centrálny vstupný bod systému, ktorý sprostredkúva požiadavky medzi klientom a mikroservismi a zabezpečuje smerovanie, autentifikáciu a rate limiting}
+    description={centrálny vstupný bod systému, ktorý sprostredkúva požiadavky medzi klientom a mikroservismi: zabezpečuje smerovanie, autentifikáciu a rate limiting}
 }
 
 \newglossaryentry{springcloudgateway}{
     name={Spring Cloud Gateway},
-    description={komponent rámca Spring Cloud, ktorý poskytuje implementáciu API Gateway pre smerovanie a bezpečnostné politiky medzi mikroservismi}
+    description={komponent rámca Spring Cloud poskytujúci implementáciu API Gateway pre smerovanie HTTP požiadaviek a aplikovanie bezpečnostných politík medzi mikroservismi}
 }
 
 \newglossaryentry{apachekafka}{
     name={Apache Kafka},
-    description={distribuovaná platforma pre streamovanie dát a asynchrónnu komunikáciu medzi službami, navrhnutá pre vysokú priepustnosť a spoľahlivosť}
-}
-
-\newglossaryentry{rabbitmq}{
-    name={RabbitMQ},
-    description={open-source message broker orientovaný na doručovanie správ prostredníctvom frontov s podporou flexibilného routingu medzi producentmi a konzumentmi}
+    description={distribuovaná platforma pre streamovanie dát a asynchrónnu komunikáciu medzi službami; navrhnutá pre vysokú priepustnosť, odolnosť voči výpadkom a at-least-once doručenie správ}
 }
 
 \newglossaryentry{transactionaloutbox}{
     name={Transactional Outbox},
-    description={návrhový vzor, ktorý zabezpečuje spoľahlivé publikovanie udalostí uložením udalosti do outbox tabuľky v rámci rovnakej databázovej transakcie ako zmena stavu, s následnou asynchrónnou publikáciou do message brokera}
+    description={návrhový vzor zabezpečujúci spoľahlivú publikáciu udalostí: udalosť sa ukladá do outbox tabuľky v rámci tej istej databázovej transakcie ako zmena stavu, a asynchrónny scheduler ju následne publikuje do message brokera}
 }
 
 \newglossaryentry{saga}{
     name={Saga},
-    description={návrhový vzor pre koordináciu viac-krokových biznis procesov v distribuovanom prostredí; existuje vo forme orchestrácie (centrálny koordinátor) alebo choreografie (služby reagujú na udalosti)}
+    description={návrhový vzor pre koordináciu viac-krokových biznis procesov v distribuovanom prostredí; vo forme choreografie (služby reagujú na udalosti) alebo orchestrácie (centrálny koordinátor riadi tok)}
 }
 
 \newglossaryentry{eventualconsistency}{
     name={Eventual Consistency},
-    description={model konzistencie v distribuovaných systémoch, kde sa stav systému stabilizuje v čase po sérii asynchrónnych operácií, nie okamžite v rámci jednej transakcie}
+    description={model konzistencie v distribuovaných systémoch, kde sa stav systému stabilizuje v čase po sérii asynchrónnych operácií — nie okamžite v rámci jednej transakcie}
 }
 
-\newglossaryentry{dlt}{
-    name={Dead Letter Topic (DLT)},
-    description={špeciálny Kafka topic, do ktorého sa presúvajú správy, ktoré sa nepodarilo spracovať ani po niekoľkých opakovaných pokusoch; slúži na archiváciu a neskoršiu analýzu chybových udalostí}
+\newglossaryentry{dltgloss}{
+    name={Dead Letter Topic},
+    description={špeciálny Kafka topic, do ktorého sa presúvajú správy, ktoré sa nepodarilo spracovať ani po niekoľkých opakovaných pokusoch; slúži na archiváciu a analýzu chybových udalostí}
 }
 
-\newglossaryentry{dto}{
-    name={DTO (Data Transfer Object)},
-    description={dátový objekt určený na prenos údajov medzi jednotlivými časťami systému; zapuzdruje iba tie dáta, ktoré sú potrebné na komunikáciu, bez implementácie business logiky}
+\newglossaryentry{dtoглoss}{
+    name={Data Transfer Object},
+    description={dátový objekt určený na prenos údajov medzi vrstvami alebo službami systému; zapuzdruje iba potrebné dáta bez implementácie business logiky}
 }
 
-\newglossaryentry{acid}{
-    name={ACID},
-    description={súbor vlastností databázových transakcií: Atomicity (atomicita), Consistency (konzistentnosť), Isolation (izolácia), Durability (trvalosť); garantuje spoľahlivé spracovanie transakcií}
+\newglossaryentry{acidgloss}{
+    name={ACID transakcia},
+    description={databázová transakcia garantujúca štyri vlastnosti: Atomicity (všetko alebo nič), Consistency (zachovanie integrity), Isolation (izolácia súbežných transakcií), Durability (trvalosť po commite)}
 }
 
 \newglossaryentry{kubernetes}{
     name={Kubernetes},
-    description={open-source systém na orchestráciu kontajnerov, ktorý automatizuje nasadzovanie, škálovanie a správu kontajnerizovaných aplikácií}
+    description={open-source systém na orchestráciu kontajnerov, ktorý automatizuje nasadzovanie, škálovanie a správu kontajnerizovaných aplikácií v klastri}
+}
+
+\newglossaryentry{boundedcontext}{
+    name={Bounded Context},
+    description={koncept z Domain-Driven Design označujúci explicitnú hranicu, v rámci ktorej platí konkrétny doménový model a jeho jazyk; základ pre rozdelenie systému na mikroservisy}
+}
+
+\newglossaryentry{idempotency}{
+    name={Idempotencia},
+    description={vlastnosť operácie, pri ktorej opakované vykonanie produkuje rovnaký výsledok ako prvé vykonanie; kľúčová pre bezpečné opakovanie spracovania správ v distribuovaných systémoch}
+}
+
+\newglossaryentry{choreography}{
+    name={Choreografia (sagy)},
+    description={spôsob koordinácie distribuovaného procesu, kde každá služba reaguje na udalosti a sама rozhoduje o ďalšom kroku — bez centrálneho orchestrátora}
+}
+
+\newglossaryentry{outboxscheduler}{
+    name={Outbox Scheduler},
+    description={asynchrónny komponent, ktorý periodicky číta záznamy z outbox tabuľky a publikuje ich ako udalosti do message brokera (napr. Kafka)}
 }

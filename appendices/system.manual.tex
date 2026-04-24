@@ -1,3 +1,148 @@
 % !TEX root = ../thesis.tex
 
 \chapter{Systémová príručka}\label{app:system.manual}
+
+Táto príručka popisuje technické prostredie, v ktorom boli prototypy vyvíjané a testované, vrátane štruktúry zdrojových súborov a pokynov na spustenie jednotlivých verzií.
+
+\section{Vývojové prostredie}
+
+Prototypy boli vyvíjané a testované na počítači s nasledujúcou konfiguráciou:
+
+\begin{itemize}
+    \item \textbf{Model:} Apple MacBook Air 15-palcový (M4, 2025)
+    \item \textbf{Operačný systém:} macOS Sequoia 26.3.1
+    \item \textbf{Procesor:} Apple M4 (10-jadrový CPU: 4 výkonnostné + 6 efektívnych jadier)
+    \item \textbf{GPU:} 10-jadrový Apple M4 GPU
+    \item \textbf{Pamäť RAM:} 24\,GiB Unified Memory
+    \item \textbf{Displej:} 15,3-palcový Liquid Retina (2880~$\times$~1864, 224\,ppi)
+    \item \textbf{Java:} OpenJDK 17
+    \item \textbf{Maven:} 3.9.x
+    \item \textbf{Docker Desktop:} 4.x (Docker Engine 24+, Docker Compose v2)
+    \item \textbf{IDE:} IntelliJ IDEA 2024
+\end{itemize}
+
+Záťažové testovanie mikroservisnej verzie bolo realizované v prostredí Docker Compose, pričom Docker Desktop mal nastavené limity zdrojov: 8\,vCPU a 5,786\,GiB RAM. Monolitická verzia bola spúšťaná lokálne príkazom \\ \texttt{mvnw spring-boot:run} mimo Docker prostredia.
+
+\section{Štruktúra zdrojových súborov}
+
+Zdrojové kódy oboch prototypov sa nachádzajú v priečinku \texttt{listings/} v koreňovom adresári tejto práce.
+
+\subsection*{Monolitická verzia (\texttt{reservation-monolith})}
+
+\begin{verbatim}
+reservation-monolith/
+├── src/
+│   └── main/
+│       ├── java/sk/tuke/reservations/
+│       │   ├── users/
+│       │   │   ├── controller/   -- UserController (REST API)
+│       │   │   ├── service/      -- UserService (biznis logika)
+│       │   │   ├── repository/   -- UserRepository (JPA)
+│       │   │   └── entity/       -- User (JPA entita)
+│       │   ├── reservations/
+│       │   │   ├── controller/   -- ReservationController
+│       │   │   ├── service/      -- ReservationService
+│       │   │   ├── repository/   -- ReservationRepository
+│       │   │   └── entity/       -- Reservation, ReservationStatus
+│       │   ├── payments/
+│       │   │   ├── controller/   -- PaymentController
+│       │   │   ├── service/      -- PaymentService
+│       │   │   ├── repository/   -- PaymentRepository
+│       │   │   └── entity/       -- Payment, PaymentStatus
+│       │   └── notifications/
+│       │       ├── service/      -- NotificationService
+│       │       ├── repository/   -- NotificationLogRepository
+│       │       └── entity/       -- NotificationLog
+│       └── resources/
+│           └── application.yml   -- DB, JPA, server konfigurácia
+├── docs/
+│   └── diagrams/                 -- architektonické diagramy (PNG)
+├── load-tests/                   -- k6 záťažové skripty
+└── pom.xml                       -- Maven build konfigurácia
+\end{verbatim}
+
+Všetky doménové oblasti zdieľajú jednu databázu PostgreSQL s názvom \\ \texttt{reservation\_monolith\_db}. Komunikácia medzi modulmi prebieha priamym volaním metód v rámci jedného JVM procesu. Transakcie sú riadené anotáciou \texttt{@Transactional} na úrovni service vrstvy.
+
+\subsection*{Mikroservisná verzia (\texttt{reservation-micro})}
+
+\begin{verbatim}
+reservation-micro/
+├── services/
+│   ├── common/                   -- zdieľané DTO a event triedy
+│   │   └── src/main/java/.../
+│   │       ├── dto/              -- request/response objekty
+│   │       └── events/           -- ReservationCreatedEvent atd.
+│   ├── gateway-service/          -- API Gateway (Spring Cloud)
+│   │   └── src/main/resources/
+│   │       └── application.yml   -- routing pravidlá
+│   ├── user-service/
+│   │   └── src/main/java/.../
+│   │       ├── controller/       -- UserController
+│   │       ├── service/          -- UserService
+│   │       ├── repository/       -- UserRepository
+│   │       └── entity/           -- User
+│   ├── reservation-service/
+│   │   └── src/main/java/.../
+│   │       ├── controller/       -- ReservationController
+│   │       ├── service/          -- ReservationService
+│   │       ├── repository/       -- Reservation + OutboxEvent repo
+│   │       ├── entity/           -- Reservation, OutboxEvent
+│   │       └── outbox/           -- OutboxEventPublisher (scheduler)
+│   ├── payment-service/
+│   │   └── src/main/java/.../
+│   │       ├── service/          -- PaymentService
+│   │       ├── repository/       -- Payment + OutboxEvent repo
+│   │       ├── entity/           -- Payment, OutboxEvent
+│   │       ├── outbox/           -- OutboxEventPublisher
+│   │       └── kafka/            -- listener + producer
+│   └── notification-service/
+│       └── src/main/java/.../
+│           ├── service/          -- NotificationService
+│           ├── repository/       -- NotificationLogRepository
+│           └── kafka/            -- listener
+├── db_init/                      -- SQL inicializácia schém DB
+├── docs/
+│   └── diagrams/                 -- architektonické diagramy (PNG)
+├── load-tests/                   -- k6 skripty a výsledky meraní
+├── docker-compose.yml            -- definícia celého prostredia
+└── pom.xml                       -- parent Maven POM (multi-modul)
+\end{verbatim}
+
+Každá služba má vlastnú databázu PostgreSQL (\texttt{user\_db}, \texttt{reservation\_db}, \texttt{payment\_db}, \texttt{notification\_db}), vlastný \texttt{Dockerfile} a konfiguráciu pre Docker v súbore \texttt{application-docker.yml}. Komunikácia medzi službami prebieha asynchrónne cez Apache Kafka; reservation-service a payment-service používajú vzor transactional outbox na spoľahlivú publikáciu udalostí.
+
+\section{Spustenie prototypov}
+
+\subsection*{Monolitická verzia}
+
+Predpoklady: Java 17, Maven, PostgreSQL (lokálne alebo v Docker).
+
+\begin{enumerate}
+    \item Spustiť databázu:
+\begin{verbatim}
+docker run --name mono-pg -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=reservation_monolith_db \
+  -p 5432:5432 -d postgres:15
+\end{verbatim}
+    \item Spustiť aplikáciu:
+\begin{verbatim}
+cd reservation-monolith
+./mvnw spring-boot:run
+\end{verbatim}
+    \item Aplikácia je dostupná na \texttt{http://localhost:8080}.
+\end{enumerate}
+
+\subsection*{Mikroservisná verzia}
+
+Predpoklady: Docker Desktop s minimálne 8\,GiB RAM a 4 vCPU.
+
+\begin{enumerate}
+    \item Zostaviť a spustiť celé prostredie:
+\begin{verbatim}
+cd reservation-micro
+docker compose up --build
+\end{verbatim}
+    \item API Gateway je dostupná na \texttt{http://localhost:8080}.
+    \item Pre zastavenie: \texttt{docker compose down -v}
+\end{enumerate}
+
+Konfigurácia pre Docker prostredie je definovaná v súboroch \\ \texttt{application-docker.yml} v každej službe. Inicializačné SQL skripty pre jednotlivé databázy sa nachádzajú v priečinku \texttt{db\_init/}.

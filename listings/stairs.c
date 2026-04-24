@@ -1,25 +1,14 @@
-#include <karel.h>
+#include <stdio.h>
 
-// function definition
-void turn_right() {
-    set_step_delay(0);
-    turn_left();
-    turn_left();
-    set_step_delay(400);
-    turn_left();
+int stairs(int n) {
+    if (n <= 0) return 0;
+    if (n == 1) return 1;
+    if (n == 2) return 2;
+    return stairs(n - 1) + stairs(n - 2);
 }
 
 int main() {
-    turn_on("stairs1.kw");
-
-    set_step_delay(400);
-
-    pick_beeper();
-    turn_left();
-    step();
-    // function call
-    turn_right();
-    step();
-
-    turn_off();
+    int n = 5;
+    printf("Stairs(%d) = %d\n", n, stairs(n));
+    return 0;
 }
