@@ -266,7 +266,7 @@ Mikroservisná architektúra poskytuje výhody, ktoré tieto testy nezachytávaj
 \bigskip
 \noindent\rule{\linewidth}{0.6pt}
 
-\noindent\textbf{Kľúčové zistenie:} Dominantným faktorom E2E latencie mikroservisnej verzie nie je surový výpočtový výkon, ale konfigurácia outbox schedulera (\texttt{fixedDelay=5000\,ms}). Optimalizácia tohto parametra — napríklad skrátením na 100\,ms alebo nahradením mechanizmom CDC (Change Data Capture) — by mohla výrazne znížiť E2E latenciu bez zásahu do základnej architektúry. Monolitická architektúra dosahuje lepší výkon vo všetkých meraných dimenziách, avšak mikroservisná verzia prináša architektonické vlastnosti, ktoré sa kvantitatívnymi meraniami nedajú priamo zachytiť.
+\noindent\textbf{Kľúčové zistenie:} Dominantným faktorom E2E latencie mikroservisnej verzie nie je surový výpočtový výkon, ale konfigurácia outbox schedulera \\ (\texttt{fixedDelay=5000\,ms}). Optimalizácia tohto parametra — napríklad skrátením na 100\,ms alebo nahradením mechanizmom CDC (Change Data Capture) — by mohla výrazne znížiť E2E latenciu bez zásahu do základnej architektúry. Monolitická architektúra dosahuje lepší výkon vo všetkých meraných dimenziách, avšak mikroservisná verzia prináša architektonické vlastnosti, ktoré sa kvantitatívnymi meraniami nedajú priamo zachytiť.
 
 \section{Zhrnutie a interpretácia výsledkov}
 
