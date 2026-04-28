@@ -1,0 +1,69 @@
+@startuml sequence-monolith
+autonumber
+actor Client
+participant "Reservation\nController" as RC
+participant "Reservation\nService" as RS
+participant "Payment\nService" as PS
+participant "Notification\nService" as NS
+database "PostgreSQL\n(reservation_monolith_db)" as DB
+
+== Create Reservation ==
+
+Client -> RC : POST /api/reservations\n{ userId, resourceId, startTime, endTime }
+activate RC
+
+RC -> RS : createReservation(request)
+activate RS
+
+RS -> DB : BEGIN TRANSACTION
+RS -> DB : INSERT reservations\n(status = CREATED)
+RS -> PS : createPayment(reservationId, amount)
+activate PS
+PS -> DB : INSERT payments\n(status = CREATED)
+PS --> RS : Payment (id, status=CREATED)
+deactivate PS
+RS -> DB : COMMIT
+RS --> RC : ReservationResponse (id, status=CREATED)
+deactivate RS
+
+RC --> Client : HTTP 201 Created\n{ reservationId, paymentId }
+deactivate RC
+
+note over Client, DB
+  Entire creation flow completes synchronously
+  in a single ACID transaction (~4-6 ms)
+end note
+
+== Confirm Payment ==
+
+Client -> RC : POST /api/payments/{paymentId}/confirm
+activate RC
+
+RC -> PS : confirmPayment(paymentId)
+activate PS
+
+PS -> DB : BEGIN TRANSACTION
+PS -> DB : UPDATE payments SET status = CONFIRMED
+PS -> RS : updateReservationStatus(reservationId, PAID)
+activate RS
+RS -> DB : UPDATE reservations SET status = PAID
+RS --> PS : ok
+deactivate RS
+PS -> NS : logNotification(reservationId, PAYMENT_CONFIRMED)
+activate NS
+NS -> DB : INSERT notification_logs
+NS --> PS : ok
+deactivate NS
+PS -> DB : COMMIT
+PS --> RC : PaymentResponse (status=CONFIRMED)
+deactivate PS
+
+RC --> Client : HTTP 200 OK
+deactivate RC
+
+note over Client, DB
+  Full E2E flow (creation + confirmation) completes
+  in median ~5 ms total. Strong ACID consistency.
+end note
+
+@enduml

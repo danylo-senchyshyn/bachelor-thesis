@@ -1,0 +1,54 @@
+@startuml components
+skinparam rectangle {
+    BackgroundColor #DDEEFF
+    BorderColor #336699
+    FontSize 12
+}
+skinparam database {
+    BackgroundColor #FFFACD
+    BorderColor #CC9900
+}
+skinparam queue {
+    BackgroundColor #FFE4CC
+    BorderColor #CC6600
+}
+skinparam defaultFontSize 12
+
+title Mikroservisná architektúra – rezervačný systém
+
+actor "Client" as Client
+
+rectangle "API Gateway\nSpring Cloud Gateway\n:8080" as Gateway
+
+rectangle "User Service\nSpring Boot :8081" as UserService
+rectangle "Reservation Service\nSpring Boot :8082" as ReservationService
+rectangle "Payment Service\nSpring Boot :8083" as PaymentService
+rectangle "Notification Service\nSpring Boot :8084\n(event-driven only)" as NotificationService
+
+database "user_db\nPostgreSQL" as UserDB
+database "reservation_db\nPostgreSQL\n+ outbox_events" as ReservationDB
+database "payment_db\nPostgreSQL\n+ outbox_events" as PaymentDB
+database "notification_db\nPostgreSQL" as NotificationDB
+
+queue "Apache Kafka\nTopics:\n- reservation-service.reservation-created\n- payment-service.payment-confirmed\n- payment-service.payment-failed\n- *.dlt (Dead Letter)" as Kafka
+
+Client --> Gateway : HTTP
+
+Gateway --> UserService        : /api/users/**
+Gateway --> ReservationService : /api/reservations/**
+Gateway --> PaymentService     : /api/payments/**
+
+UserService        --> UserDB        : JDBC / JPA
+ReservationService --> ReservationDB : JDBC / JPA
+PaymentService     --> PaymentDB     : JDBC / JPA
+NotificationService --> NotificationDB : JDBC / JPA
+
+ReservationService --> Kafka : publish ReservationCreatedEvent\n(via Outbox)
+PaymentService     --> Kafka : publish PaymentConfirmedEvent\n(via Outbox)
+PaymentService     --> Kafka : publish PaymentFailedEvent\n(via Outbox)
+
+Kafka --> PaymentService     : consume ReservationCreatedEvent
+Kafka --> ReservationService : consume PaymentConfirmedEvent / PaymentFailedEvent
+Kafka --> NotificationService : consume PaymentConfirmedEvent / PaymentFailedEvent
+
+@enduml
