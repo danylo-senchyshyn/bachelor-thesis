@@ -21,6 +21,15 @@ if (! -d 'build/chapters') {
 if (! -d 'build/appendices') {
     mkdir 'build/appendices' or die "Cannot create build/appendices directory: $!";
 }
+if (! -d 'build/ru') {
+    mkdir 'build/ru' or die "Cannot create build/ru directory: $!";
+}
+if (! -d 'build/ru/chapters') {
+    mkdir 'build/ru/chapters' or die "Cannot create build/ru/chapters directory: $!";
+}
+if (! -d 'build/ru/appendices') {
+    mkdir 'build/ru/appendices' or die "Cannot create build/ru/appendices directory: $!";
+}
 
 # Store resulting PDFs in dist/, auxiliary files in build/
 $out_dir    = 'dist';

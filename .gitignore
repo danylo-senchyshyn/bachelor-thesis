@@ -45,4 +45,9 @@ build/
 *~
 .DS_Store
 Thumbs.db
-CLAUDE.md 
+CLAUDE.md
+ru/
+thesis-ru.tex
+metadata-ru.tex
+tukethesis-ru.cls
+fonts-ru/
