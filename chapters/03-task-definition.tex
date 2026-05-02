@@ -3,6 +3,57 @@
 
 Táto kapitola sumarizuje teoretické východiská potrebné na korektné porovnanie monolitickej a mikroservisnej architektúry v kontexte backendových systémov s transakčnou doménou. Nejde o úplný prehľad celej problematiky, ale o výber konceptov, ktoré priamo ovplyvňujú návrh a interpretáciu výsledkov porovnania v ďalších kapitolách.
 
+Richardson~\cite{Richardson2018} definoval komplexný \emph{jazyk vzorov pre mikroservisy} (\emph{Microservice Pattern Language}), ktorý systematicky pokrýva všetky aspekty navrhovania, nasadenia, komunikácie a prevádzky mikroservisných systémov. Obrázok~\ref{fig:pattern-map} zobrazuje zjednodušenú mapu aplikovateľných vzorov s vyznačením tých, ktoré sú implementované alebo reflektované v tejto práci.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=0.35cm and 0.3cm,
+    pat/.style={draw, rounded corners=3pt, minimum width=2.4cm, minimum height=0.6cm,
+                align=center, font=\scriptsize, thick},
+    impl/.style={pat, fill=green!20},
+    partial/.style={pat, fill=orange!20},
+    cat/.style={font=\scriptsize\bfseries, anchor=west, text width=2.8cm}
+]
+
+% Legend
+\node[impl,   minimum width=1.4cm] (l1) at (0,0)   {implementovaný};
+\node[partial, minimum width=1.4cm, right=0.25cm of l1] (l2) {reflektovaný};
+
+% --- Row 1 ---
+\node[cat] (c1) at (0,-0.85) {Architektonický štýl};
+\node[impl, right=0.15cm of c1]  (p-mono) {Monolitická archit.};
+\node[impl, right=0.15cm of p-mono] (p-ms) {Mikroservisná archit.};
+
+% --- Row 2 ---
+\node[cat] (c2) at (0,-1.6) {Dekompozícia};
+\node[impl, right=0.15cm of c2, minimum width=4.8cm]  (p-biz) {Decompose by Business Capability};
+
+% --- Row 3 ---
+\node[cat] (c3) at (0,-2.35) {Dáta a konzistencia};
+\node[impl, right=0.15cm of c3] (p-dbs)   {Database per Service};
+\node[impl, right=0.15cm of p-dbs] (p-saga)   {Saga (choreografia)};
+\node[impl, right=0.15cm of p-saga] (p-outbox) {Transactional Outbox};
+
+% --- Row 4 ---
+\node[cat] (c4) at (0,-3.1) {Spoľahlivosť};
+\node[impl, right=0.15cm of c4] (p-idem) {Idempotent Consumer};
+\node[impl, right=0.15cm of p-idem] (p-dlt) {Dead Letter Topic};
+\node[partial, right=0.15cm of p-dlt] (p-cb) {Circuit Breaker};
+
+% --- Row 5 ---
+\node[cat] (c5) at (0,-3.85) {Externé rozhranie};
+\node[impl, right=0.15cm of c5] (p-gw) {API Gateway};
+
+% --- Row 6 ---
+\node[cat] (c6) at (0,-4.6) {Observability};
+\node[impl,  right=0.15cm of c6]   (p-hc)  {Health Check API};
+
+\end{tikzpicture}
+\caption{Mapa mikroservisných vzorov aplikovateľných v tejto práci (podľa Richardson~\cite{Richardson2018})}
+\label{fig:pattern-map}
+\end{figure}
+
 \section{Monolitická architektúra – charakteristika a dôsledky}
 
 Monolitická architektúra je prístup, v ktorom je aplikácia implementovaná a nasadzovaná ako jeden celok. Typicky ide o jeden proces, jeden runtime a často aj jednu databázu. Jej hlavnou výhodou je jednoduchosť vývoja a prevádzky v skorých fázach projektu: jednotný build, jednotné testy, jednotné nasadenie, jednoduché lokálne spustenie a zvyčajne aj jednoduchšie ladenie. Pri práci s relačnou databázou môže monolit prirodzene využívať silné transakcie (ACID) a vykonávať viacero krokov v rámci jednej transakčnej hranice~\cite{Fowler2015MonolithFirst}.
@@ -11,7 +62,7 @@ Nevýhody monolitu sa výraznejšie prejavujú pri raste systému. Ak nie sú ud
 
 \section{Mikroservisná architektúra – charakteristika a dôsledky}
 
-Mikroservisná architektúra delí systém na samostatné služby podľa doménových hraníc. Každá služba má vlastný životný cyklus, vlastné nasadenie a často aj vlastnú perzistenciu. Tento prístup môže znížiť prepojenosť a zlepšiť izoláciu zmien. Zároveň umožňuje škálovanie iba vyťaženej časti systému. V literatúre sa zdôrazňuje, že mikroservisy dávajú najväčší zmysel pri jasne oddelených doménach, dostatočnej zrelosti tímu a existencii infraštruktúry (monitoring, CI/CD, service discovery, logovanie a pod.)~\cite{Newman2021,Richardson2018,Richardson2020,FowlerLewis2014MicroservicesDefinition}.
+Mikroservisná architektúra delí systém na samostatné služby podľa doménových hraníc. Každá služba má vlastný životný cyklus, vlastné nasadenie a často aj vlastnú perzistenciu. Tento prístup môže znížiť prepojenosť a zlepšiť izoláciu zmien. Zároveň umožňuje škálovanie iba vyťaženej časti systému. Dragoni a kol.~\cite{Dragoni2017} identifikujú tri kľúčové podmienky pre zmysluplné nasadenie mikroservisov: jasne oddelené doménové hranice, dostatočnú tímovú zrelosť a existenciu podpornej infraštruktúry (monitoring, CI/CD, service discovery, logovanie). V neprítomnosti týchto podmienok operačný overhead mikroservisov prevažuje nad ich prínosmi~\cite{Newman2021,Richardson2018,Richardson2020,FowlerLewis2014MicroservicesDefinition}.
 
 Nevýhodou mikroservisov je prevádzkový a návrhový „overhead". Medzi služby vstupuje sieťová komunikácia, pribúdajú nové triedy chýb (timeouts, opakovanie požiadaviek, výpadky závislostí), a transakčná konzistencia sa mení z lokálneho problému na distribuovaný. V praxi sa preto často používa eventual consistency, doménové udalosti a vzory pre koordináciu procesov (napr. saga)~\cite{Richardson2018,Vogels2009}.
 
@@ -26,6 +77,114 @@ V takomto nastavení sú dôležité tieto princípy:
     \item \textbf{Zvládanie chýb} — dead-letter queue/topic, retry politiky, kontrola deserializácie, korelačné ID.
 \end{itemize}
 
+\section{Idempotentný konzument}
+
+V asynchrónnej komunikácii je potrebné počítať s tým, že rovnaká správa môže byť doručená viackrát — napríklad pri reštarte konzumenta, pri opakovaní po dočasnej chybe alebo pri obnove zo záznamu offsetu. Vzor \emph{Idempotent Consumer} (idempotentný konzument) zaručuje, že spracovanie rovnakej správy viackrát nevedie k nekorektnej zmene stavu systému~\cite{Richardson2018}.
+
+V praxi sa idempotencia dosahuje dvoma spôsobmi. Prvý je prirodzená idempotencia operácie: ak aktualizácia stavu rezervácie z hodnoty \texttt{CONFIRMED} na \texttt{CONFIRMED} nemá žiadny efekt, operácia je idempotentná bez dodatočnej logiky. Druhý spôsob je explicitná deduplikácia: konzument sleduje identifikátory už spracovaných správ (napríklad v databázovej tabuľke) a pri opakovanom prijatí rovnakého identifikátora správu ignoruje.
+
+V prototypoch tejto práce je idempotencia zabezpečená čiastočne prirodzeným spôsobom — aktualizácie stavov sú navrhnuté tak, aby opakované spracovanie tej istej udalosti nemalo ďalší efekt. Explicitná deduplikácia pomocou tabuľky spracovaných identifikátorov nie je implementovaná, čo je jedno z vedome prijatých zjednodušení prototypovej implementácie.
+
+Diagram na obrázku~\ref{fig:idempotent-consumer} ilustruje rozdiel medzi neidempotentným a idempotentným konzumentom pri opakovanom doručení správy.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=0.7cm and 1.2cm,
+    box/.style={draw, rounded corners=3pt, minimum width=3.2cm, minimum height=0.62cm,
+                align=center, font=\small},
+    arr/.style={-{Stealth[length=6pt]}, thick},
+    warn/.style={draw, fill=red!15, rounded corners=3pt, minimum width=3.4cm,
+                 minimum height=0.62cm, align=center, font=\small},
+    ok/.style={draw, fill=green!15, rounded corners=3pt, minimum width=3.4cm,
+               minimum height=0.62cm, align=center, font=\small},
+    ttl/.style={font=\small\bfseries}
+]
+
+% ---- Top: bez idempotentnosti ----
+\node[ttl] (t1) {Bez idempotentného konzumenta};
+\node[box,  below=0.5cm of t1] (b1) {Kafka broker};
+
+% arrows go from broker to top of message nodes
+\node[box,  below=1.4cm of b1, xshift=-2.4cm] (m1a) {Správa \#42};
+\node[box,  below=1.4cm of b1, xshift=+2.4cm] (m1b) {Správa \#42 (retry)};
+
+\coordinate (stem1) at ([yshift=-0.5cm]b1.south);
+\draw[arr] (b1.south) -- (stem1);
+\draw[arr] (stem1) -| node[left, font=\scriptsize, pos=0.65]{1.} (m1a.north);
+\draw[arr] (stem1) -| node[right,font=\scriptsize, pos=0.65]{2.} (m1b.north);
+
+\node[warn, below=1.0cm of m1a, xshift=2.4cm] (s1) {Stav: 2$\times$ aktualizovaný};
+
+\draw[arr] (m1a.south) |- (s1.west);
+\draw[arr] (m1b.south) |- (s1.east);
+
+% ---- Bottom: s idempotentnostou ----
+\node[ttl, below=5.5cm of t1] (t2) {S idempotentným konzumentom};
+\node[box,  below=0.5cm of t2] (b2) {Kafka broker};
+
+\node[box,  below=1.4cm of b2, xshift=-2.4cm] (m2a) {Správa \#42};
+\node[box,  below=1.4cm of b2, xshift=+2.4cm] (m2b) {Správa \#42 (retry)};
+
+\coordinate (stem2) at ([yshift=-0.5cm]b2.south);
+\draw[arr] (b2.south) -- (stem2);
+\draw[arr] (stem2) -| node[left, font=\scriptsize, pos=0.65]{1.} (m2a.north);
+\draw[arr] (stem2) -| node[right,font=\scriptsize, pos=0.65]{2.} (m2b.north);
+
+\node[ok,   below=1.0cm of m2a] (s2)     {Stav: 1$\times$ aktualizovaný};
+\node[warn, below=1.0cm of m2b] (ignore) {Ignorovaná};
+
+\draw[arr] (m2a.south) -- (s2.north);
+\draw[arr] (m2b.south) -- (ignore.north);
+
+\end{tikzpicture}
+\caption{Idempotentný konzument -- správanie pri opakovanom doručení správy}
+\label{fig:idempotent-consumer}
+\end{figure}
+
+\section{Circuit Breaker a odolnosť voči kaskádovým zlyhaniam}
+
+Jednou z hlavných výziev mikroservisnej architektúry je sieťová komunikácia medzi službami. Ak jedna zo závislých služieb prestane reagovať alebo začne vracať chyby, priame volanie bez ochranného mechanizmu môže spôsobiť \emph{kaskádové zlyhanie}: volajúca služba čaká na odpoveď, hromadí vlákna a zdroje, čo vedie k zlyhaniu ďalšej vrstvy systému.
+
+Vzor \emph{Circuit Breaker} (prerušovač obvodu) rieši tento problém ochranným proxy mechanizmom umiestneným medzi volajúcou a volanou službou~\cite{Richardson2018}. Prerušovač funguje ako stavový automat s tromi stavmi:
+
+\begin{itemize}
+    \item \textbf{CLOSED} (zatvorený) — normálny prevádzkový stav; požiadavky prechádzajú priamo.
+    \item \textbf{OPEN} (otvorený) — po dosiahnutí prahovej hodnoty chybovosti prerušovač „vypadne"; požiadavky sú okamžite odmietané bez ďalšieho volania závislej služby. Tým sa zabraňuje plytvaniu zdrojmi a kaskádovému šíreniu chyby.
+    \item \textbf{HALF-OPEN} (polootvorený) — po uplynutí čakacej doby prerušovač povolí obmedzený počet testovacích požiadaviek. Ak tieto uspejú, stav sa vráti do CLOSED; ak zlyhajú, vráti sa do OPEN.
+\end{itemize}
+
+Obrázok~\ref{fig:circuit-breaker} znázorňuje prechody medzi stavmi prerušovača obvodu.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=3.2cm,
+    state/.style={draw, circle, minimum size=2.2cm, text centered,
+                  font=\small\bfseries, thick},
+    closed/.style={state, fill=green!20},
+    open/.style={state, fill=red!20},
+    halfopen/.style={state, fill=orange!20},
+    arr/.style={-{Stealth}, thick, bend left=25},
+    lbl/.style={font=\scriptsize, text centered, fill=white, inner sep=2pt, yshift=3pt}
+]
+\node[closed]  (closed)   {CLOSED};
+\node[open,    right=of closed]  (open)    {OPEN};
+\node[halfopen, below=2.2cm of open] (half)    {HALF-OPEN};
+
+\draw[arr] (closed) to node[lbl, above]{chybovosť $>$ prah} (open);
+\draw[arr] (open)   to node[lbl, right]{uplynutie čakacej doby} (half);
+\draw[arr] (half)   to node[lbl, below left]{testovacia požiadavka OK} (closed);
+\draw[-{Stealth[length=6pt]}, thick, bend left=20] (half) to node[lbl, right]{testovacia požiadavka zlyhá} (open);
+\draw[-{Stealth[length=6pt]}, thick] (closed) to[out=120,in=60,looseness=5] node[lbl, above, yshift=5pt]{požiadavky OK} (closed);
+\draw[-{Stealth[length=6pt]}, thick] (open)  to[out=60,in=120,looseness=5]  node[lbl, above, yshift=5pt]{stále otvorený} (open);
+\end{tikzpicture}
+\caption{Stavový diagram vzoru Circuit Breaker}
+\label{fig:circuit-breaker}
+\end{figure}
+
+V kontexte predkladanej práce nie je Circuit Breaker implementovaný, pretože komunikácia medzi službami prebieha primárne asynchrónne cez Kafka, kde tento problém nevzniká v rovnakej forme — zlyhanie konzumenta neblokuje producentov. Pre synchrónne HTTP volania cez API Gateway by však bolo v produkčnom nasadení vhodné zaradiť tento vzor, napríklad pomocou knižnice Resilience4j integrovanej so Spring Cloud Gateway.
+
 \section{Saga a transactional outbox}
 
 Saga je vzor, ktorý popisuje koordináciu viac-krokového biznis procesu v distribuovanom prostredí. Existujú dve hlavné formy: orchestrácia (centrálny koordinátor) a choreografia (služby reagujú na udalosti)~\cite{Richardson2018}. V prototypoch tejto práce je zvolená choreografia, ktorá prirodzene demonštruje autonómiu služieb, ale kladie vyššie nároky na diagnostiku „end-to-end" toku.
@@ -37,3 +196,4 @@ Transactional outbox je vzor, ktorý rieši problém spoľahlivého publikovania
 API Gateway poskytuje jednotný vstupný bod pre klientov a umožňuje konsolidovať routing, autentifikáciu alebo rate limiting. V prototypovom kontexte sa gateway využíva najmä na zjednodušenie klientského prístupu a na stabilizáciu vstupných endpointov (najmä pri vytvorení rezervácie). Vnútri systému sa však proces spracovania realizuje asynchrónne pomocou udalostí~\cite{SpringCloudGateway2025}.
 
 Z teoretického hľadiska je dôležité, že mikroservisné rozhrania (HTTP API aj event kontrakty) sú „verejné kontrakty". Preto je vhodné používať DTO, jasné pomenovanie udalostí a uvažovať o kompatibilite pri rozšíreniach. DTO (Data Transfer Object) je dátový objekt určený na prenos údajov medzi jednotlivými časťami systému. Jeho úlohou je zapuzdriť iba tie dáta, ktoré sú potrebné na komunikáciu, bez implementácie business logiky. Používanie DTO prispieva k jednoznačnosti rozhraní, znižuje previazanosti medzi komponentmi a uľahčuje udržiavanie aj rozširovanie systému.
+

@@ -114,6 +114,8 @@ e2e\_to\_confirm\_ms & 0,9 & 0,0 & 1,0 & 1,1 & 2,0 & 3,0  \\ \hline
 \label{tab:eval-e2e-monolith}
 \end{table}
 
+Monolitická verzia dokončila celý rezervačný tok vrátane platby a notifikácie v mediáne 5\,ms, pričom maximálny nameraný čas bol 17\,ms. Tieto hodnoty odpovedajú synchrónnej povahe spracovania — celý tok prebieha v rámci jednej transakcie bez akéhokoľvek čakania na externé systémy. Pre porovnanie, nasledujúca tabuľka ukazuje E2E časy pre mikroservisnú verziu.
+
 \begin{table}[H]
 \centering
 \caption{E2E čas spracovania -- mikroservisná verzia (s)}
@@ -273,3 +275,5 @@ Mikroservisná architektúra poskytuje výhody, ktoré tieto testy nezachytávaj
 Porovnanie ukázalo, že monolitická architektúra dosahuje výrazne nižšiu E2E latenciu a nižšiu prevádzkovú zložitosť, zatiaľ čo mikroservisná architektúra prináša lepšiu izoláciu zodpovedností, nezávislé škálovanie a odolnosť voči čiastočným výpadkom za cenu vyššej infraštruktúrnej náročnosti. Výkonnostné merania potvrdili teoretické očakávania: najvýraznejší rozdiel nebol v priepustnosti, ale v end-to-end čase spracovania — výsledok priamo podmienený asynchrónnym modelom koordinácie.
 
 Výber architektúry nie je technická otázka s univerzálne správnou odpoveďou, ale kontextové rozhodnutie závislé od veľkosti tímu, požiadaviek na škálovanie a akceptovateľnej miery prevádzkovej zložitosti. Oba prístupy majú svoje oprávnené miesto, pričom pochopenie ich kompromisov je dôležitejšie než hľadanie absolútne lepšieho riešenia.
+
+Z praktického hľadiska výsledky naznačujú, že systémy s homogénnym záťažovým profilom a malým tímom by mali zvážiť monolitický prístup ako východiskový bod, pričom migrácia na mikroservisy by mala byť motivovaná konkrétnymi prevádzkovými potrebami — napríklad potrebou nezávislého škálovania jednej domény alebo zvýšenou požiadavkou na izoláciu zlyhaní. Výsledky tiež poukazujú na to, že konfiguračné rozhodnutia (ako interval outbox schedulera) môžu mať väčší dopad na výkon ako samotná architektonická voľba, čo zdôrazňuje dôležitosť empirického merania pred architektonickými rozhodnutiami.

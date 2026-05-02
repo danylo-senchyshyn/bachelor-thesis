@@ -36,7 +36,7 @@ Kľúčovým konceptuálnym rozdielom je transakčný model:
     \item \textbf{Mikroservisy} — lokálne transakcie v každej službe, eventual consistency medzi službami, koordinácia cez udalosti.
 \end{itemize}
 
-Pre mikroservisnú verziu je rozhodujúce zavedenie event-driven koordinácie a spoľahlivej publikácie udalostí. Transactional outbox je v tomto kontexte kľúčový mechanizmus, ktorý zabezpečuje, že udalosť nebude „stratená" medzi commitom databázy a publikáciou do Kafka.
+Pre mikroservisnú verziu je rozhodujúce zavedenie event-driven koordinácie a spoľahlivej publikácie udalostí. Transactional outbox zabezpečuje, že udalosť nebude „stratená" medzi commitom databázy a publikáciou do Kafka.
 
 \section{Požiadavky na riešenie}
 
@@ -91,6 +91,74 @@ public ReservationResponse createReservation(
 \end{lstlisting}
 
 \section{Návrh mikroservisnej architektúry}
+
+\subsection*{Dekompozícia podľa biznis schopností}
+
+Prvým a kľúčovým rozhodnutím pri návrhu mikroservisnej architektúry je otázka, ako rozdeliť systém na samostatné služby. V literatúre sú etablované dva hlavné prístupy: \emph{Decompose by Business Capability} a \emph{Decompose by Subdomain}~\cite{Richardson2018}.
+
+Vzor \emph{Decompose by Business Capability} vychádza z organizačnej štruktúry a aktivít podniku. Každá biznis schopnosť (napríklad „správa rezervácií" alebo „spracovanie platieb") tvorí samostatnú službu so svojím vlastným dátovým modelom a logikou. Vzor \emph{Decompose by Subdomain} vychádza z \emph{Domain-Driven Design} (DDD): systém sa dekomponuje podľa ohraničených kontextov (\emph{Bounded Context}), kde každý subdoén má vlastný jazyk a dátovú reprezentáciu~\cite{Newman2021}.
+
+V predkladanom prototypovom systéme bola zvolená dekompozícia podľa doménových hraníc, ktorá zodpovedá obom prístupom súčasne — biznis schopnosti a doménové ohraničené kontexty sú v tomto systéme prirodzene zarovnané:
+
+\begin{itemize}
+    \item \textbf{user-service} — správa používateľov (registrácia, profil),
+    \item \textbf{reservation-service} — vytváranie a správa rezervácií,
+    \item \textbf{payment-service} — spracovanie platieb a ich výsledkov,
+    \item \textbf{notification-service} — odosielanie notifikácií o stave procesu,
+    \item \textbf{gateway-service} — jednotný vstupný bod (API Gateway).
+\end{itemize}
+
+Obrázok~\ref{fig:decomposition} ilustruje, ako je monolitický systém logicky rozčlenený na tieto doménové hranice a ako každá hranica zodpovedá samostatnej mikroservise.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=0.4cm and 0.5cm,
+    svc/.style={draw, rounded corners=4pt, minimum width=2.8cm, minimum height=1.0cm,
+                align=center, font=\small\bfseries, thick},
+    msvc/.style={draw, rounded corners=4pt, minimum width=3.2cm, minimum height=1.0cm,
+                align=center, font=\small\bfseries, thick},
+    mono/.style={draw, dashed, rounded corners=6pt, inner sep=8pt},
+    arr/.style={-{Stealth[length=6pt]}, thick},
+    lbl/.style={font=\scriptsize}
+]
+
+% Monolith box
+\node[svc, fill=gray!15] (m-user)  {users};
+\node[svc, fill=gray!15, right=0.6cm of m-user] (m-res)  {reservations};
+\node[svc, fill=gray!15, right=0.6cm of m-res]  (m-pay)  {payments};
+\node[svc, fill=gray!15, right=0.6cm of m-pay]  (m-notif){notifications};
+\node[mono, fit=(m-user)(m-notif), label=above:{\small\bfseries Monolit (jeden proces)}] (monobox) {};
+
+% Gateway — placed below monolith
+\node[svc, fill=yellow!20, below=1.0cm of monobox.south, minimum width=5.0cm] (gw) {gateway-service (API Gateway)};
+
+% Arrow down (dekompozícia label) — connects monobox to gateway
+\draw[arr, very thick] (monobox.south) -- node[right=0.1cm, lbl]{dekompozícia} (gw.north);
+
+% Microservices row — further below gateway, wider spacing
+\node[msvc, fill=blue!12,  below=1.8cm of gw, xshift=-5.2cm] (s-user)  {user-service};
+\node[msvc, fill=green!15, below=1.8cm of gw, xshift=-1.7cm] (s-res)   {reservation-service};
+\node[msvc, fill=orange!15,below=1.8cm of gw, xshift=+1.7cm] (s-pay)   {payment-service};
+\node[msvc, fill=purple!12,below=1.8cm of gw, xshift=+5.2cm] (s-notif) {notification-service};
+
+% DB labels
+\foreach \s/\db in {s-user/user\_db, s-res/reserv.\_db, s-pay/payment\_db, s-notif/notif.\_db}{
+  \node[draw, fill=white, below=0.3cm of \s, font=\scriptsize, inner sep=2pt, rounded corners=2pt] {\db};
+}
+
+% Curved arrows from gateway to each microservice
+\draw[arr] (gw.south) to[out=248, in=90] (s-user.north);
+\draw[arr] (gw.south) to[out=258, in=90] (s-res.north);
+\draw[arr] (gw.south) to[out=282, in=90] (s-pay.north);
+\draw[arr] (gw.south) to[out=292, in=90] (s-notif.north);
+
+\end{tikzpicture}
+\caption{Dekompozícia monolitu na mikroservisy podľa doménových hraníc}
+\label{fig:decomposition}
+\end{figure}
+
+Každá mikroservisná doména má vlastnú databázu (\emph{Database per Service}), čo zabraňuje zdieľaniu dátových schém a umožňuje nezávislý vývoj a nasadenie každej služby. V prototypovej implementácii sú tieto databázy realizované ako samostatné PostgreSQL databázy v rámci jedného PostgreSQL servera.
 
 Mikroservisná architektúra je navrhnutá podľa doménových hraníc a obsahuje samostatné služby pre používateľov, rezervácie, platby a notifikácie, doplnené o gateway-service. Tento návrh zodpovedá odporúčaniam v literatúre, kde sa zdôrazňuje, že mikroservisy by mali rešpektovať hranice domén a minimalizovať zdieľané interné dátové štruktúry~\cite{Newman2021}.
 
@@ -213,6 +281,8 @@ Perzistencia a transakcie:
     \item transakčné spracovanie v service vrstve cez \texttt{@Transactional}.
 \end{itemize}
 
+Výhodou tejto architektúry je predovšetkým jednoduchosť nasadenia a prevádzky: celý systém beží ako jeden proces, chybové hlásenia sú sústredené na jednom mieste a ladenie toku je priamočiare. Takýto prístup výrazne znižuje prevádzkový overhead a je vhodný najmä pre tímy bez dedikovanej infraštruktúrnej kapacity alebo pre systémy, kde záťažový profil nevyžaduje nezávislé škálovanie jednotlivých domén.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.99\textwidth,height=0.99\textheight,keepaspectratio]{figures/architecture-monolith.png}
@@ -327,6 +397,16 @@ Konzistencia a spoľahlivosť:
     \item Actuator endpoints (health/info) pre základnú diagnostiku.
 \end{itemize}
 
+Táto zostava technológií odráža bežné produkčné prostredie microservisného systému: Spring Cloud Gateway zabezpečuje jednotný vstupný bod a umožňuje prípadné rozšírenie o autentifikáciu alebo rate limiting, Apache Kafka tvorí chrbticu asynchrónnej komunikácie s garantovaným doručením správ, a Docker Compose reprodukuje celé prostredie na lokálnom vývojovom stroji bez nutnosti externej infraštruktúry.
+
+Z hľadiska konfigurácie používa každá služba vlastný \texttt{application.yml} s parametrami špecifickými pre danú doménu — databázové pripojenie, Kafka topic, port. Spoločné definície udalostí a \acrshort{dto} sú centralizované v module \texttt{common}, čo eliminuje duplicitu kontraktov a zjednodušuje evolúciu schémy udalostí pri zmenách domény.
+
+Volba tohto stacku nie je náhodná: kombinácia Spring Boot a Kafka je v praxi jednou z najrozšírenejších pre event-driven mikroservisné systémy v prostredí JVM~\cite{Newman2021}. Prototyp tak demonštruje architektonické princípy na technológiách, s ktorými sa vývojári bežne stretávajú, čo zvyšuje praktickú prenositeľnosť záverov tejto práce.
+
+Dôležitým rozhodnutím pri návrhu mikroservisnej verzie bolo zachovanie logickej izolácie databáz namiesto fyzicky oddeleného databázového servera pre každú službu. V prototypovom kontexte sú jednotlivé domény oddelené na úrovni logických databáz v rámci jednej PostgreSQL inštancie — \texttt{reservation\_db}, \texttt{payment\_db}, \texttt{notification\_db} a \texttt{user\_db}. Toto zjednodušenie znižuje prevádzkový overhead lokálneho prostredia a zároveň zachováva princíp izolácie perzistentného stavu, ktorý je pre mikroservisy kľúčový.
+
+Výsledná architektonická zostava pokrýva všetky typické vrstvy event-driven systému: synchronizačnú vrstvu (HTTP cez gateway), asynchrónnu vrstvu (Kafka topics a konzumenti), perzistentnú vrstvu (oddelené databázy) a pozorovateľnostnú vrstvu (Actuator, health endpointy). Táto úplnosť umožňuje porovnanie nielen výkonnostných charakteristík, ale aj prevádzkovej zložitosti oboch architektonických prístupov.
+
 Na obrázku~\ref{fig:components} je zobrazená komponentová architektúra mikroservisnej verzie.
 
 \begin{landscape}
@@ -340,7 +420,7 @@ Na obrázku~\ref{fig:components} je zobrazená komponentová architektúra mikro
 
 Komponentový diagram na obrázku~\ref{fig:components} znázorňuje fyzické rozdelenie mikroservisnej verzie na samostatné služby. Na rozdiel od monolitu, kde všetky doménové vrstvy existujú v rámci jedného procesu, tu každá služba beží ako autonómny kontajner s vlastnou databázou. gateway-service tvorí jediný vstupný bod pre externé volania a zabezpečuje smerovanie požiadaviek bez toho, aby klient vedel o internej štruktúre systému. Táto hranica je kľúčová: z pohľadu klienta ide vždy o jediné rozhranie, pričom vnútorná dekompozícia systému zostáva transparentná.
 
-Dôležitou vlastnosťou tohto usporiadania je izolácia zlyhania: výpadok payment-service neovplyvní dostupnosť user-service ani gateway-service. Jednotlivé služby môžu byť škálované nezávisle podľa aktuálnej záťaže — napríklad reservation-service môže bežať vo viacerých inštanciách bez nutnosti škálovať notification-service. Každá služba má vlastný životný cyklus nasadenia, čo umožňuje vydávať nové verzie čiastkových komponentov bez reštartu celého systému. Za cenu tejto flexibility však systém vyžaduje explicitnú infraštruktúru: Kafka ako message broker, oddelené databázy a orchestráciu kontajnerov cez Docker Compose.
+Dôležitou vlastnosťou tohto usporiadania je izolácia zlyhania: výpadok payment-service neovplyvní dostupnosť user-service ani gateway-service. Jednotlivé služby môžu byť škálované nezávisle podľa aktuálnej záťaže — napríklad reservation-service môže bežať vo viacerých inštanciách bez nutnosti škálovať notification-service. Každá služba má vlastný životný cyklus nasadenia, čo umožňuje vydávať nové verzie čiastkových komponentov bez reštartu celého systému.
 
 Z pohľadu komunikácie je viditeľné rozdelenie na dve vrstvy: synchrónnu (HTTP cez gateway) a asynchrónnu (udalosti cez Kafka). Táto dualita je zámerná — synchronizácia je vhodná pre operácie, kde klient očakáva okamžitú odpoveď (napr. vytvorenie rezervácie), zatiaľ čo asynchrónna komunikácia sa používa pre kroky, ktoré môžu prebehnúť s oneskorením bez degradácie používateľského zážitku (platba, notifikácia). Diagram teda nezachytáva len štruktúru, ale aj komunikačný kontrakt medzi komponentmi.
 
@@ -425,3 +505,9 @@ Reprodukovateľné spustenie predstavuje dôležitý predpoklad pre korektné po
 Mikroservisná verzia je spustiteľná v lokálnom prostredí pomocou Docker Compose, ktorý definuje závislosti na Kafka/Zookeeper a PostgreSQL, a zároveň spúšťa jednotlivé služby v kontajneroch. Použitý je koncept Spring Profiles, kde sa odlišuje základná konfigurácia a konfigurácia určená pre docker prostredie (\texttt{application.yml} a \texttt{application-docker.yml}).
 
 Na úrovni testovania je v prototypoch prítomná podpora jednotkových a integračných testov (JUnit 5, Mockito). Mikroservisná verzia využíva Actuator a exponuje základné health/info endpointy pre diagnostiku stavu služieb.
+
+Záťažové testovanie bolo realizované nástrojom k6, ktorý umožňuje skriptovanie scenárov v JavaScripte a zbieranie štatistík o latencii, priepustnosti a chybovosti. Testy boli spúšťané opakovane v rovnakom prostredí, aby sa minimalizoval vplyv náhodných výkyvov na namerané výsledky. Pre mikroservisnú verziu bolo navyše potrebné zohľadniť asynchronitu spracovania — meranie end-to-end času zahŕňalo aktívne polling stavu rezervácie až do dosiahnutia terminálneho stavu (\texttt{PAID} alebo \texttt{PAYMENT\_FAILED}), čo odráža reálny spôsob, akým by klient overoval výsledok operácie v produkčnom systéme.
+
+Záťažové scenáre boli navrhnuté tak, aby simulovali realistické vzorce používania: od jedného virtuálneho používateľa pri baseline scenári až po 60 súčasných používateľov pri high\_load scenári. Každý scenár trval dostatočne dlho na to, aby boli výsledky štatisticky relevantné a eliminovali efekt studených spustení (\textit{cold start}) JVM.
+
+Výsledky záťažového testovania sú podrobne analyzované v kapitole~\ref{ch:evaluation}, kde sú porovnané namerané hodnoty latencie, priepustnosti a spotreby zdrojov pre oba architektonické varianty.
