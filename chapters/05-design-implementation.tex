@@ -204,13 +204,14 @@ Pre zvýšenie spoľahlivosti spracovania udalostí sú v prototypovej implement
 @Bean
 public ConcurrentKafkaListenerContainerFactory<String, Object>
         kafkaListenerContainerFactory(...) {
-    ConcurrentKafkaListenerContainerFactory<String, Object> factory =
-            new ConcurrentKafkaListenerContainerFactory<>();
+    var factory = new ConcurrentKafkaListenerContainerFactory
+            <String, Object>();
     factory.setConsumerFactory(consumerFactory);
 
     DeadLetterPublishingRecoverer recoverer =
             new DeadLetterPublishingRecoverer(kafkaTemplate,
-                    (r, e) -> new TopicPartition(dltTopic, r.partition()));
+                    (r, e) -> new TopicPartition(
+                            dltTopic, r.partition()));
 
     // 3 pokusy s intervalom 1 s, potom -> *.dlt topic
     DefaultErrorHandler errorHandler = new DefaultErrorHandler(
@@ -317,7 +318,7 @@ Mikroservisná verzia je navrhnutá ako súbor samostatných služieb (mikroserv
 
 Služby sú implementované v Java 17 a Spring Boot 3.4.0. Externá komunikácia klienta prebieha synchrónne cez API Gateway, pričom vnútorný proces spracovania rezervácie je realizovaný asynchrónne cez Apache Kafka. Mikroservisná verzia je preto orientovaná na event-driven architektúru a demonštruje choreografiu sagy: jednotlivé služby reagujú na udalosti a posúvajú proces dopredu bez centrálneho koordinátora.
 
-Dátová perzistencia je riešená princípom „database-per-service" na úrovni logických databáz v rámci jedného PostgreSQL servera (t.\,j. každá služba používa vlastnú databázu: \texttt{user\_db}, \texttt{reservation\_db}, \texttt{payment\_db}, \texttt{notification\_db}). Pre zabezpečenie spoľahlivej publikácie udalostí je použitý mechanizmus transactional outbox v službách reservation-service a payment-service~\cite{Richardson2018}.
+Dátová perzistencia je riešená princípom „database-per-service" na úrovni logických databáz v rámci jedného PostgreSQL servera (t.\,j. každá služba používa vlastnú databázu: \texttt{user\_db}, \texttt{reservation\_db}, \texttt{payment\_db}, \\ \texttt{notification\_db}). Pre zabezpečenie spoľahlivej publikácie udalostí je použitý mechanizmus transactional outbox v službách reservation-service a payment-service~\cite{Richardson2018}.
 
 \begin{lstlisting}[language=Java, breaklines=true, caption={Transactional Outbox -- atomické uloženie udalosti v rámci jednej transakcie (PaymentService.java)}]
 @Transactional
@@ -330,7 +331,7 @@ public PaymentResponse confirm(Long id) {
             toEventStatus(payment.getStatus())
     );
 
-    // Udalosť sa ukladá do outbox tabuľky v TEJ ISTEJ transakcii
+    // udalosť do outbox v tej istej transakcii
     OutboxEvent outboxEvent = OutboxEvent.builder()
             .aggregateType("Payment")
             .aggregateId(payment.getId())
@@ -348,21 +349,28 @@ public PaymentResponse confirm(Long id) {
 Udalosť uložená do outbox tabuľky sa nestratí ani v prípade výpadku — je súčasťou tej istej databázovej transakcie ako zmena stavu entity. Samostatný scheduler následne tieto udalosti číta a publikuje do Kafky. Tým sa zabezpečí, že každá udalosť bude doručená práve raz (at-least-once), bez rizika straty medzi commitom a odoslaním.
 
 \begin{lstlisting}[language=Java, breaklines=true, caption={Outbox scheduler -- polling a publikácia udalostí do Kafka (OutboxEventPublisher.java)}]
-@Scheduled(fixedDelayString = "${app.outbox.scheduler-fixed-rate}")
+@Scheduled(fixedDelayString =
+        "${app.outbox.scheduler-fixed-rate}")
 @Transactional
 public void publishOutboxEvents() {
     List<OutboxEvent> newEvents =
-            outboxEventRepository.findByStatus(OutboxEventStatus.NEW);
+            outboxEventRepository
+                    .findByStatus(OutboxEventStatus.NEW);
 
     for (OutboxEvent event : newEvents) {
         try {
             Object kafkaEvent = objectMapper.readValue(
-                    event.getPayload(), Class.forName(event.getEventType()));
-            if (kafkaEvent instanceof PaymentConfirmedEvent confirmed) {
-                paymentProducer.sendPaymentConfirmedEvent(confirmed)
+                    event.getPayload(),
+                    Class.forName(event.getEventType()));
+            if (kafkaEvent instanceof
+                    PaymentConfirmedEvent confirmed) {
+                paymentProducer
+                        .sendPaymentConfirmedEvent(confirmed)
                         .get(5, TimeUnit.SECONDS);
-            } else if (kafkaEvent instanceof PaymentFailedEvent failed) {
-                paymentProducer.sendPaymentFailedEvent(failed)
+            } else if (kafkaEvent instanceof
+                    PaymentFailedEvent failed) {
+                paymentProducer
+                        .sendPaymentFailedEvent(failed)
                         .get(5, TimeUnit.SECONDS);
             }
             event.setStatus(OutboxEventStatus.SENT);

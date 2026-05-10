@@ -52,34 +52,32 @@ Zdrojové kódy oboch prototypov sa nachádzajú v priečinku \texttt{listings/}
 
 \begin{verbatim}
 reservation-monolith/
-├── src/
-│   └── main/
-│       ├── java/sk/tuke/reservations/
-│       │   ├── users/
-│       │   │   ├── controller/   -- UserController (REST API)
-│       │   │   ├── service/      -- UserService (biznis logika)
-│       │   │   ├── repository/   -- UserRepository (JPA)
-│       │   │   └── entity/       -- User (JPA entita)
-│       │   ├── reservations/
-│       │   │   ├── controller/   -- ReservationController
-│       │   │   ├── service/      -- ReservationService
-│       │   │   ├── repository/   -- ReservationRepository
-│       │   │   └── entity/       -- Reservation, ReservationStatus
-│       │   ├── payments/
-│       │   │   ├── controller/   -- PaymentController
-│       │   │   ├── service/      -- PaymentService
-│       │   │   ├── repository/   -- PaymentRepository
-│       │   │   └── entity/       -- Payment, PaymentStatus
-│       │   └── notifications/
-│       │       ├── service/      -- NotificationService
-│       │       ├── repository/   -- NotificationLogRepository
-│       │       └── entity/       -- NotificationLog
-│       └── resources/
-│           └── application.yml   -- DB, JPA, server konfigurácia
-├── docs/
-│   └── diagrams/                 -- architektonické diagramy (PNG)
-├── load-tests/                   -- k6 záťažové skripty
-└── pom.xml                       -- Maven build konfigurácia
+├── src/main/
+│   ├── java/sk/tuke/reservations/
+│   │   ├── users/
+│   │   │   ├── controller/ -- UserController (REST API)
+│   │   │   ├── service/    -- UserService (biznis logika)
+│   │   │   ├── repository/ -- UserRepository (JPA)
+│   │   │   └── entity/     -- User (JPA entita)
+│   │   ├── reservations/
+│   │   │   ├── controller/ -- ReservationController
+│   │   │   ├── service/    -- ReservationService
+│   │   │   ├── repository/ -- ReservationRepository (JPA)
+│   │   │   └── entity/     -- Reservation, ReservationStatus
+│   │   ├── payments/
+│   │   │   ├── controller/ -- PaymentController
+│   │   │   ├── service/    -- PaymentService
+│   │   │   ├── repository/ -- PaymentRepository
+│   │   │   └── entity/     -- Payment, PaymentStatus
+│   │   └── notifications/
+│   │       ├── service/    -- NotificationService
+│   │       ├── repository/ -- NotificationLogRepository
+│   │       └── entity/     -- NotificationLog
+│   └── resources/
+│       └── application.yml -- DB, JPA, port konfigurácia
+├── docs/diagrams/          -- architektonické PNG diagramy
+├── load-tests/             -- k6 záťažové skripty
+└── pom.xml                 -- Maven build konfigurácia
 \end{verbatim}
 
 Všetky doménové oblasti zdieľajú jednu databázu PostgreSQL s názvom \\ \texttt{reservation\_monolith\_db}. Komunikácia medzi modulmi prebieha priamym volaním metód v rámci jedného JVM procesu. Transakcie sú riadené anotáciou \texttt{@Transactional} na úrovni service vrstvy.
@@ -89,44 +87,43 @@ Všetky doménové oblasti zdieľajú jednu databázu PostgreSQL s názvom \\ \t
 \begin{verbatim}
 reservation-micro/
 ├── services/
-│   ├── common/                   -- zdieľané DTO a event triedy
+│   ├── common/           -- zdieľané DTO a event triedy
 │   │   └── src/main/java/.../
-│   │       ├── dto/              -- request/response objekty
-│   │       └── events/           -- ReservationCreatedEvent atd.
-│   ├── gateway-service/          -- API Gateway (Spring Cloud)
+│   │       ├── dto/      -- request/response objekty
+│   │       └── events/   -- ReservationCreatedEvent atd.
+│   ├── gateway-service/  -- API Gateway (Spring Cloud)
 │   │   └── src/main/resources/
-│   │       └── application.yml   -- routing pravidlá
+│   │       └── application.yml  -- routing pravidlá
 │   ├── user-service/
 │   │   └── src/main/java/.../
-│   │       ├── controller/       -- UserController
-│   │       ├── service/          -- UserService
-│   │       ├── repository/       -- UserRepository
-│   │       └── entity/           -- User
+│   │       ├── controller/ -- UserController
+│   │       ├── service/    -- UserService
+│   │       ├── repository/ -- UserRepository
+│   │       └── entity/     -- User
 │   ├── reservation-service/
 │   │   └── src/main/java/.../
-│   │       ├── controller/       -- ReservationController
-│   │       ├── service/          -- ReservationService
-│   │       ├── repository/       -- Reservation + OutboxEvent repo
-│   │       ├── entity/           -- Reservation, OutboxEvent
-│   │       └── outbox/           -- OutboxEventPublisher (scheduler)
+│   │       ├── controller/ -- ReservationController
+│   │       ├── service/    -- ReservationService
+│   │       ├── repository/ -- Reservation + OutboxEvent repo
+│   │       ├── entity/     -- Reservation, OutboxEvent
+│   │       └── outbox/     -- OutboxEventPublisher
 │   ├── payment-service/
 │   │   └── src/main/java/.../
-│   │       ├── service/          -- PaymentService
-│   │       ├── repository/       -- Payment + OutboxEvent repo
-│   │       ├── entity/           -- Payment, OutboxEvent
-│   │       ├── outbox/           -- OutboxEventPublisher
-│   │       └── kafka/            -- listener + producer
+│   │       ├── service/    -- PaymentService
+│   │       ├── repository/ -- Payment + OutboxEvent repo
+│   │       ├── entity/     -- Payment, OutboxEvent
+│   │       ├── outbox/     -- OutboxEventPublisher
+│   │       └── kafka/      -- Kafka listener + producer
 │   └── notification-service/
 │       └── src/main/java/.../
-│           ├── service/          -- NotificationService
-│           ├── repository/       -- NotificationLogRepository
-│           └── kafka/            -- listener
-├── db_init/                      -- SQL inicializácia schém DB
-├── docs/
-│   └── diagrams/                 -- architektonické diagramy (PNG)
-├── load-tests/                   -- k6 skripty a výsledky meraní
-├── docker-compose.yml            -- definícia celého prostredia
-└── pom.xml                       -- parent Maven POM (multi-modul)
+│           ├── service/    -- NotificationService
+│           ├── repository/ -- NotificationLogRepository
+│           └── kafka/      -- Kafka listener (DLT podpora)
+├── db_init/              -- SQL skripty inicializácie schém
+├── docs/diagrams/        -- architektonické PNG diagramy
+├── load-tests/           -- k6 skripty a výsledky meraní
+├── docker-compose.yml    -- definícia celého prostredia
+└── pom.xml               -- parent Maven POM (multi-modul)
 \end{verbatim}
 
 Každá služba má vlastnú databázu PostgreSQL (\texttt{user\_db}, \texttt{reservation\_db}, \texttt{payment\_db}, \texttt{notification\_db}), vlastný \texttt{Dockerfile} a konfiguráciu pre Docker v súbore \texttt{application-docker.yml}. Komunikácia medzi službami prebieha asynchrónne cez Apache Kafka; reservation-service a payment-service používajú vzor transactional outbox na spoľahlivú publikáciu udalostí.
