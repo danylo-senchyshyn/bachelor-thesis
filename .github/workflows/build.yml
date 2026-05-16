@@ -24,9 +24,9 @@ jobs:
       - name: Install TeX Gyre Math fonts
         run: |
           sudo mkdir -p /usr/local/share/fonts/tex-gyre-math
-          sudo curl -sL "https://www.gust.org.pl/projects/e-foundry/tg-math/download/tex-gyre-pagella-math-otf.zip" \
-            -o /tmp/tgpagella-math.zip
-          sudo unzip -o /tmp/tgpagella-math.zip -d /usr/local/share/fonts/tex-gyre-math/
+          sudo curl -sL \
+            "https://mirrors.ctan.org/fonts/tex-gyre-math/opentype/texgyrepagella-math.otf" \
+            -o /usr/local/share/fonts/tex-gyre-math/texgyrepagella-math.otf
           sudo fc-cache -fv > /dev/null 2>&1
 
       - name: Build thesis PDF
