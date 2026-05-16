@@ -1,0 +1,25 @@
+% !TEX root = ../thesis.tex
+\chapter{Formulácia úlohy a cieľ práce}\label{ch:goals}
+
+Hlavným cieľom práce je navrhnúť, implementovať a analyzovať dve architektonicky odlišné verzie rovnakého rezervačného systému — monolitickú a mikroservisnú — a porovnať ich vlastnosti z hľadiska výkonu, škálovateľnosti, udržiavateľnosti a technickej náročnosti.
+
+Na dosiahnutie hlavného cieľa sú stanovené nasledujúce podciele:
+\begin{itemize}
+    \item Analyzovať teoretické základy monolitickej a mikroservisnej architektúry, vrátane typických princípov návrhu, výhod, nevýhod a oblastí použitia~\cite{Newman2021,Richardson2018}.
+    \item Navrhnúť a implementovať ukážkový rezervačný systém v monolitickej architektúre ako jeden nasaditeľný artefakt s jednotnou perzistenciou a transakčným spracovaním.
+    \item Navrhnúť a implementovať funkčne ekvivalentný systém v mikroservisnej architektúre s oddelením domén do autonómnych služieb a s centrálnym vstupným bodom cez API Gateway.
+    \item Preskúmať a zdokumentovať rozdiely v spracovaní procesov, konzistencii dát a komunikačných mechanizmoch (synchrónne API vs.\ asynchrónne udalosti)~\cite{Richardson2018}.
+    \item Pripraviť podklady pre porovnávaciu analýzu, vrátane definovania merateľných kritérií a metodiky testovania tak, aby boli výsledky interpretovateľné v kontexte zvoleného prototypu.
+    \item Vypracovať dokumentáciu s dôrazom na formálny opis architektúry, použitých technológií, návrhových rozhodnutí a kompromisov.
+\end{itemize}
+
+Úlohou tejto bakalárskej práce je vytvoriť dve funkčne ekvivalentné implementácie rezervačného systému (monolitickú a mikroservisnú) a následne ich porovnať z hľadiska architektúry, technických rozhodnutí, prevádzkových vlastností a udržiavateľnosti. Praktickým výsledkom sú dva prototypy, ktoré predstavujú reálne implementácie zvolených architektonických prístupov a tvoria základ pre odbornú analýzu.
+
+\begin{itemize}
+    \item Navrhnúť doménu systému tak, aby obsahovala minimálne tieto zodpovednosti: správa používateľov, správa rezervácií, spracovanie platieb a odosielanie notifikácií.
+    \item Zabezpečiť funkčnú ekvivalenciu oboch verzií na úrovni kľúčových use-caseov, najmä vytvorenie rezervácie a jej spracovanie až po výsledný stav (potvrdenie alebo zlyhanie platby a notifikácia).
+    \item Zdokumentovať architektonické rozhodnutia, dátové toky a spôsob perzistencie tak, aby bolo možné porovnať dopady rozdielnych prístupov na návrh a implementáciu.
+    \item Umožniť reprodukovateľné spustenie oboch prototypov v lokálnom prostredí a popísať potrebné runtime závislosti.
+\end{itemize}
+
+Z hľadiska metodiky porovnania je dôležité, aby sa porovnanie opieralo o porovnateľné scenáre, identickú doménu a konzistentný technologický stack. Preto sa oba prototypy implementujú v rovnakom jazyku a frameworku, pričom rozdiely sú zámerne viazané na architektonické rozhodnutia (transakčné hranice, dátová perzistencia, spôsob komunikácie, nasadenie a prevádzka). Porovnanie sa orientuje na kvalitatívne aj kvantitatívne aspekty: latenciu vybraných operácií, zložitosť nasadenia, modularitu, riziká konzistencie a nároky na diagnostiku.

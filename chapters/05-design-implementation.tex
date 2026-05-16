@@ -1,0 +1,532 @@
+% !TEX root = ../thesis.tex
+\chapter{Návrh a implementácia riešenia zvolenej problematiky}\label{ch:design-implementation}
+
+Pri tvorbe práce bol použitý prístup „comparative case study" založený na implementácii dvoch variantov rovnakého systému.
+
+Použitá metodológia kombinuje prvky analytického a syntetického prístupu. Najskôr je systém rozdelený na jednotlivé architektonické aspekty, ktoré sú analyzované samostatne (komunikácia, perzistencia, transakcie, nasadenie). Následne sú tieto aspekty syntetizované do uceleného pohľadu na architektúru systému ako celku.
+
+Takýto prístup umožňuje systematicky porovnať dva architektonické štýly bez toho, aby bol jeden z nich vopred preferovaný. Metodika je navrhnutá tak, aby bola reprodukovateľná a aby výsledky porovnania boli interpretovateľné aj v inom kontexte, než je konkrétny prototyp implementovaný v rámci tejto práce.
+
+Metodika spočíva v:
+\begin{itemize}
+    \item definovaní jednotnej domény a rovnakých kľúčových use-caseov, ktoré sú implementované v oboch variantoch (monolit aj mikroservisy), aby bolo porovnanie férové a opakovateľné,
+    \item implementácii monolitického prototypu s tradičnou vrstvenou štruktúrou a jednotnou databázou, kde je celý systém realizovaný ako jeden nasaditeľný celok (single deployable unit),
+    \item implementácii mikroservisného prototypu s doménovým rozdelením služieb a event-driven koordináciou procesu, kde je riešenie rozdelené do samostatných služieb v rámci multi-modulového Maven projektu,
+    \item systematickej dokumentácii architektúry, dátových tokov a technických rozhodnutí, pričom sa explicitne zaznamenávajú hranice domén (bounded contexts), spôsob komunikácie a dátové modely,
+    \item príprave kritérií porovnania a návrhu experimentov zameraných na merateľné charakteristiky: zložitosť nasadenia, izolácia zlyhaní, konzistencia dát, rozsah potrebnej infraštruktúry, udržiavateľnosť a náročnosť zmien v doméne.
+\end{itemize}
+
+Dôležitým princípom je, že oba prototypy slúžia na porovnanie architektúr, preto je prístup k optimalizáciám pragmatický: prioritou je transparentnosť, reprodukovateľnosť a demonštrácia rozdielov, nie maximalizácia výkonu alebo úplná produkčná pripravenosť.
+
+\section{Konceptuálny návrh riešenia}
+
+Konceptuálny návrh vychádza z doménovej dekompozície rezervačného systému na štyri hlavné oblasti:
+\begin{itemize}
+    \item \textbf{Users} — správa používateľov a ich identifikácia,
+    \item \textbf{Reservations} — evidencia rezervácií a ich životný cyklus,
+    \item \textbf{Payments} — spracovanie platby a výsledku platby,
+    \item \textbf{Notifications} — informovanie o výsledku (potvrdenie alebo zlyhanie).
+\end{itemize}
+
+V monolitickej verzii sú tieto oblasti realizované v rámci jedného systému ako logické moduly s priamou komunikáciou. V mikroservisnej verzii sú realizované ako autonómne služby.
+
+Kľúčovým konceptuálnym rozdielom je transakčný model:
+\begin{itemize}
+    \item \textbf{Monolit} — jeden proces, jedna databáza, \acrshort{acid} transakcia pokrývajúca viac krokov.
+    \item \textbf{Mikroservisy} — lokálne transakcie v každej službe, eventual consistency medzi službami, koordinácia cez udalosti.
+\end{itemize}
+
+Pre mikroservisnú verziu je rozhodujúce zavedenie event-driven koordinácie a spoľahlivej publikácie udalostí. Transactional outbox zabezpečuje, že udalosť nebude „stratená" medzi commitom databázy a publikáciou do Kafka.
+
+\section{Požiadavky na riešenie}
+
+\subsection*{Funkčné požiadavky}
+
+Funkčné požiadavky vychádzajú z domény rezervačného systému a zahŕňajú:
+\begin{itemize}
+    \item správa používateľov,
+    \item vytvorenie rezervácie,
+    \item spracovanie platby,
+    \item odoslanie notifikácie po výsledku platby,
+    \item evidencia stavov (napr. \texttt{CREATED}, \texttt{PAID}, \texttt{PAYMENT\_FAILED}) v rámci rezervácie/platby podľa implementácie.
+\end{itemize}
+
+\subsection*{Nefunkčné požiadavky}
+
+Nefunkčné požiadavky pre účely porovnania zahŕňajú:
+\begin{itemize}
+    \item reprodukovateľnosť spustenia,
+    \item transparentné logovanie a základná diagnostika,
+    \item zrozumiteľná modularita a udržiavateľnosť kódu,
+    \item možnosť analyzovať dopady architektúry na zložitosť procesu (najmä pri prechode z lokálnej transakcie na distribuovaný proces).
+\end{itemize}
+
+Je potrebné zdôrazniť, že prototypy v práci slúžia primárne na porovnanie architektúr. Preto môžu obsahovať zjednodušenia typické pre akademické prototypy (napr. obmedzený rozsah bezpečnostných mechanizmov alebo zjednodušené riadenie schémy databázy), pričom tieto skutočnosti musia byť v texte práce transparentne uvedené.
+
+\section{Analýza existujúcej monolitickej implementácie}
+
+Monolitický prototyp predstavuje tradičný spôsob návrhu systému: všetky doménové časti sú implementované v rámci jedného Spring Boot backendu a zdieľajú spoločnú databázu. Kód je organizovaný prístupom package-by-feature: doménové oblasti (rezervácie, platby, používatelia, notifikácie) majú vlastné balíky, pričom v rámci nich sú zachované vrstvy controller/service/re\-po\-si\-tory/entity. Tento štýl je typický pre monolity, ktoré sa snažia zachovať doménové členenie bez fyzického rozdelenia na samostatné procesy.
+
+Kľúčovým aspektom monolitickej implementácie je transakčný model. Pri spracovaní rezervácie môže service vrstva vyvolať platobnú logiku priamym volaním \texttt{PaymentService} a následne notifikácie, pričom celá operácia môže prebehnúť v rámci jednej databázovej transakcie (\texttt{@Transactional}). Výhodou je jednoznačná konzistencia v jednom kroku a jednoduchšia diagnostika toku (všetko sa deje v jednom procese). Nevýhodou je vyššia miera prepojenosti a to, že pri potrebe škálovať len časť systému je potrebné škálovať celý monolit.
+
+\begin{lstlisting}[language=Java, breaklines=true, caption={Monolitická verzia -- vytvorenie rezervácie v jednej transakcii (ReservationService.java)}]
+@Transactional
+public ReservationResponse createReservation(
+        CreateReservationRequest request) {
+    Reservation reservation = Reservation.builder()
+            .userId(request.userId())
+            .resourceId(request.resourceId())
+            .startTime(request.from())
+            .endTime(request.to())
+            .status(ReservationStatus.CREATED)
+            .build();
+    reservation = reservationRepository.save(reservation);
+    // Priame volanie PaymentService v tej istej transakcii
+    paymentService.create(
+            new CreatePaymentRequest(
+                    reservation.getId(), new BigDecimal(100))
+    );
+    return toResponse(reservation);
+}
+\end{lstlisting}
+
+\section{Návrh mikroservisnej architektúry}
+
+\subsection*{Dekompozícia podľa biznis schopností}
+
+Prvým a kľúčovým rozhodnutím pri návrhu mikroservisnej architektúry je otázka, ako rozdeliť systém na samostatné služby. V literatúre sú etablované dva hlavné prístupy: \emph{Decompose by Business Capability} a \emph{Decompose by Subdomain}~\cite{Richardson2018}.
+
+Vzor \emph{Decompose by Business Capability} vychádza z organizačnej štruktúry a aktivít podniku. Každá biznis schopnosť (napríklad „správa rezervácií" alebo „spracovanie platieb") tvorí samostatnú službu so svojím vlastným dátovým modelom a logikou. Vzor \emph{Decompose by Subdomain} vychádza z \emph{Domain-Driven Design} (DDD): systém sa dekomponuje podľa ohraničených kontextov (\emph{Bounded Context}), kde každý subdoén má vlastný jazyk a dátovú reprezentáciu~\cite{Newman2021}.
+
+V predkladanom prototypovom systéme bola zvolená dekompozícia podľa doménových hraníc, ktorá zodpovedá obom prístupom súčasne — biznis schopnosti a doménové ohraničené kontexty sú v tomto systéme prirodzene zarovnané:
+
+\begin{itemize}
+    \item \textbf{user-service} — správa používateľov (registrácia, profil),
+    \item \textbf{reservation-service} — vytváranie a správa rezervácií,
+    \item \textbf{payment-service} — spracovanie platieb a ich výsledkov,
+    \item \textbf{notification-service} — odosielanie notifikácií o stave procesu,
+    \item \textbf{gateway-service} — jednotný vstupný bod (API Gateway).
+\end{itemize}
+
+Obrázok~\ref{fig:decomposition} ilustruje, ako je monolitický systém logicky rozčlenený na tieto doménové hranice a ako každá hranica zodpovedá samostatnej mikroservise.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=0.4cm and 0.5cm,
+    svc/.style={draw, rounded corners=4pt, minimum width=2.8cm, minimum height=1.0cm,
+                align=center, font=\small\bfseries, thick},
+    msvc/.style={draw, rounded corners=4pt, minimum width=3.2cm, minimum height=1.0cm,
+                align=center, font=\small\bfseries, thick},
+    mono/.style={draw, dashed, rounded corners=6pt, inner sep=8pt},
+    arr/.style={-{Stealth[length=6pt]}, thick},
+    lbl/.style={font=\scriptsize}
+]
+
+% Monolith box
+\node[svc, fill=gray!15] (m-user)  {users};
+\node[svc, fill=gray!15, right=0.6cm of m-user] (m-res)  {reservations};
+\node[svc, fill=gray!15, right=0.6cm of m-res]  (m-pay)  {payments};
+\node[svc, fill=gray!15, right=0.6cm of m-pay]  (m-notif){notifications};
+\node[mono, fit=(m-user)(m-notif), label=above:{\small\bfseries Monolit (jeden proces)}] (monobox) {};
+
+% Gateway — placed below monolith
+\node[svc, fill=yellow!20, below=1.0cm of monobox.south, minimum width=5.0cm] (gw) {gateway-service (API Gateway)};
+
+% Arrow down (dekompozícia label) — connects monobox to gateway
+\draw[arr, very thick] (monobox.south) -- node[right=0.1cm, lbl]{dekompozícia} (gw.north);
+
+% Microservices row — further below gateway, wider spacing
+\node[msvc, fill=blue!12,  below=1.8cm of gw, xshift=-5.2cm] (s-user)  {user-service};
+\node[msvc, fill=green!15, below=1.8cm of gw, xshift=-1.7cm] (s-res)   {reservation-service};
+\node[msvc, fill=orange!15,below=1.8cm of gw, xshift=+1.7cm] (s-pay)   {payment-service};
+\node[msvc, fill=purple!12,below=1.8cm of gw, xshift=+5.2cm] (s-notif) {notification-service};
+
+% DB labels
+\foreach \s/\db in {s-user/user\_db, s-res/reserv.\_db, s-pay/payment\_db, s-notif/notif.\_db}{
+  \node[draw, fill=white, below=0.3cm of \s, font=\scriptsize, inner sep=2pt, rounded corners=2pt] {\db};
+}
+
+% Curved arrows from gateway to each microservice
+\draw[arr] (gw.south) to[out=248, in=90] (s-user.north);
+\draw[arr] (gw.south) to[out=258, in=90] (s-res.north);
+\draw[arr] (gw.south) to[out=282, in=90] (s-pay.north);
+\draw[arr] (gw.south) to[out=292, in=90] (s-notif.north);
+
+\end{tikzpicture}
+\caption{Dekompozícia monolitu na mikroservisy podľa doménových hraníc}
+\label{fig:decomposition}
+\end{figure}
+
+Každá mikroservisná doména má vlastnú databázu (\emph{Database per Service}), čo zabraňuje zdieľaniu dátových schém a umožňuje nezávislý vývoj a nasadenie každej služby. V prototypovej implementácii sú tieto databázy realizované ako samostatné PostgreSQL databázy v rámci jedného PostgreSQL servera.
+
+Mikroservisná architektúra je navrhnutá podľa doménových hraníc a obsahuje samostatné služby pre používateľov, rezervácie, platby a notifikácie, doplnené o gateway-service. Tento návrh zodpovedá odporúčaniam v literatúre, kde sa zdôrazňuje, že mikroservisy by mali rešpektovať hranice domén a minimalizovať zdieľané interné dátové štruktúry~\cite{Newman2021}.
+
+Gateway-service poskytuje jednotný vstupný bod pre externé volania a zabezpečuje smerovanie požiadaviek na príslušné služby. Služby sú nasaditeľné samostatne a prevádzkované na oddelených portoch. V prototypovej implementácii sú tieto porty explicitne definované pre jednotlivé služby, čo umožňuje jednoznačné spustenie a testovanie v lokálnom prostredí.
+
+\section{Komunikácia a konzistencia}
+
+Konzistencia v distribuovaných systémoch je úzko spojená s kompromisom medzi dostupnosťou a toleranciou voči výpadkom. Zatiaľ čo v monolite je možné spoliehať sa na jednu databázovú transakciu, v mikroservisoch sa konzistencia dosahuje koordináciou medzi službami. To vedie k potrebe riešiť scenáre ako duplicitné správy, oneskorené spracovanie, preusporiadanie udalostí alebo dočasnú nedostupnosť služby. V takomto prostredí sa často uplatňujú princípy idempotencie (bezpečné opakovanie spracovania) a kompenzačných akcií~\cite{Richardson2018}.
+
+V práci je zvolený prístup choreografie sagy, kde neexistuje centrálny orchestrátor. Výhodou choreografie je nižšia centralizácia a prirodzená autonómia služieb: každá služba reaguje na udalosti a vykonáva vlastné lokálne zmeny. Nevýhodou môže byť zložitejšia diagnostika celého procesu, pretože „riadenie" toku je distribuované. Aj v prototypovom kontexte je preto vhodné zdôrazniť význam konzistentného logovania, korelačných identifikátorov a jasne pomenovaných stavov~\cite{Newman2021}.
+
+Najvýraznejší rozdiel medzi monolitom a mikroservisami sa prejavuje v spôsobe koordinácie procesu „vytvorenie rezervácie → spracovanie platby → aktualizácia stavu → notifikácia":
+
+\begin{itemize}
+    \item \textbf{Monolit} — tento proces je realizovaný synchrónne v jednom procese a typicky v jednej transakcii: po uložení rezervácie sa priamo vyvolá platobná logika a následne notifikácia. Konzistencia je zabezpečená databázovým mechanizmom v rámci jednej schémy.
+    \item \textbf{Mikroservisy} — proces je realizovaný ako choreografia udalostí cez Kafka. Po vytvorení rezervácie uloží reservation-service rezerváciu so stavom \texttt{CREATED} a v rámci rovnakej lokálnej transakcie uloží udalosť \texttt{Reservation\allowbreak Created} do outbox tabuľky. Asynchrónny publisher udalosť publikuje do Kafka topicu. payment-service túto udalosť konzumuje, spracuje platbu a opäť cez outbox publikuje udalosť \texttt{Payment\allowbreak Confirmed} alebo \texttt{Payment\allowbreak Failed}. Výsledná udalosť vyvolá aktualizáciu stavu rezervácie a notifikačný krok. Tento prístup demonštruje eventual consistency: stav systému sa stabilizuje v čase, nie okamžite v jednom kroku~\cite{Richardson2018}.
+\end{itemize}
+
+\begin{lstlisting}[language=Java, breaklines=true, caption={Mikroservisná verzia -- Kafka konzumenti (choreografia sagy)}]
+// payment-service: ReservationCreatedListener.java
+@KafkaListener(
+        topics = "${app.kafka.topics.reservation-created}",
+        groupId = "payment-service-group"
+)
+public void onReservationCreated(ReservationCreatedEvent event) {
+    paymentService.processPayment(event);
+}
+
+// reservation-service: PaymentStatusListener.java
+@KafkaListener(
+        topics = "${app.kafka.topics.payment-confirmed}",
+        groupId = "reservation-service-group"
+)
+public void onPaymentConfirmed(PaymentConfirmedEvent event) {
+    reservationService.updateReservationStatus(
+            event.reservationId(), event.status());
+}
+\end{lstlisting}
+
+Pre zvýšenie spoľahlivosti spracovania udalostí sú v prototypovej implementácii využité mechanizmy ako \acrshort{dlt} (dead letter topics) a robustnejšia deserializácia v notifikačnej službe. Tieto prvky sú relevantné z hľadiska prevádzky, pretože poukazujú na potrebu riešiť chybové scenáre v distribuovanom spracovaní~\cite{KafkaDocs2025}.
+
+\begin{lstlisting}[language=Java, breaklines=true, caption={Konfigurácia Dead Letter Topic -- 3 pokusy, interval 1\,s (KafkaConsumerConfig.java)}]
+@Bean
+public ConcurrentKafkaListenerContainerFactory<String, Object>
+        kafkaListenerContainerFactory(...) {
+    var factory = new ConcurrentKafkaListenerContainerFactory
+            <String, Object>();
+    factory.setConsumerFactory(consumerFactory);
+
+    DeadLetterPublishingRecoverer recoverer =
+            new DeadLetterPublishingRecoverer(kafkaTemplate,
+                    (r, e) -> new TopicPartition(
+                            dltTopic, r.partition()));
+
+    // 3 pokusy s intervalom 1 s, potom -> *.dlt topic
+    DefaultErrorHandler errorHandler = new DefaultErrorHandler(
+            recoverer, new FixedBackOff(1000L, 3L));
+    factory.setCommonErrorHandler(errorHandler);
+    return factory;
+}
+\end{lstlisting}
+
+\section{Technologická analýza}
+
+Použitý stack je v oboch prototypoch konzistentný v základných prvkoch (Java, Spring Boot, PostgreSQL), čo umožňuje férové porovnanie bez toho, aby boli rozdiely spôsobené diametrálne odlišnými technológiami.
+
+Mikroservisná verzia pridáva:
+\begin{itemize}
+    \item Spring Cloud Gateway (routing a jednotný vstup),
+    \item Spring Kafka a Apache Kafka (asynchrónna komunikácia),
+    \item profily a dockerizáciu (reprodukcia prostredia),
+    \item Actuator endpoints (health/info) na základnú diagnostiku.
+\end{itemize}
+
+Zároveň je dôležité uviesť, že prototypy nemusia obsahovať všetky prvky typické pre produkčné cloud-native systémy (napr. distribuované trasovanie alebo plnohodnotné bezpečnostné vrstvy). Tieto prvky môžu byť uvedené ako potenciálne rozšírenia alebo ako odporúčania pre produkčnú prax, avšak analytická časť musí jasne odlíšiť „implementované v prototypoch" od „teoreticky vhodné".
+
+\section{Testovanie a meranie výkonnosti}
+
+Pri meraní výkonnosti je vhodné odlíšiť meranie latencie jednotlivého HTTP volania od merania celkového času spracovania biznis procesu. V monolite sú tieto metriky často veľmi blízke, pretože spracovanie prebieha synchrónne a výsledok je známy v rámci jednej transakcie. V mikroservisnej architektúre však HTTP volanie môže reprezentovať iba „spustenie procesu" a finálny výsledok sa stabilizuje až po spracovaní udalostí. Preto je metodicky korektné uvažovať o metrikách typu „time-to-consistency" alebo „end-to-end processing time" pre daný scenár.
+
+Interpretácia výsledkov musí zohľadniť aj infraštruktúrny overhead. V mikroservisnom variante sa do latencie a využitia zdrojov premieta serializácia správ, sieťová komunikácia, čakanie v topicu a spracovanie v konzumentoch. Tieto náklady však v praxi môžu byť vyvážené možnosťou škálovať iba najvyťaženejšie služby.
+
+Pri návrhu výkonových experimentov je vhodné zamerať sa na merateľné časti procesu:
+\begin{itemize}
+    \item latencia vytvorenia rezervácie (HTTP request cez gateway),
+    \item čas do stabilizácie výsledného stavu (od \texttt{Reservation\allowbreak Created} po \texttt{Payment\allowbreak Confirmed} a aktualizáciu re\-zer\-vá\-cie),
+    \item spotreba systémových prostriedkov v lokálnom prostredí (CPU/RAM) pri porovnateľnom scenári.
+\end{itemize}
+
+Keďže cieľom práce je porovnanie prototypov, merania majú byť interpretované ako porovnanie trendov a dopadov architektúry, nie ako absolútne benchmarky platné pre produkčné systémy.
+
+\section{Implementovaný prototyp}
+
+Okrem čisto technického opisu komponentov je vhodné stručne opísať aj spôsob, akým sa prototyp používa z pohľadu scenára. V oboch verziách systém umožňuje vytvoriť rezerváciu a iniciovať spracovanie platby s následným prechodom rezervácie do výsledného stavu. Rozdiel je v tom, ako rýchlo je tento výsledok pozorovateľný a kde sa nachádza „hranica procesu": v monolite je proces typicky uzavretý v rámci jedného volania, v mikroservisoch je rozdelený do viacerých krokov spracovaných nezávisle.
+
+Pri implementácii prototypu je dôležité poznamenať, že niektoré prvky boli zvolené ako pragmatické zjednodušenie pre účely porovnania. Typickým príkladom je správa schémy databázy automatickou aktualizáciou v monolite alebo zdieľaný modul so spoločnými definíciami v mikroservisoch. V produkčných systémoch by boli preferované explicitné migrácie a striktnejšie verzovanie kontraktov.
+
+\subsection{Monolitická verzia}
+
+Monolitická verzia je implementovaná ako jeden Spring Boot backend, ktorý je nasadzovaný ako jeden spustiteľný artefakt (jeden proces). V rámci jednej aplikácie sú implementované doménové časti pre používateľov, rezervácie, platby a notifikácie. Typickou charakteristikou monolitu je priama interná komunikácia medzi modulmi vo forme volania metód v rámci rovnakého runtime. Kľúčovým znakom je transakčné spracovanie: proces vytvorenia rezervácie a súvisiace kroky môžu byť realizované v rámci jednej databázovej transakcie, čo poskytuje silnú konzistenciu (\acrshort{acid}) v rámci jedného systému.
+
+Monolit používa jednu databázu PostgreSQL (v prototypovej implementácii pomenovanú ako \texttt{reservation\_monolith\_db}) a perzistenciu realizuje pomocou Spring Data JPA. Cieľom monolitickej verzie v práci je slúžiť ako tradičný referenčný bod pre porovnanie s mikroservisnou verziou.
+
+Architektúra monolitu:
+\begin{itemize}
+    \item jeden Spring Boot backend (jeden deployable artefakt),
+    \item package-by-feature (users/reservations/payments/notifications),
+    \item vrstvy controller/service/repository/entity v rámci jednotlivých domén.
+\end{itemize}
+
+Technológie:
+\begin{itemize}
+    \item Java 17, Spring Boot 3.2.3,
+    \item Spring Data JPA, PostgreSQL,
+    \item Maven ako build nástroj,
+    \item Docker Compose pre reprodukovateľné lokálne spustenie.
+\end{itemize}
+
+Perzistencia a transakcie:
+\begin{itemize}
+    \item jedna databáza \texttt{reservation\_monolith\_db},
+    \item transakčné spracovanie v service vrstve cez \texttt{@Transactional}.
+\end{itemize}
+
+Nasadenie a spustenie:
+\begin{itemize}
+    \item \texttt{Dockerfile} — multi-stage build (Maven build + JRE runtime),
+    \item \texttt{docker-compose.yml} — dva kontajnery: \texttt{monolith-app} a \texttt{postgres},
+    \item \texttt{application-docker.yml} — Spring profil pre Docker prostredie (hostname \texttt{postgres} namiesto \texttt{localhost}).
+\end{itemize}
+
+Výhodou tejto architektúry je predovšetkým jednoduchosť nasadenia a prevádzky: celý systém beží ako jeden proces, chybové hlásenia sú sústredené na jednom mieste a ladenie toku je priamočiare. Takýto prístup výrazne znižuje prevádzkový overhead a je vhodný najmä pre tímy bez dedikovanej infraštruktúrnej kapacity alebo pre systémy, kde záťažový profil nevyžaduje nezávislé škálovanie jednotlivých domén.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth,height=0.99\textheight,keepaspectratio]{figures/architecture-monolith.png}
+    \caption{Architektúra monolitickej verzie}
+    \label{fig:architecture-monolith}
+\end{figure}
+
+Architektúra na obrázku~\ref{fig:architecture-monolith} zachytáva logické usporiadanie monolitického systému: klient komunikuje s jedným Spring Boot backendom, ktorý interne zahŕňa všetky doménové vrstvy. Komunikácia medzi nimi prebieha priamym volaním metód v rámci rovnakého JVM procesu, konzistencia je zabezpečená jednou databázovou transakciou. Nevýhodou je silné prepojenie domén a potreba škálovať celý systém ako celok.
+
+Tok spracovania rezervácie v monolitickej verzii začína HTTP požiadavkou klienta na \texttt{POST /api/reservations}. \texttt{ReservationController} deleguje spracovanie na \texttt{ReservationService}, ktorý v rámci jednej databázovej transakcie uloží nový záznam o rezervácii so stavom \texttt{PENDING} a okamžite zavolá \\ \texttt{PaymentService}.
+
+\texttt{PaymentService} vytvorí platobný záznam so stavom \texttt{PENDING} a vráti jeho identifikátor späť volajúcej službe. Keďže celé spracovanie prebieha v jednom JVM procese, nie je potrebná žiadna sieťová komunikácia ani serializácia správ — volanie je priame a synchronné. Transakcia zostáva otvorená počas celého toku, čo zaručuje atomickú konzistenciu: ak ktorýkoľvek krok zlyhá, celá operácia sa rollbackne.
+
+Po úspešnom vytvorení platby klient explicitne potvrdí platbu volaním \texttt{POST /api/payments/\{id\}/confirm}. \texttt{PaymentService} aktualizuje stav platby na \texttt{CONFIRMED}, načíta príslušnú rezerváciu a nastaví jej stav na \texttt{PAID}. V tom istom transakčnom kontexte \texttt{NotificationService} zaznamená notifikáciu do tabuľky \texttt{notification\_logs}. Celý tok — od vytvorenia rezervácie až po záznam notifikácie — tak prebehne v niekoľkých milisekundách bez akéhokoľvek asynchrónneho čakania.
+
+Na obrázku~\ref{fig:sequence-monolith} je zobrazený sekvenčný diagram tohto toku — od HTTP požiadavky cez volanie \texttt{PaymentService} až po odoslanie notifikácie, všetko v rámci jednej synchrónnej transakcie.
+
+\begin{landscape}
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.99\linewidth,height=0.85\textheight,keepaspectratio]{figures/sequence-monolith.png}
+    \caption{Sekvenčný diagram -- monolitická verzia}
+    \label{fig:sequence-monolith}
+\end{figure}
+\end{landscape}
+
+\subsection{Mikroservisná verzia}
+
+Mikroservisná verzia je navrhnutá ako súbor samostatných služieb (mikroservisov), ktoré reprezentujú jednotlivé doménové oblasti:
+\begin{itemize}
+    \item \textbf{gateway-service} — centrálny vstupný bod (API Gateway),
+    \item \textbf{user-service} — správa používateľov,
+    \item \textbf{reservation-service} — spracovanie rezervácií,
+    \item \textbf{payment-service} — spracovanie platieb,
+    \item \textbf{notification-service} — notifikácie,
+    \item \textbf{common} modul — zdieľaný „shared kernel" pre spoločné definície udalostí/DTO v rámci prototypu.
+\end{itemize}
+
+Služby sú implementované v Java 17 a Spring Boot 3.4.0. Externá komunikácia klienta prebieha synchrónne cez API Gateway, pričom vnútorný proces spracovania rezervácie je realizovaný asynchrónne cez Apache Kafka. Mikroservisná verzia je preto orientovaná na event-driven architektúru a demonštruje choreografiu sagy: jednotlivé služby reagujú na udalosti a posúvajú proces dopredu bez centrálneho koordinátora.
+
+Dátová perzistencia je riešená princípom „database-per-service" na úrovni logických databáz v rámci jedného PostgreSQL servera (t.\,j. každá služba používa vlastnú databázu: \texttt{user\_db}, \texttt{reservation\_db}, \texttt{payment\_db}, \\ \texttt{notification\_db}). Pre zabezpečenie spoľahlivej publikácie udalostí je použitý mechanizmus transactional outbox v službách reservation-service a payment-service~\cite{Richardson2018}.
+
+\begin{lstlisting}[language=Java, breaklines=true, caption={Transactional Outbox -- atomické uloženie udalosti v rámci jednej transakcie (PaymentService.java)}]
+@Transactional
+public PaymentResponse confirm(Long id) {
+    Payment payment = getPayment(id);
+    payment.setStatus(PaymentStatus.CONFIRMED);
+
+    PaymentConfirmedEvent event = new PaymentConfirmedEvent(
+            payment.getId(), payment.getReservationId(),
+            toEventStatus(payment.getStatus())
+    );
+
+    // udalosť do outbox v tej istej transakcii
+    OutboxEvent outboxEvent = OutboxEvent.builder()
+            .aggregateType("Payment")
+            .aggregateId(payment.getId())
+            .eventType(event.getClass().getName())
+            .payload(objectMapper.writeValueAsString(event))
+            .status(OutboxEventStatus.NEW)
+            .createdAt(LocalDateTime.now())
+            .build();
+    outboxEventRepository.save(outboxEvent);
+
+    return toResponse(payment);  // commit = atomova operacia
+}
+\end{lstlisting}
+
+Udalosť uložená do outbox tabuľky sa nestratí ani v prípade výpadku — je súčasťou tej istej databázovej transakcie ako zmena stavu entity. Samostatný scheduler následne tieto udalosti číta a publikuje do Kafky. Tým sa zabezpečí, že každá udalosť bude doručená práve raz (at-least-once), bez rizika straty medzi commitom a odoslaním.
+
+\begin{lstlisting}[language=Java, breaklines=true, caption={Outbox scheduler -- polling a publikácia udalostí do Kafka (OutboxEventPublisher.java)}]
+@Scheduled(fixedDelayString =
+        "${app.outbox.scheduler-fixed-rate}")
+@Transactional
+public void publishOutboxEvents() {
+    List<OutboxEvent> newEvents =
+            outboxEventRepository
+                    .findByStatus(OutboxEventStatus.NEW);
+
+    for (OutboxEvent event : newEvents) {
+        try {
+            Object kafkaEvent = objectMapper.readValue(
+                    event.getPayload(),
+                    Class.forName(event.getEventType()));
+            if (kafkaEvent instanceof
+                    PaymentConfirmedEvent confirmed) {
+                paymentProducer
+                        .sendPaymentConfirmedEvent(confirmed)
+                        .get(5, TimeUnit.SECONDS);
+            } else if (kafkaEvent instanceof
+                    PaymentFailedEvent failed) {
+                paymentProducer
+                        .sendPaymentFailedEvent(failed)
+                        .get(5, TimeUnit.SECONDS);
+            }
+            event.setStatus(OutboxEventStatus.SENT);
+        } catch (Exception e) {
+            event.setStatus(OutboxEventStatus.FAILED);
+        }
+    }
+    outboxEventRepository.saveAll(newEvents);
+}
+\end{lstlisting}
+
+Architektúra mikroservisov:
+\begin{itemize}
+    \item gateway-service ako centrálna brána,
+    \item user-service, reservation-service, payment-service, notification-service ako doménové služby,
+    \item common modul pre zdieľané definície udalostí/\acrshort{dto} v rámci prototypu,
+    \item hlavný proces rezervácie realizovaný event-driven cez Kafka.
+\end{itemize}
+
+Technológie:
+\begin{itemize}
+    \item Java 17, Spring Boot 3.4.0, Spring Cloud (Gateway),
+    \item Apache Kafka (Spring Kafka),
+    \item PostgreSQL (oddelené databázy na úrovni logických DB),
+    \item Docker Compose pre lokálne spustenie~\cite{DockerCompose2025}.
+\end{itemize}
+
+Konzistencia a spoľahlivosť:
+\begin{itemize}
+    \item transactional outbox v reservation-service a payment-service,
+    \item \acrshort{dlt} pre spracovanie chýb v Kafka konzumácii,
+    \item Actuator endpoints (health/info) pre základnú diagnostiku.
+\end{itemize}
+
+Táto zostava technológií odráža bežné produkčné prostredie microservisného systému: Spring Cloud Gateway zabezpečuje jednotný vstupný bod a umožňuje prípadné rozšírenie o autentifikáciu alebo rate limiting, Apache Kafka tvorí chrbticu asynchrónnej komunikácie s garantovaným doručením správ, a Docker Compose reprodukuje celé prostredie na lokálnom vývojovom stroji bez nutnosti externej infraštruktúry.
+
+Z hľadiska konfigurácie používa každá služba vlastný \texttt{application.yml} s parametrami špecifickými pre danú doménu — databázové pripojenie, Kafka topic, port. Spoločné definície udalostí a \acrshort{dto} sú centralizované v module \texttt{common}, čo eliminuje duplicitu kontraktov a zjednodušuje evolúciu schémy udalostí pri zmenách domény.
+
+Volba tohto stacku nie je náhodná: kombinácia Spring Boot a Kafka je v praxi jednou z najrozšírenejších pre event-driven mikroservisné systémy v prostredí JVM~\cite{Newman2021}. Prototyp tak demonštruje architektonické princípy na technológiách, s ktorými sa vývojári bežne stretávajú, čo zvyšuje praktickú prenositeľnosť záverov tejto práce.
+
+Dôležitým rozhodnutím pri návrhu mikroservisnej verzie bolo zachovanie logickej izolácie databáz namiesto fyzicky oddeleného databázového servera pre každú službu. V prototypovom kontexte sú jednotlivé domény oddelené na úrovni logických databáz v rámci jednej PostgreSQL inštancie — \texttt{reservation\_db}, \texttt{payment\_db}, \texttt{notification\_db} a \texttt{user\_db}. Toto zjednodušenie znižuje prevádzkový overhead lokálneho prostredia a zároveň zachováva princíp izolácie perzistentného stavu, ktorý je pre mikroservisy kľúčový.
+
+Výsledná architektonická zostava pokrýva všetky typické vrstvy event-driven systému: synchronizačnú vrstvu (HTTP cez gateway), asynchrónnu vrstvu (Kafka topics a konzumenti), perzistentnú vrstvu (oddelené databázy) a pozorovateľnostnú vrstvu (Actuator, health endpointy). Táto úplnosť umožňuje porovnanie nielen výkonnostných charakteristík, ale aj prevádzkovej zložitosti oboch architektonických prístupov.
+
+Na obrázku~\ref{fig:components} je zobrazená komponentová architektúra mikroservisnej verzie.
+
+\begin{landscape}
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.99\linewidth,height=0.85\textheight,keepaspectratio]{figures/components.png}
+    \caption{Komponentová architektúra mikroservisnej verzie}
+    \label{fig:components}
+\end{figure}
+\end{landscape}
+
+Komponentový diagram na obrázku~\ref{fig:components} znázorňuje fyzické rozdelenie mikroservisnej verzie na samostatné služby. Na rozdiel od monolitu, kde všetky doménové vrstvy existujú v rámci jedného procesu, tu každá služba beží ako autonómny kontajner s vlastnou databázou. gateway-service tvorí jediný vstupný bod pre externé volania a zabezpečuje smerovanie požiadaviek bez toho, aby klient vedel o internej štruktúre systému. Táto hranica je kľúčová: z pohľadu klienta ide vždy o jediné rozhranie, pričom vnútorná dekompozícia systému zostáva transparentná.
+
+Dôležitou vlastnosťou tohto usporiadania je izolácia zlyhania: výpadok payment-service neovplyvní dostupnosť user-service ani gateway-service. Jednotlivé služby môžu byť škálované nezávisle podľa aktuálnej záťaže — napríklad reservation-service môže bežať vo viacerých inštanciách bez nutnosti škálovať notification-service. Každá služba má vlastný životný cyklus nasadenia, čo umožňuje vydávať nové verzie čiastkových komponentov bez reštartu celého systému.
+
+Z pohľadu komunikácie je viditeľné rozdelenie na dve vrstvy: synchrónnu (HTTP cez gateway) a asynchrónnu (udalosti cez Kafka). Táto dualita je zámerná — synchronizácia je vhodná pre operácie, kde klient očakáva okamžitú odpoveď (napr. vytvorenie rezervácie), zatiaľ čo asynchrónna komunikácia sa používa pre kroky, ktoré môžu prebehnúť s oneskorením bez degradácie používateľského zážitku (platba, notifikácia). Diagram teda nezachytáva len štruktúru, ale aj komunikačný kontrakt medzi komponentmi.
+
+Tok vytvorenia rezervácie v mikroservisnej verzii je rozdelený do dvoch fáz. Na obrázku~\ref{fig:sequence-sync} je zobrazená synchrónna fáza: klient odošle HTTP požiadavku cez API Gateway do reservation-service, ktorý v rámci jednej lokálnej transakcie uloží rezerváciu a outbox udalosť. Klient dostane okamžitú odpoveď (HTTP 201) — ďalšie spracovanie prebieha asynchrónne na pozadí.
+
+\begin{landscape}
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.99\linewidth,height=0.85\textheight,keepaspectratio]{figures/sequence-sync.png}
+    \caption{Sekvenčný diagram -- mikroservisná verzia (synchrónna fáza)}
+    \label{fig:sequence-sync}
+\end{figure}
+\end{landscape}
+
+Synchrónna fáza demonštruje jeden z kľúčových rozdielov mikroservisnej architektúry oproti monolitu: hranica transakcie je obmedzená na jedinú službu a jedinú databázu. Reservation-service uloží rezerváciu a outbox udalosť atomicky v rámci jednej lokálnej transakcie — bez akéhokoľvek sieťového volania na iné služby. Tým sa eliminuje riziko nekonzistentného stavu pri výpadku počas spracovania, keďže outbox udalosť „prežije" aj prípadný reštart aplikácie a bude doručená do Kafky pri najbližšom cykle schedulera.
+
+Vzor transactional outbox tu plní úlohu spoľahlivého mosta medzi databázovou transakciou a asynchrónnou komunikáciou. Bez tohto vzoru by priame volanie Kafka producera po commite databázovej transakcie mohlo viesť k strate udalosti — napríklad pri výpadku siete alebo reštarte JVM medzi commitom a odoslaním správy. Outbox garantuje, že udalosť bude odoslaná práve raz (at-least-once), pričom idempotentné spracovanie na strane konzumenta zabezpečuje korektnosť aj pri opakovanom doručení.
+
+Na obrázku~\ref{fig:sequence-async} je zobrazená asynchrónna fáza: outbox scheduler publikuje udalosť \texttt{Reservation\allowbreak Created} do Kafky, payment-service ju spracuje, vykoná platbu a cez vlastný outbox publikuje výsledok. Reservation-service a notification-service výsledok konzumujú a aktualizujú stav rezervácie. Celý \acrshort{e2e} tok trvá typicky 4,7–10\,s v závislosti od fázy outbox schedulera s \texttt{fixedDelay=5000\,ms}.
+
+Kľúčovým aspektom asynchrónnej fázy je decoupling medzi HTTP vrstvou a spracovaním udalostí. Klient, ktorý odoslal požiadavku na vytvorenie rezervácie, dostane okamžitú odpoveď (HTTP 201) hneď po uložení záznamu do databázy — bez čakania na výsledok platby. Platobný proces prebieha nezávisle na pozadí a výsledný stav rezervácie (\texttt{PAID} alebo \texttt{PAYMENT\_FAILED}) je dostupný až po spracovaní udalostí vo všetkých dotknutých službách. Tento prístup zlepšuje dostupnosť a odolnosť voči výpadkom jednotlivých služieb, no vyžaduje explicitné riadenie stavov a mechanizmy pre prípad duplicitného alebo oneskoreného doručenia správ.
+
+\begin{landscape}
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.99\linewidth,height=0.85\textheight,keepaspectratio]{figures/sequence-async.png}
+    \caption{Sekvenčný diagram -- mikroservisná verzia (asynchrónna fáza)}
+    \label{fig:sequence-async}
+\end{figure}
+\end{landscape}
+
+\acrshort{erd} diagramy jednotlivých domén sú zobrazené na obrázkoch~\ref{fig:erd-reservation} a~\ref{fig:erd-payment}. Diagram reservation-service zachytáva entitu rezervácie spolu s outbox tabuľkou, ktorá zabezpečuje spoľahlivú publikáciu udalostí. Diagram payment-service zobrazuje analogickú štruktúru na strane platobného procesu.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.47\textwidth}
+        \centering
+        \includegraphics[height=0.38\textheight]{figures/erd-reservation.png}
+        \caption{ERD -- reservation-service}
+        \label{fig:erd-reservation}
+    \end{minipage}%
+    \hspace{0.04\textwidth}%
+    \begin{minipage}[t]{0.47\textwidth}
+        \centering
+        \includegraphics[height=0.38\textheight]{figures/erd-payment.png}
+        \caption{ERD -- payment-service}
+        \label{fig:erd-payment}
+    \end{minipage}
+\end{figure}
+
+\subsection{Funkčná ekvivalencia}
+
+Funkčná ekvivalencia v tejto práci znamená, že oba prototypy podporujú rovnaké kľúčové doménové operácie a vedú k rovnakým výsledným stavom procesu.
+
+V oboch verziách je možné:
+\begin{itemize}
+    \item spravovať používateľov (základné operácie nad používateľskou entitou),
+    \item vytvoriť rezerváciu,
+    \item spracovať platbu asociovanú s rezerváciou,
+    \item vyvolať notifikačný krok po potvrdení alebo zlyhaní platby.
+\end{itemize}
+
+Rozdiel medzi verziami spočíva v tom, ako je tento proces implementovaný (jedna transakcia a priame volania v monolite vs.\ asynchrónna choreografia cez udalosti v mikroservisnej verzii), nie v samotnom cieľovom správaní systému.
+
+\subsection{Dátový model a API kontrakty}
+
+Pri návrhu API kontraktov je dôležité dbať na stabilitu rozhraní a jasnú zodpovednosť za dáta. V monolitickej architektúre sú interné hranice často implicitné — jednotlivé moduly môžu zdieľať entity alebo priamo volať služby. Naopak, v mikroservisnej architektúre sa hranice materializujú ako verejné rozhrania (HTTP API alebo event kontrakty), ktoré by mali byť navrhnuté tak, aby minimalizovali potrebu častých zmien.
+
+Z pohľadu dátového modelu je rozdiel medzi „zdieľanou schémou" a „rozdelenou perzistenciou" kľúčový. Monolit môže používať jednotné referenčné väzby (napr. cudzie kľúče) naprieč doménami, čo uľahčuje dotazy a reportovanie. Mikroservisná architektúra naopak uprednostňuje vlastné dátové modely v rámci každej služby a komunikáciu cez správy alebo API. To znižuje prepojenosť, ale môže viesť k potrebe redundancie údajov.
+
+Z pohľadu prototypu je dôležité zdokumentovať minimálne tieto kontrakty:
+\begin{itemize}
+    \item vstupné HTTP rozhranie pre vytvorenie rezervácie (volané cez gateway, smerované do reservation-service),
+    \item udalosti publikované do Kafka, najmä \texttt{Reservation\allowbreak Created} a \texttt{Payment\allowbreak Confirmed}/\texttt{Payment\allowbreak Failed},
+    \item spôsob zmeny stavu rezervácie v reakcii na výsledok platby,
+    \item \texttt{GET /api/notifications} — čítanie záznamov z \texttt{notification\_logs} pre overenie, že notifikácia bola zapísaná po ukončení platobného procesu.
+\end{itemize}
+
+Pre interaktívne preskúmanie a manuálne testovanie HTTP rozhraní oboch prototypov bola integrovaná podpora Swagger UI prostredníctvom knižnice \\ \texttt{springdoc\allowbreak-openapi}. Každý prototyp generuje OpenAPI dokumentáciu automaticky pri štarte aplikácie na základe anotácií kontrolérov. V monolitickej verzii je Swagger UI dostupný na \texttt{/swagger-ui/index.html}. V mikroservisnej verzii je Swagger UI každej služby vystavený cez gateway na prefixovaných cestách \\ (napr.\ \texttt{/user-service/swagger-ui/index.html}), pričom každý \\ \texttt{OpenApiConfig} explicitne nastavuje \texttt{servers} URL na adresu gateway, aby volania cez „Try it out" smerovali správne cez jediný vstupný bod na porte 8080.
+
+\subsection{Spustenie a testovanie}
+
+Oba prototypy sú spustiteľné rovnakým spôsobom — pomocou Docker Compose — čo zaručuje metodicky korektné porovnanie. Monolitická verzia používa dva kontajnery (\texttt{monolith-app} a \texttt{postgres}), mikroservisná sedem vrátane Kafka brokera~\cite{DockerCompose2025}. V oboch verziách odlišuje Spring profil \texttt{docker} konfiguráciu pre kontajnerové prostredie (\texttt{application-docker.yml}) od lokálnej.
+
+Na úrovni testovania je v prototypoch prítomná podpora jednotkových a integračných testov (JUnit 5, Mockito). Manuálne overenie E2E toku je možné cez Swagger UI — pre mikroservisnú verziu cez gateway, pre monolitickú na \texttt{localhost:8080}.
+
+Záťažové testovanie bolo realizované nástrojom k6 v štyroch scenároch s rastúcou záťažou: od jedného virtuálneho používateľa (baseline) až po 60 súčasných (high\_load). Pre mikroservisnú verziu meranie end-to-end času zahŕňalo aktívne polling stavu rezervácie až do dosiahnutia terminálneho stavu (\texttt{PAID} alebo \texttt{PAYMENT\_FAILED}).

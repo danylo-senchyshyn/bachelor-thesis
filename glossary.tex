@@ -1,0 +1,104 @@
+\newglossaryentry{microservice}{
+    name={Mikroservis},
+    description={malá, nezávislá služba v rámci systému, ktorá implementuje konkrétnu funkcionalitu a komunikuje s ostatnými službami prostredníctvom API alebo udalostí}
+}
+
+\newglossaryentry{monolith}{
+    name={Monolitická architektúra},
+    description={architektonický prístup, v ktorom je celá aplikácia vyvíjaná a nasadzovaná ako jeden celok so spoločnou kódovou základňou, jedným runtimeom a typicky jednou databázou}
+}
+
+\newglossaryentry{springboot}{
+    name={Spring Boot},
+    description={open-source Java framework určený na rýchlu tvorbu backendových aplikácií a mikroservisov s minimálnou konfiguráciou}
+}
+
+\newglossaryentry{docker}{
+    name={Docker},
+    description={platforma na kontajnerizáciu aplikácií, ktorá umožňuje izolované spúšťanie služieb a jednoduché nasadzovanie v rôznych prostrediach}
+}
+
+\newglossaryentry{dockercompose}{
+    name={Docker Compose},
+    description={nástroj na deklaratívne definovanie a spúšťanie viacerých Docker kontajnerov prostredníctvom jedného konfiguračného súboru}
+}
+
+\newglossaryentry{postgresql}{
+    name={PostgreSQL},
+    description={open-source relačný databázový systém s podporou ACID transakcií, rozšírených dátových typov a vysokej spoľahlivosti}
+}
+
+\newglossaryentry{restapi}{
+    name={REST API},
+    description={webové rozhranie navrhnuté podľa princípov REST — bezstavové HTTP volania na čítanie alebo zmenu zdrojov (GET, POST, PUT, DELETE)}
+}
+
+\newglossaryentry{gateway}{
+    name={API Gateway},
+    description={centrálny vstupný bod systému, ktorý sprostredkúva požiadavky medzi klientom a mikroservismi: zabezpečuje smerovanie, autentifikáciu a rate limiting}
+}
+
+\newglossaryentry{springcloudgateway}{
+    name={Spring Cloud Gateway},
+    description={komponent rámca Spring Cloud poskytujúci implementáciu API Gateway pre smerovanie HTTP požiadaviek a aplikovanie bezpečnostných politík medzi mikroservismi}
+}
+
+\newglossaryentry{apachekafka}{
+    name={Apache Kafka},
+    description={distribuovaná platforma pre streamovanie dát a asynchrónnu komunikáciu medzi službami; navrhnutá pre vysokú priepustnosť, odolnosť voči výpadkom a at-least-once doručenie správ}
+}
+
+\newglossaryentry{transactionaloutbox}{
+    name={Transactional Outbox},
+    description={návrhový vzor zabezpečujúci spoľahlivú publikáciu udalostí: udalosť sa ukladá do outbox tabuľky v rámci tej istej databázovej transakcie ako zmena stavu, a asynchrónny scheduler ju následne publikuje do message brokera}
+}
+
+\newglossaryentry{saga}{
+    name={Saga},
+    description={návrhový vzor pre koordináciu viac-krokových biznis procesov v distribuovanom prostredí; vo forme choreografie (služby reagujú na udalosti) alebo orchestrácie (centrálny koordinátor riadi tok)}
+}
+
+\newglossaryentry{eventualconsistency}{
+    name={Eventual Consistency},
+    description={model konzistencie v distribuovaných systémoch, kde sa stav systému stabilizuje v čase po sérii asynchrónnych operácií — nie okamžite v rámci jednej transakcie}
+}
+
+\newglossaryentry{dltgloss}{
+    name={Dead Letter Topic},
+    description={špeciálny Kafka topic, do ktorého sa presúvajú správy, ktoré sa nepodarilo spracovať ani po niekoľkých opakovaných pokusoch; slúži na archiváciu a analýzu chybových udalostí}
+}
+
+\newglossaryentry{dtoглoss}{
+    name={Data Transfer Object},
+    description={dátový objekt určený na prenos údajov medzi vrstvami alebo službami systému; zapuzdruje iba potrebné dáta bez implementácie business logiky}
+}
+
+\newglossaryentry{acidgloss}{
+    name={ACID transakcia},
+    description={databázová transakcia garantujúca štyri vlastnosti: Atomicity (všetko alebo nič), Consistency (zachovanie integrity), Isolation (izolácia súbežných transakcií), Durability (trvalosť po commite)}
+}
+
+\newglossaryentry{kubernetes}{
+    name={Kubernetes},
+    description={open-source systém na orchestráciu kontajnerov, ktorý automatizuje nasadzovanie, škálovanie a správu kontajnerizovaných aplikácií v klastri}
+}
+
+\newglossaryentry{boundedcontext}{
+    name={Bounded Context},
+    description={koncept z Domain-Driven Design označujúci explicitnú hranicu, v rámci ktorej platí konkrétny doménový model a jeho jazyk; základ pre rozdelenie systému na mikroservisy}
+}
+
+\newglossaryentry{idempotency}{
+    name={Idempotencia},
+    description={vlastnosť operácie, pri ktorej opakované vykonanie produkuje rovnaký výsledok ako prvé vykonanie; kľúčová pre bezpečné opakovanie spracovania správ v distribuovaných systémoch}
+}
+
+\newglossaryentry{choreography}{
+    name={Choreografia (sagy)},
+    description={spôsob koordinácie distribuovaného procesu, kde každá služba reaguje na udalosti a sама rozhoduje o ďalšom kroku — bez centrálneho orchestrátora}
+}
+
+\newglossaryentry{outboxscheduler}{
+    name={Outbox Scheduler},
+    description={asynchrónny komponent, ktorý periodicky číta záznamy z outbox tabuľky a publikuje ich ako udalosti do message brokera (napr. Kafka)}
+}

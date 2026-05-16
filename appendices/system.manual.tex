@@ -1,0 +1,169 @@
+% !TEX root = ../thesis.tex
+
+\chapter{Systémová príručka}\label{app:system.manual}
+
+Táto príručka popisuje technické prostredie, v ktorom boli prototypy vyvíjané a testované, vrátane štruktúry zdrojových súborov a pokynov na spustenie jednotlivých verzií.
+
+\section{Vývojové prostredie}
+
+Prototypy boli vyvíjané a testované na počítači s nasledujúcou konfiguráciou:
+
+\begin{itemize}
+    \item \textbf{Model:} Apple MacBook Air 15-palcový (M4, 2025)
+    \item \textbf{Operačný systém:} macOS Sequoia 26.3.1
+    \item \textbf{Procesor:} Apple M4 (10-jadrový CPU: 4 výkonnostné + 6 efektívnych jadier)
+    \item \textbf{GPU:} 10-jadrový Apple M4 GPU
+    \item \textbf{Pamäť RAM:} 24\,GiB Unified Memory
+    \item \textbf{Displej:} 15,3-palcový Liquid Retina (2880~$\times$~1864, 224\,ppi)
+    \item \textbf{Java:} OpenJDK 17
+    \item \textbf{Maven:} 3.9.x
+    \item \textbf{Docker Desktop:} 4.x (Docker Engine 24+, Docker Compose v2)
+    \item \textbf{IDE:} IntelliJ IDEA 2024
+\end{itemize}
+
+Záťažové testovanie oboch prototypov bolo realizované v rovnakom prostredí Docker Compose, pričom Docker Desktop mal nastavené limity zdrojov: 8\,vCPU a 5,786\,GiB RAM. Monolitická verzia bola spúšťaná ako Docker Compose prostredie s dvoma kontajnermi (\texttt{monolith-app} a \texttt{postgres}), mikroservisná verzia so siedmimi kontajnermi vrátane Kafka brokera.
+
+\section{Minimálne systémové požiadavky}
+
+Nasledujúca tabuľka uvádza minimálne požiadavky potrebné na spustenie jednotlivých verzií prototypu. Hodnoty vychádzajú z nameranej spotreby zdrojov pri záťažovom testovaní (viď kapitolu~\ref{ch:evaluation}).
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|p{0.35\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Požiadavka} & \textbf{Monolitická verzia} & \textbf{Mikroservisná verzia} \\ \hline
+Operačný systém  & Linux, macOS alebo Windows s podporou Dockeru & Linux, macOS alebo Windows s podporou Dockeru \\ \hline
+CPU              & 2 jadrá & 4 jadrá (odporúčané 8) \\ \hline
+RAM              & 1\,GiB & 6\,GiB (odporúčané 8\,GiB) \\ \hline
+Voľné miesto     & 1\,GiB & 4\,GiB (obraz Kafka + PostgreSQL + služby) \\ \hline
+Java             & nie je potrebná (beží v Docker kontajneroch) & nie je potrebná (beží v Docker kontajneroch) \\ \hline
+Maven            & nie je potrebný (beží v Docker kontajneroch) & nie je potrebný (beží v Docker kontajneroch) \\ \hline
+Docker           & Docker Desktop 4.x / Docker Engine 24+, Docker Compose v2 & Docker Desktop 4.x / Docker Engine 24+, Docker Compose v2 \\ \hline
+\end{tabular}
+\caption{Minimálne systémové požiadavky}
+\label{tab:system-requirements}
+\end{table}
+
+\section{Štruktúra zdrojových súborov}
+
+Zdrojové kódy oboch prototypov sa nachádzajú v priečinku \texttt{listings/} v koreňovom adresári tejto práce.
+
+\subsection*{Monolitická verzia (\texttt{reservation-monolith})}
+
+\begin{verbatim}
+reservation-monolith/
+├── src/main/
+│   ├── java/sk/tuke/reservations/
+│   │   ├── users/
+│   │   │   ├── controller/ -- UserController (REST API)
+│   │   │   ├── service/    -- UserService (biznis logika)
+│   │   │   ├── repository/ -- UserRepository (JPA)
+│   │   │   └── entity/     -- User (JPA entita)
+│   │   ├── reservations/
+│   │   │   ├── controller/ -- ReservationController
+│   │   │   ├── service/    -- ReservationService
+│   │   │   ├── repository/ -- ReservationRepository (JPA)
+│   │   │   └── entity/     -- Reservation, ReservationStatus
+│   │   ├── payments/
+│   │   │   ├── controller/ -- PaymentController
+│   │   │   ├── service/    -- PaymentService
+│   │   │   ├── repository/ -- PaymentRepository
+│   │   │   └── entity/     -- Payment, PaymentStatus
+│   │   └── notifications/
+│   │       ├── controller/ -- NotificationController
+│   │       ├── service/    -- NotificationService
+│   │       ├── repository/ -- NotificationLogRepository
+│   │       └── entity/     -- NotificationLog
+│   └── resources/
+│       ├── application.yml        -- DB, JPA, port
+│       └── application-docker.yml -- Docker profil
+├── docs/diagrams/          -- architektonické PNG diagramy
+├── load-tests/             -- k6 záťažové skripty
+├── Dockerfile              -- multi-stage build
+├── docker-compose.yml      -- monolith-app + postgres
+└── pom.xml                 -- Maven build konfigurácia
+\end{verbatim}
+
+Všetky doménové oblasti zdieľajú jednu databázu PostgreSQL s názvom \\ \texttt{reservation\_monolith\_db}. Komunikácia medzi modulmi prebieha priamym volaním metód v rámci jedného JVM procesu. Transakcie sú riadené anotáciou \texttt{@Transactional} na úrovni service vrstvy. Každá doménová oblasť (users, reservations, payments, notifications) exponuje vlastný REST kontrolér — vrátane \texttt{NotificationController}, ktorý sprístupňuje záznamy z \texttt{notification\_logs} na endpointe \texttt{GET /api/notifications}.
+
+\subsection*{Mikroservisná verzia (\texttt{reservation-micro})}
+
+\begin{verbatim}
+reservation-micro/
+├── services/
+│   ├── common/           -- zdieľané DTO a event triedy
+│   │   └── src/main/java/.../
+│   │       ├── dto/      -- request/response objekty
+│   │       └── events/   -- ReservationCreatedEvent atd.
+│   ├── gateway-service/  -- API Gateway (Spring Cloud)
+│   │   └── src/main/resources/
+│   │       └── application.yml  -- routing pravidlá
+│   ├── user-service/
+│   │   └── src/main/java/.../
+│   │       ├── controller/ -- UserController
+│   │       ├── service/    -- UserService
+│   │       ├── repository/ -- UserRepository
+│   │       └── entity/     -- User
+│   ├── reservation-service/
+│   │   └── src/main/java/.../
+│   │       ├── controller/ -- ReservationController
+│   │       ├── service/    -- ReservationService
+│   │       ├── repository/ -- Reservation + OutboxEvent repo
+│   │       ├── entity/     -- Reservation, OutboxEvent
+│   │       └── outbox/     -- OutboxEventPublisher
+│   ├── payment-service/
+│   │   └── src/main/java/.../
+│   │       ├── service/    -- PaymentService
+│   │       ├── repository/ -- Payment + OutboxEvent repo
+│   │       ├── entity/     -- Payment, OutboxEvent
+│   │       ├── outbox/     -- OutboxEventPublisher
+│   │       └── kafka/      -- Kafka listener + producer
+│   └── notification-service/
+│       └── src/main/java/.../
+│           ├── controller/ -- NotificationController
+│           ├── service/    -- NotificationService
+│           ├── repository/ -- NotificationLogRepository
+│           └── kafka/      -- Kafka listener (DLT podpora)
+├── db_init/              -- SQL skripty inicializácie schém
+├── docs/diagrams/        -- architektonické PNG diagramy
+├── load-tests/           -- k6 skripty a výsledky meraní
+├── docker-compose.yml    -- definícia celého prostredia
+└── pom.xml               -- parent Maven POM (multi-modul)
+\end{verbatim}
+
+Každá služba má vlastnú databázu PostgreSQL (\texttt{user\_db}, \texttt{reservation\_db}, \texttt{payment\_db}, \texttt{notification\_db}), vlastný \texttt{Dockerfile} a konfiguráciu pre Docker v súbore \texttt{application-docker.yml}. Komunikácia medzi službami prebieha asynchrónne cez Apache Kafka; reservation-service a payment-service používajú vzor transactional outbox na spoľahlivú publikáciu udalostí. HTTP rozhranie je dostupné cez gateway na porte 8080; každá doménová služba vrátane notification-service exponuje vlastný REST kontrolér (\texttt{GET /api/notifications}).
+
+\section{Spustenie prototypov}
+
+\subsection*{Monolitická verzia}
+
+Predpoklady: Docker Desktop 4.x s Docker Compose v2 (Java ani Maven nie sú potrebné).
+
+\begin{enumerate}
+    \item Zostaviť a spustiť prostredie:
+\begin{verbatim}
+cd reservation-monolith
+docker compose up --build
+\end{verbatim}
+    \item Aplikácia je dostupná na \texttt{http://localhost:8080}.
+    \item Swagger UI: \texttt{http://localhost:8080/swagger-ui/index.html}
+    \item Pre zastavenie: \texttt{docker compose down -v}
+\end{enumerate}
+
+Konfigurácia pre Docker prostredie je definovaná v súbore \\ \texttt{src/main/resources/application-docker.yml}, ktorý nastavuje hostname databázy na \texttt{postgres} (názov kontajnera namiesto \texttt{localhost}).
+
+\subsection*{Mikroservisná verzia}
+
+Predpoklady: Docker Desktop s minimálne 8\,GiB RAM a 4 vCPU.
+
+\begin{enumerate}
+    \item Zostaviť a spustiť celé prostredie:
+\begin{verbatim}
+cd reservation-micro
+docker compose up --build
+\end{verbatim}
+    \item API Gateway je dostupná na \texttt{http://localhost:8080}.
+    \item Pre zastavenie: \texttt{docker compose down -v}
+\end{enumerate}
+
+Konfigurácia pre Docker prostredie je definovaná v súboroch \\ \texttt{application-docker.yml} v každej službe. Inicializačné SQL skripty pre jednotlivé databázy sa nachádzajú v priečinku \texttt{db\_init/}.

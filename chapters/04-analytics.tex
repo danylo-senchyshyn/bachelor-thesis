@@ -1,0 +1,139 @@
+% !TEX root = ../thesis.tex
+\chapter{Analýza stavu problematiky}\label{ch:analytics}
+
+Táto kapitola vytvára teoretický a technický rámec pre návrh a implementáciu oboch prototypov. Jej cieľom je vyjasniť kľúčové pojmy súvisiace s monolitickou a mikroservisnou architektúrou, identifikovať kritériá porovnania a zdôvodniť použité návrhové rozhodnutia. V tejto časti sa analyzuje technologický kontext (zvolený stack), existujúca monolitická implementácia a požiadavky, ktoré musí spĺňať mikroservisná verzia, aby bolo porovnanie metodicky korektné.
+
+Analytická časť práce zohráva kľúčovú úlohu pri vytváraní premostenia medzi teoretickými poznatkami a praktickou implementáciou. Jej cieľom nie je iba opísať použité technológie, ale najmä vysvetliť, prečo boli zvolené konkrétne architektonické riešenia a aké dôsledky tieto rozhodnutia prinášajú.
+
+Dôležitým aspektom je aj identifikácia obmedzení prototypového riešenia. Keďže cieľom práce nie je vytvoriť plnohodnotný produkčný systém, ale porovnateľné implementácie pre akademickú analýzu, je potrebné tieto obmedzenia transparentne pomenovať. Takýto prístup zvyšuje odbornú hodnotu práce a umožňuje korektnú interpretáciu výsledkov porovnania.
+
+\section{Súvisiace práce a existujúce riešenia}
+
+Porovnávaniu monolitickej a mikroservisnej architektúry sa venuje viacero akademických prác, a to na medzinárodnej aj domácej úrovni.
+
+Blinowski a kol.~\cite{Blinowski2022} realizovali empirickú výkonostnú a škálovateľnostnú evaluáciu monolitickej a mikroservisnej architektúry na referenčnej webovej aplikácii. Výsledky ukázali, že pre systémy bez tisícok súbežných používateľov, ktoré je možné škálovať vertikálne, nie sú prínosy migrácie na mikroservisy jednoznačne preukázané a dostupné dôkazy sú nekonzistentné. Na rozdiel od tejto práce, ktorá využívala existujúcu referenčnú aplikáciu, predkladaná bakalárska práca implementuje oba prototypy od základu na rovnakom technologickom zásobníku a v rovnakej doméne, čo eliminuje skreslenie spôsobené odlišným technologickým výberom. Navyše sa zameriava na event-driven koordináciu a spoľahlivosť doručenia udalostí (transactional outbox, Saga, \acrshort{dlt}), ktoré Blinowski a kol. nezohľadňujú.
+
+Jaroš~\cite{Jaros2025} v bakalárskej práci analyzoval riziká adopcie mikroservisnej architektúry na príklade aplikácie pre pediatrickú ambulanciu. Identifikoval, že hlavnými rizikami sú celková komplexnosť systému, zložitejšia správa komponentov a pomalší vývoj. Záverom práce je, že pre aplikácie menšieho rozsahu identifikované nevýhody prevažujú nad výhodami a efektívnejším riešením by bola monolitická architektúra. Práca Jaroša sa však opiera výlučne o kvalitatívnu analýzu bez implementácie alebo merania — neobsahuje ani jeden funkčný prototyp, ani namerané výsledky. Predkladaná práca tento záver empiricky overuje: oba prístupy sú implementované a porovnané na základe konkrétnych meraní latencie, priepustnosti a end-to-end času spracovania.
+
+Ilek~\cite{Ilek2025} v diplomovej práci na Technickej univerzite v Košiciach navrhol a implementoval inteligentný systém na odporúčanie cestovateľských destinácií postavený na mikroservisnej architektúre. Práca preukazuje praktickú aplikovateľnosť mikroservisného prístupu v reálnom systéme a potvrdzuje jeho výhody z hľadiska flexibility, škálovateľnosti a jednoduchej údržby v kontexte komplexnejšej aplikácie. Keďže však práca implementuje iba mikroservisnú verziu, neobsahuje porovnanie s alternatívnou architektúrou a absentuje akékoľvek záťažové testovanie. Predkladaná bakalárska práca dopĺňa tento pohľad tým, že stavia funkčne ekvivalentný monolitický prototyp vedľa mikroservisného a na základe meraní kvantifikuje konkrétne rozdiely medzi oboma prístupmi.
+
+Predkladaná bakalárska práca sa teda od všetkých uvedených prác odlišuje kombináciou troch prvkov: (1)~implementáciou dvoch funkčne ekvivalentných prototypov na rovnakom technologickom zásobníku, (2)~kvantitatívnym porovnaním na základe nameraných výsledkov záťažového testovania, a (3)~praktickou demonštráciou vzoru transactional outbox, choreografie sagy a mechanizmu Dead Letter Topic — paternov, ktoré sú síce odporúčané v literatúre, no zriedkavo demonštrované na ucelených implementáciách v akademickom prostredí.
+
+\section{Analýza technologického kontextu}
+
+V oboch prototypoch je použitý technologický základ postavený na jazyku Java a frameworku Spring Boot, čo umožňuje vytvoriť porovnateľné backendové implementácie pri zachovaní rovnakých vývojových princípov, ako sú inverzia riadenia, vrstvenie aplikácie a integrácia s perzistenciou. Takéto technologické zjednotenie je dôležité pre korektné porovnanie architektonických prístupov, pretože znižuje riziko, že výsledné rozdiely budú spôsobené odlišným technologickým stackom, a nie samotnou architektúrou systému~\cite{SpringBootDocs2025,SpringWebRESTDocs2025}.
+
+Na zabezpečenie perzistencie údajov je v oboch prototypoch použitý databázový systém PostgreSQL, ktorý poskytuje relačný model ukladania dát a podporuje \acrshort{acid} transakcie~\cite{PostgreSQLDocs2025}. Táto vlastnosť je významná najmä pri monolitickej architektúre, kde väčšina operácií prebieha v rámci jednej aplikácie a jednej databázovej vrstvy. Mikroservisná verzia okrem toho využíva Apache Kafka ako message broker, čím sa architektúra posúva smerom k asynchrónnej komunikácii a event-driven prístupu, ktorý je v literatúre považovaný za vhodný najmä pre distribuované a dekomponované systémy~\cite{Richardson2018}.
+
+Docker je platforma na kontajnerizáciu aplikácií, ktorá zabaľuje aplikáciu spolu so všetkými závislosťami do izolovaného kontajnera a tým zaručuje konzistentné správanie v rôznych prostrediach. Docker Compose rozširuje tento princíp o deklaratívne definovanie viacerých kontajnerov, ich sieťových prepojení a závislostí v jednom konfiguračnom súbore. V kontexte tejto práce umožňuje reprodukovateľné spustenie celého mikroservisného prostredia — vrátane PostgreSQL, Apache Kafka a jednotlivých aplikačných služieb — bez manuálnej konfigurácie každého komponentu~\cite{Merkel2014Docker,DockerCompose2025}.
+
+\section{Apache Kafka ako technológia asynchrónnej komunikácie}
+
+Apache Kafka predstavuje distribuovanú platformu na prenos a spracovanie udalostí, ktorá je navrhnutá pre vysokú priepustnosť, škálovateľnosť a spoľahlivú asynchrónnu komunikáciu medzi jednotlivými časťami systému. V mikroservisných architektúrach plní úlohu sprostredkovateľa udalostí medzi producentmi a konzumentmi správ, pričom jednotlivé služby nemusia komunikovať priamo navzájom, ale prostredníctvom zdieľanej infraštruktúry udalostí. Takýto model prispieva k nižšej previazanosti služieb, lepšej odolnosti systému voči zlyhaniam a väčšej flexibilite pri rozširovaní architektúry~\cite{KafkaDocs2025}.
+
+Základným konceptom platformy Kafka je topic — logický komunikačný kanál, do ktorého producenti zapisujú správy a z ktorého ich konzumenti odoberajú. Každý topic je rozdelený na partície: samostatné usporiadané sekvencie správ, ktoré umožňujú horizontálne škálovanie a paralelné spracovanie. V rámci partície je poradie správ zachované; každá správa je identifikovaná offsetom, čo umožňuje konzumentom sledovať stav spracovania a v prípade potreby čítať udalosti od ľubovoľnej pozície. Kafka využíva princíp append-only logu — nové správy sa pripisujú na koniec sekvencie, čo je efektívne z hľadiska sekvenčných zápisov aj čítania. Z pohľadu spoľahlivosti každá partícia môže mať lídra a jednu alebo viac replík; pri výpadku uzla vedenie partície prevezme replika, čím sa zachováva dostupnosť systému. Kafka zároveň podporuje model consumer groups: viacero konzumentov zdieľa správy z partícií, čo tvorí základ pre škálovateľné a nezávislé spracovanie udalostí v mikroservisnej architektúre~\cite{KafkaDocs2025}.
+
+V kontexte tejto bakalárskej práce je Apache Kafka významná najmä preto, že prirodzene podporuje event-driven prístup k návrhu komunikácie medzi mikroservismi. Služby môžu publikovať udalosti reprezentujúce zmenu stavu alebo vykonanie určitej operácie a ostatné služby na tieto udalosti reagujú nezávisle, bez potreby priamej synchrónnej väzby. Na druhej strane si takýto prístup vyžaduje dôsledné navrhovanie formátu udalostí, kompatibility správ, idempotentného spracovania a riešenie eventual consistency~\cite{KafkaDocs2025}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|p{0.65\textwidth}|}
+\hline
+\textbf{Koncept} & \textbf{Popis} \\ \hline
+Topic      & Logický komunikačný kanál; producenti zapisujú správy, konzumenti ich odoberajú \\ \hline
+Partícia   & Usporiadaná sekvencia správ v rámci topicu; umožňuje horizontálne škálovanie \\ \hline
+Offset     & Jedinečné poradové číslo správy v partícii; sleduje stav spracovania konzumenta \\ \hline
+Broker     & Serverový uzol klastra; prijíma, ukladá a doručuje správy \\ \hline
+Replikácia & Každá partícia má lídra a repliky; zabezpečuje odolnosť voči výpadku uzla \\ \hline
+Consumer group & Skupina konzumentov zdieľajúca správy z partícií; základ pre paralelné spracovanie \\ \hline
+\end{tabular}
+\caption{Prehľad kľúčových konceptov platformy Apache Kafka}
+\label{tab:kafka-concepts}
+\end{table}
+
+Nasledujúci diagram ilustruje konkrétne usporiadanie týchto konceptov. Topic je rozdelený na tri partície s rôznymi offsetmi; dve consumer groups čítajú správy nezávisle — každá sleduje vlastný offset v každej partícii, čo umožňuje paralelné spracovanie bez vzájomného ovplyvnenia. Consumer Group A obsahuje štyroch konzumentov, pričom každý spracováva správy z jednej priradenej partície, zatiaľ čo Consumer Group B využíva iba dvoch konzumentov — jeden z nich tak obsluhuje viacero partícií súčasne. Táto vlastnosť demonštruje flexibilitu modelu: počet konzumentov v skupine nemusí zodpovedať počtu partícií, Kafka však zaručuje, že každú partíciu v rámci jednej skupiny spracováva vždy najviac jeden konzument. Práve takéto usporiadanie tvorí základ pre škálovateľné a spoľahlivé spracovanie udalostí v mikroservisnej architektúre.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/consumer-groups.png}
+    \caption{Štruktúra Apache Kafka -- topic, partície, offsety a consumer groups}
+    \label{fig:kafka-diagram}
+\end{figure}
+
+\section{RabbitMQ ako alternatíva k Apache Kafka}
+
+Alternatívou k platforme Apache Kafka je RabbitMQ — message broker orientovaný na doručovanie správ prostredníctvom frontov, ktorý podporuje flexibilné smerovanie správ, potvrdzovanie ich prijatia a rôzne komunikačné vzory. RabbitMQ je vhodný pre tradičnú message-oriented komunikáciu a fronty úloh, zatiaľ čo Kafka je navrhnutá ako distribuovaný log optimalizovaný na spracovanie veľkého objemu udalostí s možnosťou opätovného čítania a paralelného spracovania cez consumer groups.
+
+Z hľadiska tejto bakalárskej práce je vhodnejšou voľbou práve Apache Kafka. RabbitMQ by bol postačujúci pre jednoduchší scenár doručenia správy medzi dvoma službami, avšak v kontexte tejto práce je nevyhnutná schopnosť prehrávať udalosti od ľubovoľného offsetu — napríklad pri reštarte konzumenta alebo ladení asynchrónneho toku. RabbitMQ túto vlastnosť nemá, pretože správy po potvrdení prijatia maže. Okrem toho model consumer groups s partition-based škálovaním Kafky priamo zodpovedá požiadavkám choreografie sagy, kde viacero nezávislých konzumentov reaguje na rovnaký prúd udalostí. Alternatívy ako NATS alebo ActiveMQ síce ponúkajú nižšiu latenciu, resp. širšiu škálu protokolov, no chýba im log-based model trvalého ukladania udalostí, ktorý je pre vzor transactional outbox a spoľahlivé at-least-once doručenie kľúčový. Z týchto dôvodov je Apache Kafka pre ciele tejto práce jednoznačne vhodnejšou voľbou.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{0.22\textwidth}|p{0.34\textwidth}|p{0.34\textwidth}|}
+\hline
+\textbf{Kritérium} & \textbf{Apache Kafka} & \textbf{RabbitMQ} \\ \hline
+Model doručenia   & Publish-subscribe (log-based) & Message queue (push/pull) \\ \hline
+Uloženie správ    & Append-only log, konfigurovateľná retenčná doba & Správy sa mažú po potvrdení príjmu \\ \hline
+Škálovanie        & Horizontálne cez partície a consumer groups & Horizontálne cez fronty a shovel/federation \\ \hline
+Replay správ      & Áno — konzumenti môžu čítať od ľubovoľného offsetu & Nie — správa je dostupná iba raz \\ \hline
+Typické využitie  & Event streaming, event-driven architektúry, dátové toky & Fronty úloh, RPC, jemnejšie smerovanie správ \\ \hline
+Vhodnosť pre prácu & \textbf{Áno} — event-driven mikroservisy, saga choreografia & Menej vhodný — chýba replay a log-based model \\ \hline
+\end{tabular}
+\caption{Porovnanie Apache Kafka a RabbitMQ}
+\label{tab:kafka-vs-rabbitmq}
+\end{table}
+
+\section{Hypotézy a očakávané výsledky}
+
+Na základe známych charakteristík architektúr je možné formulovať nasledovné očakávania, ktoré budú overované porovnávacou analýzou:
+
+\begin{itemize}
+    \item Monolit pravdepodobne poskytne nižšiu latenciu pri spracovaní komplexného procesu, pretože všetky kroky prebiehajú lokálne bez sieťovej komunikácie a bez asynchrónnej koordinácie.
+    \item Mikroservisná verzia pravdepodobne prinesie vyšší prevádzkový overhead (viac procesov, message broker, koordinácia), avšak zároveň poskytne lepšie oddelenie zodpovedností a potenciál pre izolované škálovanie.
+\end{itemize}
+
+Tieto očakávania sú v práci dôležité najmä ako východisko pre interpretáciu výsledkov a nie ako vopred dané závery. Formulovanie očakávaní pred samotnou porovnávacou analýzou má význam nielen z metodologického, ale aj z interpretačného hľadiska.
+
+V kontexte tejto práce sa očakáva, že monolitická architektúra bude jednoduchšia z pohľadu vývoja a ladenia, keďže celý systém beží v jednom procese a využíva jednotný dátový model. Naopak mikroservisná architektúra sa očakáva ako náročnejšia na návrh a prevádzku, avšak s vyšším potenciálom pre rozšíriteľnosť a oddelenie zodpovedností.
+
+\section{Riziká a mitigácia}
+
+Riziká sú rozdelené podľa typu architektúry a typu problému.
+
+\subsection*{Riziká mikroservisnej verzie}
+\begin{itemize}
+    \item prevádzková komplexita (viac služieb, message broker, konfigurácia),
+    \item chybové scenáre v asynchrónnom spracovaní (opakovanie udalostí, zlyhanie deserializácie, potreba \acrshort{dlt}),
+    \item diagnostika toku bez distribuovaného trasovania (ťažšie sledovanie „end-to-end" procesu),
+    \item riziko nekonzistencie pri nesprávnej implementácii eventual consistency.
+\end{itemize}
+
+\subsection*{Riziká monolitickej verzie}
+\begin{itemize}
+    \item vyššia miera prepojenosti modulov pri raste systému,
+    \item potreba nasadzovať celý systém pri každej zmene,
+    \item obmedzené možnosti izolovaného škálovania konkrétnej domény.
+\end{itemize}
+
+\subsection*{Návrhy mitigácie pre mikroservisnú verziu}
+\begin{itemize}
+    \item zavedenie jasného event kontraktu v spoločnom module a konzistentné verzovanie udalostí,
+    \item robustné spracovanie chýb (\acrshort{dlt}, idempotentné spracovanie),
+    \item rozšírenie observability (centralizované logovanie, distribuované trasovanie) ako odporúčané rozšírenie pre produkčnú prax.
+\end{itemize}
+
+Z hľadiska diagnostiky využíva mikroservisný prototyp Actuator endpointy Spring Bootu (\texttt{/actuator/health}, \texttt{/actuator/info}, \\ \texttt{/actuator/prometheus}) a základné konzolové logovanie — čo je postačujúce pre účely tohto porovnania, no v produkčnom prostredí by bolo vhodné doplniť centralizované logovanie a distribuované trasovanie.
+
+\subsection*{Návrhy mitigácie pre monolitickú verziu}
+\begin{itemize}
+    \item dôsledné dodržiavanie package-by-feature a jasné hranice zodpovedností,
+    \item minimalizácia „priečnych" závislostí medzi doménami,
+    \item oddelenie transakčných hraníc tam, kde je to vhodné pre zrozumiteľnosť a testovateľnosť.
+\end{itemize}
+
+\section{Zhrnutie analytickej časti}
+
+Analýza ukázala, že monolitická architektúra poskytuje jednoduchý a tradičný základ pre implementáciu rezervačného systému s lokálnou transakčnou konzistenciou, zatiaľ čo mikroservisná architektúra umožňuje fyzické oddelenie domén a podporuje event-driven spracovanie. Zároveň boli identifikované kľúčové technické oblasti, v ktorých sa architektúry líšia: komunikácia, konzistencia dát, nasadenie a prevádzková náročnosť.
+
+Tieto zistenia tvoria základ pre ďalšiu kapitolu, v ktorej sú uvedené použité metódy, konceptuálny návrh riešenia, požiadavky na systém a opis implementovaných prototypov s dôrazom na architektúru, komponenty, technológie, nasadenie a spôsob testovania.
+
+Dôležitým výstupom analytickej časti je aj vymedzenie hraníc porovnania: cieľom nie je dokázať nadradenosť jedného prístupu nad druhým, ale kvantifikovať konkrétne rozdiely merateľnými experimentmi. Tento zámer priamo ovplyvňuje návrh prototypov — oba musia byť funkčne ekvivalentné, nasaditeľné v rovnakom prostredí a testovateľné rovnakými nástrojmi, aby bolo porovnanie metodicky korektné a výsledky interpretovateľné.

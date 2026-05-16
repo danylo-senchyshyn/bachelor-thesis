@@ -1,0 +1,56 @@
+% !TEX root = thesis.tex
+
+%% Document Metadata
+
+%% The location of your Assignment Statement (scanned as image)
+\thesisspec{figures/zadavaci.list.png}
+
+\title{Comparative Analysis of Monolithic and Microservices Architecture}{Komparatívna analýza monolitickej a mikroservisnej architektúry}  % názov práce v slovenčine a angličtine
+%\thesis{Master thesis}{Diplomová práca}  % typ prace
+
+\author{Danylo}{Senchyshyn}
+\supervisor{Ing. Sylvia Maťašová}
+\consultant{doc. Ing. Eva Chovancová, PhD.}  % thesis consultant
+% \consultantsaffiliation{Stanford University}{Stanfordská univerzita}  % affiliation of the consultant
+% \college{University of Žilina}{Žilinská univerzita}  % univerzita
+\faculty{Faculty of Electrical Engineering and informatics}{Fakulta elektrotechniky a informatiky}  % fakulta
+% \department{Department of Computers and Informatics}{Katedra počítačov a informatiky}  % katedra
+% \departmentacr{DCI}{KPI}  % skratka katedry
+\submissiondate{29}{5}{2026}
+\fieldofstudy{Informatika}
+\studyprogramme{Informatika}  % iba názov bez číselného kódu
+% \city{Košice}  % mesto
+
+\keywords{%
+  % english
+  microservices, monolithic architecture, reservation system, Spring Boot, Apache Kafka, Docker, PostgreSQL, transactional outbox, saga pattern, performance comparison
+}{%
+  % slovak
+  mikroservisy, monolitická architektúra, rezervačný systém, Spring Boot, Apache Kafka, Docker, PostgreSQL, transakčný outbox, saga vzor, porovnanie výkonu
+}
+
+\declaration{%
+    Vyhlasujem, že som záverečnú prácu vypracoval samostatne s~použitím uvedenej odbornej literatúry. Pri písaní niektorých častí textu som využil nástroje umelej inteligencie (Claude od Anthropic) ako pomocný nástroj na formuláciu viet a kontrolu textu; obsah, odborné rozhodnutia a implementácia prototypov sú výlučne mojou vlastnou prácou.%
+}
+
+\abstract{%
+  % english
+  This thesis presents a comparative study of two architecturally distinct implementations of the same reservation system — a monolithic and a microservice-based version — developed using Java, Spring Boot, and PostgreSQL. The monolithic prototype implements all domain responsibilities within a single deployable unit with a unified transactional boundary, while the microservice prototype decomposes the system into autonomous services coordinated through event-driven choreography via Apache Kafka and the transactional outbox pattern.
+  Performance measurements using the k6 load testing tool showed that the monolithic architecture achieves 14\,\% higher peak throughput (1\,110 vs.\ 972 req/s), 2.2× lower median HTTP latency, and a dramatically shorter end-to-end processing time (5\,ms vs.\ 5\,210\,ms median). The dominant factor behind the end-to-end difference is the asynchronous outbox scheduler, not raw compute performance. Qualitative analysis confirmed that microservices provide better fault isolation, independent deployability, and potential for selective scaling at the cost of significantly higher operational complexity. The findings support context-dependent architectural decision-making rather than a universal preference for either approach.
+}{%
+  % slovak
+  Táto práca predstavuje porovnávaciu štúdiu dvoch architektonicky odlišných implementácií rovnakého rezervačného systému — monolitickej a mikroservisnej verzie — vyvinutých v prostredí Java, Spring Boot a PostgreSQL. Monolitický prototyp implementuje všetky doménové zodpovednosti v rámci jedného nasaditeľného artefaktu s jednotnou transakčnou hranicou, zatiaľ čo mikroservisný prototyp dekomponuje systém na autonómne služby koordinované prostredníctvom event-driven choreografie cez Apache Kafka a vzor transactional outbox.
+  Výkonnostné merania pomocou nástroja k6 ukázali, že monolitická architektúra dosahuje o 14\,\% vyšší peak throughput (1\,110 oproti 972 req/s), 2,2-násobne nižšiu mediánovú latenciu HTTP a výrazne kratší end-to-end čas spracovania (5\,ms oproti 5\,210\,ms medián). Dominantným faktorom tohto rozdielu je asynchrónny outbox scheduler, nie surový výpočtový výkon. Kvalitatívna analýza potvrdila, že mikroservisy poskytujú lepšiu izoláciu zlyhaní, nezávislú nasaditeľnosť a potenciál pre selektívne škálovanie za cenu výrazne vyššej prevádzkovej zložitosti. Výsledky podporujú kontextovo závislé architektonické rozhodovanie namiesto univerzálnej preferencie jedného prístupu.
+}
+
+\acknowledgment{%
+  Na tomto mieste by som sa rád poďakoval svojej školiteľke Ing. Sylvii Maťašovej a konzultantke doc. Ing. Eve Chovancovej, PhD. za ich čas, odborné vedenie a cenné pripomienky počas celého riešenia záverečnej práce.
+  Rovnako by som sa rád poďakoval svojim rodičom a priateľom za ich podporu a povzbudzovanie počas celého môjho štúdia.
+}
+
+
+% Uncomment the following line for the printer-friendly version of the thesis.
+% When defined, final PDF will not contain colored links, which is useful for printing.
+% WARNING: Uncomment ONLY when used manually without the Docker image for building the thesis. By uncommenting this line, you will manually override the printable flag and behavior of the Docker image will not work as expected.
+% If you want to use the Docker image for building the document, please do not uncomment this line.
+%\def\printable{}
