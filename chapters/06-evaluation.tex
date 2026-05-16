@@ -3,7 +3,7 @@
 
 Táto kapitola obsahuje objektívne vyhodnotenie navrhnutých a implementovaných prototypov. Vyhodnotenie sa opiera o kvantitatívne merania výkonnosti a kvalitatívne posúdenie architektonických vlastností, pričom výsledky sú interpretované v kontexte stanovených cieľov práce.
 
-\section{Výsledky výkonnostného testovania}
+\section{Výsledky výkonnostného testovania}\label{sec:load-testing}
 
 Táto sekcia prezentuje namerané výsledky záťažového testovania oboch prototypov. Merania sú rozdelené do troch oblastí: latencia a priepustnosť HTTP odpovedí, end-to-end čas spracovania celého rezervačného toku a spotreba systémových zdrojov. Výsledky sú interpretované v kontexte architektonických rozdielov identifikovaných v predchádzajúcich kapitolách.
 
@@ -269,6 +269,112 @@ Mikroservisná architektúra poskytuje výhody, ktoré tieto testy nezachytávaj
 \noindent\rule{\linewidth}{0.6pt}
 
 \noindent\textbf{Kľúčové zistenie:} Dominantným faktorom E2E latencie mikroservisnej verzie nie je surový výpočtový výkon, ale konfigurácia outbox schedulera \\ (\texttt{fixedDelay=5000\,ms}). Optimalizácia tohto parametra — napríklad skrátením na 100\,ms alebo nahradením mechanizmom CDC (Change Data Capture) — by mohla výrazne znížiť E2E latenciu bez zásahu do základnej architektúry. Monolitická architektúra dosahuje lepší výkon vo všetkých meraných dimenziách, avšak mikroservisná verzia prináša architektonické vlastnosti, ktoré sa kvantitatívnymi meraniami nedajú priamo zachytiť.
+
+\section{Analýza zložitosti kódu}
+
+Okrem výkonnostných metrík a kvalitatívnych vlastností je možné architektonické rozdiely kvantifikovať aj na úrovni samotného zdrojového kódu. Počet tried, riadkov kódu, konfiguračných súborov a testov priamo odráža vývojovú náročnosť každého prístupu.
+
+\subsection*{Objem zdrojového kódu}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{0.58\textwidth}|r|r|}
+\hline
+\textbf{Metrika} & \textbf{Monolit} & \textbf{Mikroservisy} \\ \hline
+Počet Java tried                                  & 29 & 71     \\ \hline
+Celkový počet riadkov kódu                        & 834 & 3\,840 \\ \hline
+Konfiguračný súbor aplikácie (\texttt{application.yml}) & 1 & 10 \\ \hline
+Počet \texttt{Dockerfile}                         & 0  & 1      \\ \hline
+Počet súborov \texttt{docker-compose}             & 0  & 2      \\ \hline
+Počet Maven \texttt{pom.xml}                      & 1  & 7      \\ \hline
+\end{tabular}
+\caption{Porovnanie objemu zdrojového kódu}
+\label{tab:code-complexity}
+\end{table}
+
+Mikroservisná verzia obsahuje 2,4-násobne viac tried a 4,6-násobne viac riadkov kódu. Tento rozdiel nie je len dôsledkom väčšieho počtu modulov — každá doménová služba musí opakovane obsahovať vlastnú konfiguráciu Kafka konzumentov, topicov, outbox publishera, globálneho exception handlera a Swagger konfigurácie. Kód, ktorý sa v monolite vyskytuje raz, musí byť v mikroservisnej verzii zreplikovaný naprieč viacerými službami.
+
+\subsection*{Rozloženie kódu v mikroservisnej verzii}
+
+Tabuľka~\ref{tab:micro-per-service} zachytáva rozloženie kódu medzi jednotlivé služby. Najrozsiahlejšie sú reservation-service a payment-service, ktoré implementujú vzor transactional outbox vrátane schedulera, Kafka producenta a konzumentov.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|r|r|r|}
+\hline
+\textbf{Služba} & \textbf{Java triedy} & \textbf{Riadky kódu} & \textbf{Konfiguračné súbory} \\ \hline
+reservation-service  & 22 & 1\,370 & 2 \\ \hline
+payment-service      & 22 & 1\,275 & 2 \\ \hline
+notification-service & 14 &   629  & 2 \\ \hline
+user-service         & 10 &   464  & 2 \\ \hline
+gateway-service      &  3 &   102  & 2 \\ \hline
+common               &  4 &    45  & — \\ \hline
+\textbf{CELKOM}      & \textbf{75} & \textbf{3\,885} & \textbf{10} \\ \hline
+\end{tabular}
+\caption{Rozloženie kódu v mikroservisnej verzii podľa služieb}
+\label{tab:micro-per-service}
+\end{table}
+
+\subsection*{Infraštruktúrna réžia}
+
+Okrem aplikačného kódu si mikroservisná verzia vyžaduje rozsiahlejšiu infraštruktúrnu konfiguráciu. Každá zo štyroch doménových služieb (reservation-service, payment-service, notification-service, user-service) obsahuje dva konfiguračné súbory: \texttt{application.yml} pre lokálne prostredie a \\ \texttt{application-docker.yml} pre Docker Compose. Navyše je potrebné udržiavať \texttt{docker-compose.yml} pre celé prostredie, samostatný \\ \texttt{docker-compose.monitoring.yml} pre Prometheus a Grafana, a jeden spoločný \texttt{Dockerfile} pre multi-stage build všetkých služieb.
+
+Monolitická verzia naproti tomu vystačí s jedným \texttt{application.yml} súborom a nevyžaduje žiadnu kontajnerizačnú konfiguráciu pre základné spustenie. Celková prevádzkovo-konfiguračná záťaž je teda v monolite minimálna, kým mikroservisná verzia vyžaduje aktívnu správu 10 konfiguračných súborov a 2 Compose definícií.
+
+\subsection*{Cena zmeny: pridanie nového stavu}
+
+Konkrétnym príkladom nákladov na zmenu je pridanie nového stavu rezervácie — napríklad \texttt{EXPIRED} pre rezervácie, ktorých platba nebola spracovaná v stanovenom čase. V monolite si táto zmena vyžaduje úpravu jediného enumu \\ \texttt{ReservationStatus} a príslušnej logiky v \\ \texttt{ReservationService} a \texttt{PaymentService} — všetko v rámci jedného modulu, jednej kompilácie a jedného nasadenia.
+
+V mikroservisnej verzii je ten istý zásah distribuovaný naprieč viacerými modulmi a vyžaduje koordinované zmeny vo viacerých službách:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{0.42\textwidth}|p{0.48\textwidth}|}
+\hline
+\textbf{Modul / súbor} & \textbf{Potrebná zmena} \\ \hline
+\texttt{reservation-service} \newline \texttt{ReservationStatus.java} & pridanie hodnoty \texttt{EXPIRED} do enumu \\ \hline
+\texttt{reservation-service} \newline \texttt{ReservationService.java} & logika prechodu do stavu \texttt{EXPIRED} \\ \hline
+\texttt{common} & nová udalosť \texttt{ReservationExpiredEvent} \\ \hline
+\texttt{payment-service} \newline \texttt{OutboxEventPublisher.java} & spracovanie nového typu udalosti \\ \hline
+\texttt{notification-service} & nový Kafka listener + service metóda \\ \hline
+\texttt{application.yml} (dotknuté služby) & prípadné pridanie nového Kafka topicu \\ \hline
+\texttt{docker-compose.yml} & aktualizácia závislostí \\ \hline
+\end{tabular}
+\caption{Dotknuté moduly pri pridaní nového stavu rezervácie \texttt{EXPIRED}}
+\label{tab:cost-of-change}
+\end{table}
+
+Kým monolit vyžaduje zmeny v jednom module bez dopadov na nasadenie ostatných častí, mikroservisná verzia si vyžaduje zmeny v minimálne štyroch samostatných moduloch (\texttt{common}, \texttt{reservation-service}, \texttt{payment-service}, \texttt{notification-service}), pričom každý z nich musí byť nezávisle zostavený, otestovaný a nasadený. Tento rozdiel sa prejavuje najmä pri evolúcii systému v čase — čím viac domén zmena zasahuje, tým vyššia je koordinačná réžia v mikroservisnej architektúre.
+
+\subsection*{Cena rozšírenia: pridanie novej doménovej oblasti}
+
+Ďalším rozmerom porovnania je náklad na pridanie úplne novej doménovej oblasti — napríklad \texttt{review-service} pre hodnotenie rezervácií. V monolite stačí pridať nový balík \texttt{review} s entitou, repozitárom, service triedou a kontrolérom. Celá zmena je lokálna, nevyžaduje žiadnu infraštruktúrnu konfiguráciu navyše a nová doménová oblasť je okamžite dostupná v rámci existujúcej transakcie.
+
+V mikroservisnej verzii si pridanie novej služby vyžaduje vytvorenie kompletného infraštruktúrneho základu, ktorý je spoločný pre každú službu bez ohľadu na rozsah jej doménovej logiky:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|r|}
+\hline
+\textbf{Artefakt} & \textbf{Počet} \\ \hline
+Nový Maven modul (\texttt{pom.xml}) & 1 \\ \hline
+\texttt{application.yml} + \texttt{application-docker.yml} & 2 \\ \hline
+\texttt{GlobalExceptionHandler.java} & 1 \\ \hline
+\texttt{SwaggerConfig.java} / \texttt{OpenApiConfig.java} & 1 \\ \hline
+Sekcia v \texttt{docker-compose.yml} ($\approx$17 riadkov) & 1 \\ \hline
+Build stage v \texttt{Dockerfile} & 1 \\ \hline
+Registrácia v koreňovom \texttt{pom.xml} & 1 \\ \hline
+\textbf{Celkom artefaktov pred prvým riadkom doménovej logiky} & \textbf{8} \\ \hline
+\end{tabular}
+\caption{Infraštruktúrna réžia potrebná pre každú novú mikroservisnú službu}
+\label{tab:new-service-boilerplate}
+\end{table}
+
+Každá nová mikroservis teda pred prvým riadkom vlastnej doménovej logiky vyžaduje vytvorenie 8 infraštruktúrnych artefaktov. Tento fixný náklad existuje bez ohľadu na to, aká jednoduchá alebo komplexná je samotná doménová logika novej služby. V porovnaní s monolitom, kde nová doménová oblasť znamená nový balík bez akéhokoľvek infraštruktúrneho overhead, je tento rozdiel výrazný — a rastie lineárne s počtom služieb.
+
+\subsection*{Zhrnutie}
+
+Analýza zdrojového kódu potvrdzuje, že mikroservisná architektúra prináša výraznú nárast vývojovej zložitosti aj bez zmeny doménovej logiky. Väčšina tejto réžie pochádza z potreby opakovane konfigurovať infraštruktúrne komponenty (Kafka, outbox, exception handling) v každej službe samostatne. V praxi to znamená, že tím pracujúci s mikroservismi musí počítať nielen s vyšším počiatočným nákladom na implementáciu, ale aj s dlhodobejšou údržbou rozptýlenej konfigurácie.
 
 \section{Zhrnutie a interpretácia výsledkov}
 
