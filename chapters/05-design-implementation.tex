@@ -301,7 +301,13 @@ Výhodou tejto architektúry je predovšetkým jednoduchosť nasadenia a prevád
 
 Architektúra na obrázku~\ref{fig:architecture-monolith} zachytáva logické usporiadanie monolitického systému: klient komunikuje s jedným Spring Boot backendom, ktorý interne zahŕňa všetky doménové vrstvy. Komunikácia medzi nimi prebieha priamym volaním metód v rámci rovnakého JVM procesu, konzistencia je zabezpečená jednou databázovou transakciou. Nevýhodou je silné prepojenie domén a potreba škálovať celý systém ako celok.
 
-Na obrázku~\ref{fig:sequence-monolith} je zobrazený sekvenčný diagram toku vytvorenia rezervácie — od HTTP požiadavky cez volanie PaymentService až po odoslanie notifikácie, všetko v rámci jednej synchrónnej transakcie.
+Tok spracovania rezervácie v monolitickej verzii začína HTTP požiadavkou klienta na \texttt{POST /api/reservations}. \texttt{ReservationController} deleguje spracovanie na \texttt{ReservationService}, ktorý v rámci jednej databázovej transakcie uloží nový záznam o rezervácii so stavom \texttt{PENDING} a okamžite zavolá \\ \texttt{PaymentService}.
+
+\texttt{PaymentService} vytvorí platobný záznam so stavom \texttt{PENDING} a vráti jeho identifikátor späť volajúcej službe. Keďže celé spracovanie prebieha v jednom JVM procese, nie je potrebná žiadna sieťová komunikácia ani serializácia správ — volanie je priame a synchronné. Transakcia zostáva otvorená počas celého toku, čo zaručuje atomickú konzistenciu: ak ktorýkoľvek krok zlyhá, celá operácia sa rollbackne.
+
+Po úspešnom vytvorení platby klient explicitne potvrdí platbu volaním \texttt{POST /api/payments/\{id\}/confirm}. \texttt{PaymentService} aktualizuje stav platby na \texttt{CONFIRMED}, načíta príslušnú rezerváciu a nastaví jej stav na \texttt{PAID}. V tom istom transakčnom kontexte \texttt{NotificationService} zaznamená notifikáciu do tabuľky \texttt{notification\_logs}. Celý tok — od vytvorenia rezervácie až po záznam notifikácie — tak prebehne v niekoľkých milisekundách bez akéhokoľvek asynchrónneho čakania.
+
+Na obrázku~\ref{fig:sequence-monolith} je zobrazený sekvenčný diagram tohto toku — od HTTP požiadavky cez volanie \texttt{PaymentService} až po odoslanie notifikácie, všetko v rámci jednej synchrónnej transakcie.
 
 \begin{landscape}
 \begin{figure}[p]
