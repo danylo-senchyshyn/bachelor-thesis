@@ -1,0 +1,47 @@
+name: Build PDF
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            texlive-xetex texlive-fonts-recommended texlive-fonts-extra \
+            texlive-lang-czechslovak texlive-latex-extra \
+            texlive-latex-recommended texlive-plain-generic \
+            texlive-bibtex-extra texlive-science biber latexmk make \
+            tex-gyre fonts-texgyre
+
+      - name: Build thesis PDF
+        run: |
+          mkdir -p dist build build/chapters build/appendices
+          latexmk thesis
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: thesis-pdf
+          path: dist/thesis.pdf
+          retention-days: 90
+
+      - name: Create/update release with PDF
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "Latest Build"
+          body: |
+            Automatically built from the latest commit on `master`.
+
+            **[⬇ Download thesis.pdf](https://github.com/danylo-senchyshyn/bachelor-thesis/releases/latest/download/thesis.pdf)**
+          files: dist/thesis.pdf
+          make_latest: true
+          prerelease: false
