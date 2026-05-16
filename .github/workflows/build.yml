@@ -21,6 +21,14 @@ jobs:
             texlive-bibtex-extra texlive-science biber latexmk make \
             tex-gyre fonts-texgyre
 
+      - name: Install TeX Gyre Math fonts
+        run: |
+          sudo mkdir -p /usr/local/share/fonts/tex-gyre-math
+          sudo curl -sL "https://www.gust.org.pl/projects/e-foundry/tg-math/download/tex-gyre-pagella-math-otf.zip" \
+            -o /tmp/tgpagella-math.zip
+          sudo unzip -o /tmp/tgpagella-math.zip -d /usr/local/share/fonts/tex-gyre-math/
+          sudo fc-cache -fv > /dev/null 2>&1
+
       - name: Build thesis PDF
         run: |
           mkdir -p dist build build/chapters build/appendices
