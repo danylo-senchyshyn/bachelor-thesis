@@ -51,6 +51,5 @@ thesis-ru.tex
 metadata-ru.tex
 tukethesis-ru.cls
 fonts-ru/
-# Large k6 raw output files
-listings/reservation-micro/load-tests/results/microservices/latency-throughput.json
-listings/reservation-monolith/load-tests/results/monolith/latency-throughput.json
+listings/
+target/
