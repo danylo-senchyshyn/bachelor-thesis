@@ -31,8 +31,8 @@ The PDF is automatically built from source on every push to `master` and publish
 
 | Project | Repository |
 |---|---|
-| Monolith (Spring Boot) | [reservation-monolith](https://git.kpi.fei.tuke.sk/kpi-zp/2026/bp.danylo.senchyshyn/workspace/reservation-monolith) |
-| Microservices (Spring Boot + Kafka) | [reservation-micro](https://git.kpi.fei.tuke.sk/kpi-zp/2026/bp.danylo.senchyshyn/workspace/reservation-micro) |
+| Monolith (Spring Boot) | [reservation-monolith](https://github.com/danylo-senchyshyn/reservation-monolith) |
+| Microservices (Spring Boot + Kafka) | [reservation-micro](https://github.com/danylo-senchyshyn/reservation-micro) |
 
 Both prototypes run via `docker compose up --build` — no local Java or Maven required.
 
