@@ -21,7 +21,10 @@ jobs:
             texlive-fonts-extra \
             texlive-lang-czechslovak \
             texlive-latex-extra \
+            texlive-latex-recommended \
+            texlive-generic-extra \
             texlive-bibtex-extra \
+            texlive-science \
             biber \
             latexmk \
             make
