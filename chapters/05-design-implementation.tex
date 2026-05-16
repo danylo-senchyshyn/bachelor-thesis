@@ -273,13 +273,21 @@ Technológie:
 \begin{itemize}
     \item Java 17, Spring Boot 3.2.3,
     \item Spring Data JPA, PostgreSQL,
-    \item Maven ako build nástroj.
+    \item Maven ako build nástroj,
+    \item Docker Compose pre reprodukovateľné lokálne spustenie.
 \end{itemize}
 
 Perzistencia a transakcie:
 \begin{itemize}
     \item jedna databáza \texttt{reservation\_monolith\_db},
     \item transakčné spracovanie v service vrstve cez \texttt{@Transactional}.
+\end{itemize}
+
+Nasadenie a spustenie:
+\begin{itemize}
+    \item \texttt{Dockerfile} — multi-stage build (Maven build + JRE runtime),
+    \item \texttt{docker-compose.yml} — dva kontajnery: \texttt{monolith-app} a \texttt{postgres},
+    \item \texttt{application-docker.yml} — Spring profil pre Docker prostredie (hostname \texttt{postgres} namiesto \texttt{localhost}).
 \end{itemize}
 
 Výhodou tejto architektúry je predovšetkým jednoduchosť nasadenia a prevádzky: celý systém beží ako jeden proces, chybové hlásenia sú sústredené na jednom mieste a ladenie toku je priamočiare. Takýto prístup výrazne znižuje prevádzkový overhead a je vhodný najmä pre tímy bez dedikovanej infraštruktúrnej kapacity alebo pre systémy, kde záťažový profil nevyžaduje nezávislé škálovanie jednotlivých domén.
@@ -511,12 +519,8 @@ Pre interaktívne preskúmanie a manuálne testovanie HTTP rozhraní oboch proto
 
 \subsection{Spustenie a testovanie}
 
-Reprodukovateľné spustenie predstavuje dôležitý predpoklad pre korektné porovnanie. V monolitickej verzii typicky postačuje spustenie jednej aplikácie a jednej databázy. V mikroservisnom variante však lokálne prostredie simuluje distribuovaný systém: okrem databáz je potrebný message broker a viacero bežiacich služieb. Docker Compose v tomto kontexte poskytuje praktický spôsob, ako definovať infraštruktúru deklaratívne a spúšťať ju konzistentne~\cite{DockerCompose2025}.
+Oba prototypy sú spustiteľné rovnakým spôsobom — pomocou Docker Compose — čo zaručuje metodicky korektné porovnanie. Monolitická verzia používa dva kontajnery (\texttt{monolith-app} a \texttt{postgres}), mikroservisná sedem vrátane Kafka brokera~\cite{DockerCompose2025}. V oboch verziách odlišuje Spring profil \texttt{docker} konfiguráciu pre kontajnerové prostredie (\texttt{application-docker.yml}) od lokálnej.
 
-Mikroservisná verzia je spustiteľná v lokálnom prostredí pomocou Docker Compose, ktorý definuje závislosti na Kafka/Zookeeper a PostgreSQL, a zároveň spúšťa jednotlivé služby v kontajneroch. Použitý je koncept Spring Profiles, kde sa odlišuje základná konfigurácia a konfigurácia určená pre docker prostredie (\texttt{application.yml} a \texttt{application-docker.yml}).
+Na úrovni testovania je v prototypoch prítomná podpora jednotkových a integračných testov (JUnit 5, Mockito). Manuálne overenie E2E toku je možné cez Swagger UI — pre mikroservisnú verziu cez gateway, pre monolitickú na \texttt{localhost:8080}.
 
-Na úrovni testovania je v prototypoch prítomná podpora jednotkových a integračných testov (JUnit 5, Mockito). Mikroservisná verzia využíva Actuator a exponuje základné health/info endpointy pre diagnostiku stavu služieb. Manuálne overenie E2E toku je v oboch verziách možné priamo cez Swagger UI — pre mikroservisnú verziu cez gateway na portoch jednotlivých prefixov, pre monolitickú verziu lokálne na \texttt{localhost:8080}.
-
-Záťažové testovanie bolo realizované nástrojom k6, ktorý umožňuje skriptovanie scenárov v JavaScripte a zbieranie štatistík o latencii, priepustnosti a chybovosti. Testy boli spúšťané opakovane v rovnakom prostredí, aby sa minimalizoval vplyv náhodných výkyvov na namerané výsledky. Pre mikroservisnú verziu bolo navyše potrebné zohľadniť asynchronitu spracovania — meranie end-to-end času zahŕňalo aktívne polling stavu rezervácie až do dosiahnutia terminálneho stavu (\texttt{PAID} alebo \texttt{PAYMENT\_FAILED}), čo odráža reálny spôsob, akým by klient overoval výsledok operácie v produkčnom systéme.
-
-Záťažové scenáre boli navrhnuté tak, aby simulovali realistické vzorce používania: od jedného virtuálneho používateľa pri baseline scenári až po 60 súčasných používateľov pri high\_load scenári. Každý scenár trval dostatočne dlho na to, aby boli výsledky štatisticky relevantné a eliminovali efekt studených spustení (\textit{cold start}) JVM.
+Záťažové testovanie bolo realizované nástrojom k6 v štyroch scenároch s rastúcou záťažou: od jedného virtuálneho používateľa (baseline) až po 60 súčasných (high\_load). Pre mikroservisnú verziu meranie end-to-end času zahŕňalo aktívne polling stavu rezervácie až do dosiahnutia terminálneho stavu (\texttt{PAID} alebo \texttt{PAYMENT\_FAILED}).

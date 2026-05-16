@@ -21,7 +21,7 @@ Prototypy boli vyvíjané a testované na počítači s nasledujúcou konfigurá
     \item \textbf{IDE:} IntelliJ IDEA 2024
 \end{itemize}
 
-Záťažové testovanie mikroservisnej verzie bolo realizované v prostredí Docker Compose, pričom Docker Desktop mal nastavené limity zdrojov: 8\,vCPU a 5,786\,GiB RAM. Monolitická verzia bola spúšťaná lokálne príkazom \\ \texttt{mvnw spring-boot:run} mimo Docker prostredia.
+Záťažové testovanie oboch prototypov bolo realizované v rovnakom prostredí Docker Compose, pričom Docker Desktop mal nastavené limity zdrojov: 8\,vCPU a 5,786\,GiB RAM. Monolitická verzia bola spúšťaná ako Docker Compose prostredie s dvoma kontajnermi (\texttt{monolith-app} a \texttt{postgres}), mikroservisná verzia so siedmimi kontajnermi vrátane Kafka brokera.
 
 \section{Minimálne systémové požiadavky}
 
@@ -36,9 +36,9 @@ Operačný systém  & Linux, macOS alebo Windows s podporou Dockeru & Linux, mac
 CPU              & 2 jadrá & 4 jadrá (odporúčané 8) \\ \hline
 RAM              & 1\,GiB & 6\,GiB (odporúčané 8\,GiB) \\ \hline
 Voľné miesto     & 1\,GiB & 4\,GiB (obraz Kafka + PostgreSQL + služby) \\ \hline
-Java             & OpenJDK 17+ & nie je potrebná (beží v Docker kontajneroch) \\ \hline
-Maven            & 3.9.x & nie je potrebný (beží v Docker kontajneroch) \\ \hline
-Docker           & Docker Desktop 4.x / Docker Engine 24+ & Docker Desktop 4.x / Docker Engine 24+, Docker Compose v2 \\ \hline
+Java             & nie je potrebná (beží v Docker kontajneroch) & nie je potrebná (beží v Docker kontajneroch) \\ \hline
+Maven            & nie je potrebný (beží v Docker kontajneroch) & nie je potrebný (beží v Docker kontajneroch) \\ \hline
+Docker           & Docker Desktop 4.x / Docker Engine 24+, Docker Compose v2 & Docker Desktop 4.x / Docker Engine 24+, Docker Compose v2 \\ \hline
 \end{tabular}
 \caption{Minimálne systémové požiadavky}
 \label{tab:system-requirements}
@@ -75,9 +75,12 @@ reservation-monolith/
 │   │       ├── repository/ -- NotificationLogRepository
 │   │       └── entity/     -- NotificationLog
 │   └── resources/
-│       └── application.yml -- DB, JPA, port konfigurácia
+│       ├── application.yml        -- DB, JPA, port
+│       └── application-docker.yml -- Docker profil
 ├── docs/diagrams/          -- architektonické PNG diagramy
 ├── load-tests/             -- k6 záťažové skripty
+├── Dockerfile              -- multi-stage build
+├── docker-compose.yml      -- monolith-app + postgres
 └── pom.xml                 -- Maven build konfigurácia
 \end{verbatim}
 
@@ -134,17 +137,20 @@ Každá služba má vlastnú databázu PostgreSQL (\texttt{user\_db}, \texttt{re
 
 \subsection*{Monolitická verzia}
 
-Predpoklady: Java 17, Maven, bežiaci PostgreSQL server (lokálne, port 5432, databáza \texttt{reservation\_monolith\_db}, heslo \texttt{postgres}).
+Predpoklady: Docker Desktop 4.x s Docker Compose v2 (Java ani Maven nie sú potrebné).
 
 \begin{enumerate}
-    \item Spustiť aplikáciu:
+    \item Zostaviť a spustiť prostredie:
 \begin{verbatim}
 cd reservation-monolith
-./mvnw spring-boot:run
+docker compose up --build
 \end{verbatim}
     \item Aplikácia je dostupná na \texttt{http://localhost:8080}.
     \item Swagger UI: \texttt{http://localhost:8080/swagger-ui/index.html}
+    \item Pre zastavenie: \texttt{docker compose down -v}
 \end{enumerate}
+
+Konfigurácia pre Docker prostredie je definovaná v súbore \\ \texttt{src/main/resources/application-docker.yml}, ktorý nastavuje hostname databázy na \texttt{postgres} (názov kontajnera namiesto \texttt{localhost}).
 
 \subsection*{Mikroservisná verzia}
 
