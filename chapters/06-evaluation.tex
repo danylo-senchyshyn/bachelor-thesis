@@ -19,7 +19,6 @@ Spotreba zdrojov (\acrshort{cpu}, \acrshort{ram}) bola sledovaná zásobníkom P
 
 \begin{table}[H]
 \centering
-\caption{Priepustnosť -- monolitická verzia}
 \begin{tabular}{|l|r|r|r|r|}
 \hline
 Scenár & VUs & Trvanie & Požiadavky & Priepustnosť \\ \hline
@@ -28,6 +27,7 @@ low\_load    & 10 & 60\,s  & 10\,870 & \textasciitilde181 req/s  \\ \hline
 medium\_load & 30 & 60\,s  & 32\,980 & \textasciitilde550 req/s  \\ \hline
 high\_load   & 60 & 60\,s  & 66\,630 & \textasciitilde1\,110 req/s \\ \hline
 \end{tabular}
+\caption{Priepustnosť -- monolitická verzia}
 \label{tab:eval-throughput-monolith}
 \end{table}
 
@@ -35,7 +35,6 @@ Monolitická verzia škálovala lineárne s rastúcim počtom virtuálnych použ
 
 \begin{table}[H]
 \centering
-\caption{Priepustnosť -- mikroservisná verzia}
 \begin{tabular}{|l|r|r|r|r|}
 \hline
 Scenár & VUs & Trvanie & Požiadavky & Priepustnosť \\ \hline
@@ -44,6 +43,7 @@ low\_load    & 10 & 60\,s  & 10\,249 & \textasciitilde171 req/s \\ \hline
 medium\_load & 30 & 60\,s  & 31\,583 & \textasciitilde526 req/s \\ \hline
 high\_load   & 60 & 60\,s  & 58\,295 & \textasciitilde972 req/s \\ \hline
 \end{tabular}
+\caption{Priepustnosť -- mikroservisná verzia}
 \label{tab:eval-throughput-micro}
 \end{table}
 
@@ -60,7 +60,6 @@ Latencia HTTP odpovedí bola meraná vo všetkých percentiloch (p50, p90, p95, 
 
 \begin{table}[H]
 \centering
-\caption{Latencia HTTP odpovedí -- monolitická verzia (ms)}
 \begin{tabular}{|l|r|r|r|r|r|r|}
 \hline
 Scenár & avg & p50 & p90 & p95 & p99 & max \\ \hline
@@ -69,6 +68,7 @@ low\_load    & 4,2 & 3,8 & 5,4  & 6,5  & 9,1  & 55,0 \\ \hline
 medium\_load & 4,2 & 3,9 & 5,9  & 7,0  & 10,4 & 27,5 \\ \hline
 high\_load   & 3,8 & 3,3 & 6,0  & 7,4  & 12,2 & 48,7 \\ \hline
 \end{tabular}
+\caption{Latencia HTTP odpovedí -- monolitická verzia (ms)}
 \label{tab:eval-latency-monolith}
 \end{table}
 
@@ -76,7 +76,6 @@ Monolitická verzia udržiavala stabilnú latenciu naprieč všetkými scenármi
 
 \begin{table}[H]
 \centering
-\caption{Latencia HTTP odpovedí -- mikroservisná verzia (ms)}
 \begin{tabular}{|l|r|r|r|r|r|r|}
 \hline
 Scenár & avg & p50 & p90 & p95 & p99 & max \\ \hline
@@ -85,6 +84,7 @@ low\_load    & 8,0  & 5,7  & 14,0 & 19,8 & 41,3  & 225,1 \\ \hline
 medium\_load & 6,7  & 4,4  & 11,0 & 15,9 & 33,5  & 895,6 \\ \hline
 high\_load   & 11,5 & 7,1  & 23,8 & 35,9 & 72,9  & 155,4 \\ \hline
 \end{tabular}
+\caption{Latencia HTTP odpovedí -- mikroservisná verzia (ms)}
 \label{tab:eval-latency-micro}
 \end{table}
 
@@ -103,7 +103,6 @@ End-to-end (\acrshort{e2e}) čas spracovania meria celkový čas od vytvorenia r
 
 \begin{table}[H]
 \centering
-\caption{E2E čas spracovania -- monolitická verzia (ms)}
 \begin{tabular}{|l|r|r|r|r|r|r|}
 \hline
 Metrika & avg & min & p50 & p90 & p95 & max \\ \hline
@@ -111,6 +110,7 @@ e2e\_total\_ms       & 5,7 & 4,0 & 5,0 & 6,3 & 9,4 & 17,0 \\ \hline
 e2e\_to\_payment\_ms & 0,9 & 0,0 & 1,0 & 1,1 & 2,1 & 5,0  \\ \hline
 e2e\_to\_confirm\_ms & 0,9 & 0,0 & 1,0 & 1,1 & 2,0 & 3,0  \\ \hline
 \end{tabular}
+\caption{E2E čas spracovania -- monolitická verzia (ms)}
 \label{tab:eval-e2e-monolith}
 \end{table}
 
@@ -118,7 +118,6 @@ Monolitická verzia dokončila celý rezervačný tok vrátane platby a notifik�
 
 \begin{table}[H]
 \centering
-\caption{E2E čas spracovania -- mikroservisná verzia (s)}
 \begin{tabular}{|l|r|r|r|r|r|r|}
 \hline
 Metrika & avg & min & p50 & p90 & p95 & max \\ \hline
@@ -126,6 +125,7 @@ e2e\_total\_ms       & 7,10 & 4,71 & 5,21 & 9,92  & 10,33 & 10,34 \\ \hline
 e2e\_to\_payment\_ms & 2,37 & 0,05 & 0,55 & 5,17  & 5,19  & 5,19  \\ \hline
 e2e\_to\_confirm\_ms & 4,71 & 4,59 & 4,63 & 5,17  & 5,17  & 5,17  \\ \hline
 \end{tabular}
+\caption{E2E čas spracovania -- mikroservisná verzia (s)}
 \label{tab:eval-e2e-micro}
 \end{table}
 
@@ -146,7 +146,6 @@ Spotreba CPU bola v mikroservisnej verzii distribuovaná naprieč siedmimi konta
 
 \begin{table}[H]
 \centering
-\caption{Spotreba CPU -- mikroservisná verzia (peak 60 VUs)}
 \begin{tabular}{|l|r|r|}
 \hline
 Služba & Priemer CPU & Maximum CPU \\ \hline
@@ -158,6 +157,7 @@ payment-service      &  8,5\,\% & 131,7\,\% \\ \hline
 notification-service &  1,3\,\% &  40,7\,\% \\ \hline
 user-service         &  0,4\,\% &  41,7\,\% \\ \hline
 \end{tabular}
+\caption{Spotreba CPU -- mikroservisná verzia (peak 60 VUs)}
 \label{tab:eval-cpu-micro}
 \end{table}
 
@@ -165,13 +165,13 @@ Monolitická verzia sústredila celú záťaž do jedného procesu. Aplikácia v
 
 \begin{table}[H]
 \centering
-\caption{Spotreba CPU -- monolitická verzia (peak 60 VUs)}
 \begin{tabular}{|l|r|r|}
 \hline
 Komponent & Priemer CPU & Maximum CPU \\ \hline
 monolith-app & \textasciitilde70\,\% & \textasciitilde98\,\% \\ \hline
 postgres     & \textasciitilde1\,\%  & \textasciitilde5\,\%  \\ \hline
 \end{tabular}
+\caption{Spotreba CPU -- monolitická verzia (peak 60 VUs)}
 \label{tab:eval-cpu-monolith}
 \end{table}
 
@@ -179,7 +179,6 @@ Okrem CPU bola sledovaná aj spotreba operačnej pamäte. Mikroservisná verzia 
 
 \begin{table}[H]
 \centering
-\caption{Spotreba pamäte RAM -- mikroservisná verzia (peak)}
 \begin{tabular}{|l|r|}
 \hline
 Služba & Peak RAM \\ \hline
@@ -192,6 +191,7 @@ gateway-service      & 292\,MiB \\ \hline
 postgres             & 192\,MiB \\ \hline
 \textbf{CELKOM}      & \textbf{\textasciitilde3\,584\,MiB} \\ \hline
 \end{tabular}
+\caption{Spotreba pamäte RAM -- mikroservisná verzia (peak)}
 \label{tab:eval-ram-micro}
 \end{table}
 
@@ -199,7 +199,6 @@ Mikroservisná verzia spotrebovala celkovo \textasciitilde3\,584\,MiB RAM. Pre p
 
 \begin{table}[H]
 \centering
-\caption{Spotreba pamäte RAM -- monolitická verzia (peak)}
 \begin{tabular}{|l|r|r|}
 \hline
 Komponent & Idle RAM & Peak RAM \\ \hline
@@ -207,6 +206,7 @@ monolith-app & 23\,MiB & 290\,MiB \\ \hline
 postgres     & 86\,MiB &  86\,MiB \\ \hline
 \textbf{CELKOM} & --- & \textbf{\textasciitilde376\,MiB} \\ \hline
 \end{tabular}
+\caption{Spotreba pamäte RAM -- monolitická verzia (peak)}
 \label{tab:eval-ram-monolith}
 \end{table}
 
@@ -237,7 +237,6 @@ Okrem kvantitatívnych metrík boli porovnávané aj kvalitatívne aspekty, ktor
 
 \begin{table}[H]
 \centering
-\caption{Súhrnné porovnanie architektúr (60 VUs)}
 \begin{tabular}{|l|r|r|r|}
 \hline
 Metrika & Monolit & Mikroservisy & Pomer \\ \hline
@@ -250,6 +249,7 @@ HTTP chybovosť      & 0\,\%      & 0\,\%        & Rovnaká \\ \hline
 Celková RAM         & \textasciitilde376\,MiB & \textasciitilde3\,584\,MiB & 9,5$\times$ menej \\ \hline
 Počet procesov      & 2          & 7            & 3,5$\times$ menej \\ \hline
 \end{tabular}
+\caption{Súhrnné porovnanie architektúr (60 VUs)}
 \label{tab:eval-summary}
 \end{table}
 

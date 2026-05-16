@@ -37,7 +37,6 @@ V kontexte tejto bakalárskej práce je Apache Kafka významná najmä preto, ž
 
 \begin{table}[H]
 \centering
-\caption{Prehľad kľúčových konceptov platformy Apache Kafka}
 \begin{tabular}{|l|p{0.65\textwidth}|}
 \hline
 \textbf{Koncept} & \textbf{Popis} \\ \hline
@@ -48,6 +47,7 @@ Broker     & Serverový uzol klastra; prijíma, ukladá a doručuje správy \\ \
 Replikácia & Každá partícia má lídra a repliky; zabezpečuje odolnosť voči výpadku uzla \\ \hline
 Consumer group & Skupina konzumentov zdieľajúca správy z partícií; základ pre paralelné spracovanie \\ \hline
 \end{tabular}
+\caption{Prehľad kľúčových konceptov platformy Apache Kafka}
 \label{tab:kafka-concepts}
 \end{table}
 
@@ -68,8 +68,7 @@ Z hľadiska tejto bakalárskej práce je vhodnejšou voľbou práve Apache Kafka
 
 \begin{table}[H]
 \centering
-\caption{Porovnanie Apache Kafka a RabbitMQ}
-\begin{tabular}{|l|p{0.35\textwidth}|p{0.35\textwidth}|}
+\begin{tabular}{|p{0.22\textwidth}|p{0.34\textwidth}|p{0.34\textwidth}|}
 \hline
 \textbf{Kritérium} & \textbf{Apache Kafka} & \textbf{RabbitMQ} \\ \hline
 Model doručenia   & Publish-subscribe (log-based) & Message queue (push/pull) \\ \hline
@@ -79,6 +78,7 @@ Replay správ      & Áno — konzumenti môžu čítať od ľubovoľného offse
 Typické využitie  & Event streaming, event-driven architektúry, dátové toky & Fronty úloh, RPC, jemnejšie smerovanie správ \\ \hline
 Vhodnosť pre prácu & \textbf{Áno} — event-driven mikroservisy, saga choreografia & Menej vhodný — chýba replay a log-based model \\ \hline
 \end{tabular}
+\caption{Porovnanie Apache Kafka a RabbitMQ}
 \label{tab:kafka-vs-rabbitmq}
 \end{table}
 

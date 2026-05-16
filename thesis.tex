@@ -46,12 +46,17 @@
 \usepackage{fontspec}
 \setmainfont{TeX Gyre Pagella}
 
-\hypersetup{linkcolor=magenta}
+\hypersetup{linkcolor=black, citecolor=black, urlcolor=black, filecolor=black}
 
 \setlength{\parskip}{0.5\baselineskip}
 
-% Acronym/glossary links shown in magenta
-\renewcommand*{\glstextformat}[1]{\textcolor{magenta}{#1}}
+% Captions below all floats (figures, tables, listings)
+\usepackage{caption}
+\captionsetup{position=below}
+\lstset{captionpos=b}
+
+% Acronym/glossary links shown in black
+\renewcommand*{\glstextformat}[1]{\textcolor{black}{#1}}
 
 % TOC/LOF/LOT/LOL entries rendered in black
 \addtocontents{toc}{\protect\hypersetup{linkcolor=black}}

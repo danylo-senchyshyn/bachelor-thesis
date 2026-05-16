@@ -29,7 +29,6 @@ Nasledujúca tabuľka uvádza minimálne požiadavky potrebné na spustenie jedn
 
 \begin{table}[H]
 \centering
-\caption{Minimálne systémové požiadavky}
 \begin{tabular}{|l|p{0.35\textwidth}|p{0.35\textwidth}|}
 \hline
 \textbf{Požiadavka} & \textbf{Monolitická verzia} & \textbf{Mikroservisná verzia} \\ \hline
@@ -41,6 +40,7 @@ Java             & OpenJDK 17+ & nie je potrebná (beží v Docker kontajneroch)
 Maven            & 3.9.x & nie je potrebný (beží v Docker kontajneroch) \\ \hline
 Docker           & Docker Desktop 4.x / Docker Engine 24+ & Docker Desktop 4.x / Docker Engine 24+, Docker Compose v2 \\ \hline
 \end{tabular}
+\caption{Minimálne systémové požiadavky}
 \label{tab:system-requirements}
 \end{table}
 
@@ -70,6 +70,7 @@ reservation-monolith/
 │   │   │   ├── repository/ -- PaymentRepository
 │   │   │   └── entity/     -- Payment, PaymentStatus
 │   │   └── notifications/
+│   │       ├── controller/ -- NotificationController
 │   │       ├── service/    -- NotificationService
 │   │       ├── repository/ -- NotificationLogRepository
 │   │       └── entity/     -- NotificationLog
@@ -80,7 +81,7 @@ reservation-monolith/
 └── pom.xml                 -- Maven build konfigurácia
 \end{verbatim}
 
-Všetky doménové oblasti zdieľajú jednu databázu PostgreSQL s názvom \\ \texttt{reservation\_monolith\_db}. Komunikácia medzi modulmi prebieha priamym volaním metód v rámci jedného JVM procesu. Transakcie sú riadené anotáciou \texttt{@Transactional} na úrovni service vrstvy.
+Všetky doménové oblasti zdieľajú jednu databázu PostgreSQL s názvom \\ \texttt{reservation\_monolith\_db}. Komunikácia medzi modulmi prebieha priamym volaním metód v rámci jedného JVM procesu. Transakcie sú riadené anotáciou \texttt{@Transactional} na úrovni service vrstvy. Každá doménová oblasť (users, reservations, payments, notifications) exponuje vlastný REST kontrolér — vrátane \texttt{NotificationController}, ktorý sprístupňuje záznamy z \texttt{notification\_logs} na endpointe \texttt{GET /api/notifications}.
 
 \subsection*{Mikroservisná verzia (\texttt{reservation-micro})}
 
@@ -116,6 +117,7 @@ reservation-micro/
 │   │       └── kafka/      -- Kafka listener + producer
 │   └── notification-service/
 │       └── src/main/java/.../
+│           ├── controller/ -- NotificationController
 │           ├── service/    -- NotificationService
 │           ├── repository/ -- NotificationLogRepository
 │           └── kafka/      -- Kafka listener (DLT podpora)
@@ -126,27 +128,22 @@ reservation-micro/
 └── pom.xml               -- parent Maven POM (multi-modul)
 \end{verbatim}
 
-Každá služba má vlastnú databázu PostgreSQL (\texttt{user\_db}, \texttt{reservation\_db}, \texttt{payment\_db}, \texttt{notification\_db}), vlastný \texttt{Dockerfile} a konfiguráciu pre Docker v súbore \texttt{application-docker.yml}. Komunikácia medzi službami prebieha asynchrónne cez Apache Kafka; reservation-service a payment-service používajú vzor transactional outbox na spoľahlivú publikáciu udalostí.
+Každá služba má vlastnú databázu PostgreSQL (\texttt{user\_db}, \texttt{reservation\_db}, \texttt{payment\_db}, \texttt{notification\_db}), vlastný \texttt{Dockerfile} a konfiguráciu pre Docker v súbore \texttt{application-docker.yml}. Komunikácia medzi službami prebieha asynchrónne cez Apache Kafka; reservation-service a payment-service používajú vzor transactional outbox na spoľahlivú publikáciu udalostí. HTTP rozhranie je dostupné cez gateway na porte 8080; každá doménová služba vrátane notification-service exponuje vlastný REST kontrolér (\texttt{GET /api/notifications}).
 
 \section{Spustenie prototypov}
 
 \subsection*{Monolitická verzia}
 
-Predpoklady: Java 17, Maven, PostgreSQL (lokálne alebo v Docker).
+Predpoklady: Java 17, Maven, bežiaci PostgreSQL server (lokálne, port 5432, databáza \texttt{reservation\_monolith\_db}, heslo \texttt{postgres}).
 
 \begin{enumerate}
-    \item Spustiť databázu:
-\begin{verbatim}
-docker run --name mono-pg -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_DB=reservation_monolith_db \
-  -p 5432:5432 -d postgres:15
-\end{verbatim}
     \item Spustiť aplikáciu:
 \begin{verbatim}
 cd reservation-monolith
 ./mvnw spring-boot:run
 \end{verbatim}
     \item Aplikácia je dostupná na \texttt{http://localhost:8080}.
+    \item Swagger UI: \texttt{http://localhost:8080/swagger-ui/index.html}
 \end{enumerate}
 
 \subsection*{Mikroservisná verzia}

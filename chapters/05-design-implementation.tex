@@ -298,7 +298,7 @@ Na obrázku~\ref{fig:sequence-monolith} je zobrazený sekvenčný diagram toku v
 \begin{landscape}
 \begin{figure}[p]
     \centering
-    \includegraphics[width=0.99\paperwidth,height=0.99\paperheight,keepaspectratio]{figures/sequence-monolith.png}
+    \includegraphics[width=0.99\linewidth,height=0.85\textheight,keepaspectratio]{figures/sequence-monolith.png}
     \caption{Sekvenčný diagram -- monolitická verzia}
     \label{fig:sequence-monolith}
 \end{figure}
@@ -420,7 +420,7 @@ Na obrázku~\ref{fig:components} je zobrazená komponentová architektúra mikro
 \begin{landscape}
 \begin{figure}[p]
     \centering
-    \includegraphics[width=0.99\paperwidth,height=0.92\paperheight,keepaspectratio]{figures/components.png}
+    \includegraphics[width=0.99\linewidth,height=0.85\textheight,keepaspectratio]{figures/components.png}
     \caption{Komponentová architektúra mikroservisnej verzie}
     \label{fig:components}
 \end{figure}
@@ -437,7 +437,7 @@ Tok vytvorenia rezervácie v mikroservisnej verzii je rozdelený do dvoch fáz. 
 \begin{landscape}
 \begin{figure}[p]
     \centering
-    \includegraphics[width=0.99\paperwidth,height=0.99\paperheight,keepaspectratio]{figures/sequence-sync.png}
+    \includegraphics[width=0.99\linewidth,height=0.85\textheight,keepaspectratio]{figures/sequence-sync.png}
     \caption{Sekvenčný diagram -- mikroservisná verzia (synchrónna fáza)}
     \label{fig:sequence-sync}
 \end{figure}
@@ -454,7 +454,7 @@ Kľúčovým aspektom asynchrónnej fázy je decoupling medzi HTTP vrstvou a spr
 \begin{landscape}
 \begin{figure}[p]
     \centering
-    \includegraphics[width=0.99\paperwidth,height=0.99\paperheight,keepaspectratio]{figures/sequence-async.png}
+    \includegraphics[width=0.99\linewidth,height=0.85\textheight,keepaspectratio]{figures/sequence-async.png}
     \caption{Sekvenčný diagram -- mikroservisná verzia (asynchrónna fáza)}
     \label{fig:sequence-async}
 \end{figure}
@@ -464,16 +464,16 @@ Kľúčovým aspektom asynchrónnej fázy je decoupling medzi HTTP vrstvou a spr
 
 \begin{figure}[H]
     \centering
-    \begin{minipage}[t]{0.48\textwidth}
+    \begin{minipage}[t]{0.47\textwidth}
         \centering
-        \includegraphics[height=0.42\textheight]{figures/erd-reservation.png}
+        \includegraphics[height=0.38\textheight]{figures/erd-reservation.png}
         \caption{ERD -- reservation-service}
         \label{fig:erd-reservation}
-    \end{minipage}
-    \hfill
-    \begin{minipage}[t]{0.48\textwidth}
+    \end{minipage}%
+    \hspace{0.04\textwidth}%
+    \begin{minipage}[t]{0.47\textwidth}
         \centering
-        \includegraphics[height=0.42\textheight]{figures/erd-payment.png}
+        \includegraphics[height=0.38\textheight]{figures/erd-payment.png}
         \caption{ERD -- payment-service}
         \label{fig:erd-payment}
     \end{minipage}
@@ -503,8 +503,11 @@ Z pohľadu prototypu je dôležité zdokumentovať minimálne tieto kontrakty:
 \begin{itemize}
     \item vstupné HTTP rozhranie pre vytvorenie rezervácie (volané cez gateway, smerované do reservation-service),
     \item udalosti publikované do Kafka, najmä \texttt{Reservation\allowbreak Created} a \texttt{Payment\allowbreak Confirmed}/\texttt{Payment\allowbreak Failed},
-    \item spôsob zmeny stavu rezervácie v reakcii na výsledok platby.
+    \item spôsob zmeny stavu rezervácie v reakcii na výsledok platby,
+    \item \texttt{GET /api/notifications} — čítanie záznamov z \texttt{notification\_logs} pre overenie, že notifikácia bola zapísaná po ukončení platobného procesu.
 \end{itemize}
+
+Pre interaktívne preskúmanie a manuálne testovanie HTTP rozhraní oboch prototypov bola integrovaná podpora Swagger UI prostredníctvom knižnice \\ \texttt{springdoc\allowbreak-openapi}. Každý prototyp generuje OpenAPI dokumentáciu automaticky pri štarte aplikácie na základe anotácií kontrolérov. V monolitickej verzii je Swagger UI dostupný na \texttt{/swagger-ui/index.html}. V mikroservisnej verzii je Swagger UI každej služby vystavený cez gateway na prefixovaných cestách \\ (napr.\ \texttt{/user-service/swagger-ui/index.html}), pričom každý \\ \texttt{OpenApiConfig} explicitne nastavuje \texttt{servers} URL na adresu gateway, aby volania cez „Try it out" smerovali správne cez jediný vstupný bod na porte 8080.
 
 \subsection{Spustenie a testovanie}
 
@@ -512,10 +515,8 @@ Reprodukovateľné spustenie predstavuje dôležitý predpoklad pre korektné po
 
 Mikroservisná verzia je spustiteľná v lokálnom prostredí pomocou Docker Compose, ktorý definuje závislosti na Kafka/Zookeeper a PostgreSQL, a zároveň spúšťa jednotlivé služby v kontajneroch. Použitý je koncept Spring Profiles, kde sa odlišuje základná konfigurácia a konfigurácia určená pre docker prostredie (\texttt{application.yml} a \texttt{application-docker.yml}).
 
-Na úrovni testovania je v prototypoch prítomná podpora jednotkových a integračných testov (JUnit 5, Mockito). Mikroservisná verzia využíva Actuator a exponuje základné health/info endpointy pre diagnostiku stavu služieb.
+Na úrovni testovania je v prototypoch prítomná podpora jednotkových a integračných testov (JUnit 5, Mockito). Mikroservisná verzia využíva Actuator a exponuje základné health/info endpointy pre diagnostiku stavu služieb. Manuálne overenie E2E toku je v oboch verziách možné priamo cez Swagger UI — pre mikroservisnú verziu cez gateway na portoch jednotlivých prefixov, pre monolitickú verziu lokálne na \texttt{localhost:8080}.
 
 Záťažové testovanie bolo realizované nástrojom k6, ktorý umožňuje skriptovanie scenárov v JavaScripte a zbieranie štatistík o latencii, priepustnosti a chybovosti. Testy boli spúšťané opakovane v rovnakom prostredí, aby sa minimalizoval vplyv náhodných výkyvov na namerané výsledky. Pre mikroservisnú verziu bolo navyše potrebné zohľadniť asynchronitu spracovania — meranie end-to-end času zahŕňalo aktívne polling stavu rezervácie až do dosiahnutia terminálneho stavu (\texttt{PAID} alebo \texttt{PAYMENT\_FAILED}), čo odráža reálny spôsob, akým by klient overoval výsledok operácie v produkčnom systéme.
 
 Záťažové scenáre boli navrhnuté tak, aby simulovali realistické vzorce používania: od jedného virtuálneho používateľa pri baseline scenári až po 60 súčasných používateľov pri high\_load scenári. Každý scenár trval dostatočne dlho na to, aby boli výsledky štatisticky relevantné a eliminovali efekt studených spustení (\textit{cold start}) JVM.
-
-Výsledky záťažového testovania sú podrobne analyzované v kapitole~\ref{ch:evaluation}, kde sú porovnané namerané hodnoty latencie, priepustnosti a spotreby zdrojov pre oba architektonické varianty.
