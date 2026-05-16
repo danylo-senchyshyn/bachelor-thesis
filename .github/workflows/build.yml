@@ -1,0 +1,47 @@
+name: Build PDF
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: git.kpi.fei.tuke.sk:4567/kpi/latex:2025.09.4
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build thesis PDF
+        run: |
+          /entrypoint.bash
+          make --makefile=/app/Makefile thesis printable
+          mv dist/*.pdf .
+
+      - name: Upload PDF artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: thesis-pdf
+          path: |
+            thesis.pdf
+            thesis-printable.pdf
+          retention-days: 90
+
+      - name: Create/update release with PDF
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "Latest Build"
+          body: |
+            Automatically built from the latest commit on `master`.
+
+            **Download:**
+            - `thesis.pdf` — screen/ebook version (colored links)
+            - `thesis-printable.pdf` — print version (no colored links)
+          files: |
+            thesis.pdf
+            thesis-printable.pdf
+          make_latest: true
+          prerelease: false
