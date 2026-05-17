@@ -64,7 +64,7 @@ Nasledujúci diagram ilustruje konkrétne usporiadanie týchto konceptov. Topic 
 
 Alternatívou k platforme Apache Kafka je RabbitMQ — message broker orientovaný na doručovanie správ prostredníctvom frontov, ktorý podporuje flexibilné smerovanie správ, potvrdzovanie ich prijatia a rôzne komunikačné vzory. RabbitMQ je vhodný pre tradičnú message-oriented komunikáciu a fronty úloh, zatiaľ čo Kafka je navrhnutá ako distribuovaný log optimalizovaný na spracovanie veľkého objemu udalostí s možnosťou opätovného čítania a paralelného spracovania cez consumer groups.
 
-Z hľadiska tejto bakalárskej práce je vhodnejšou voľbou práve Apache Kafka. RabbitMQ by bol postačujúci pre jednoduchší scenár doručenia správy medzi dvoma službami, avšak v kontexte tejto práce je nevyhnutná schopnosť prehrávať udalosti od ľubovoľného offsetu — napríklad pri reštarte konzumenta alebo ladení asynchrónneho toku. RabbitMQ túto vlastnosť nemá, pretože správy po potvrdení prijatia maže. Okrem toho model consumer groups s partition-based škálovaním Kafky priamo zodpovedá požiadavkám choreografie sagy, kde viacero nezávislých konzumentov reaguje na rovnaký prúd udalostí. Alternatívy ako NATS alebo ActiveMQ síce ponúkajú nižšiu latenciu, resp. širšiu škálu protokolov, no chýba im log-based model trvalého ukladania udalostí, ktorý je pre vzor transactional outbox a spoľahlivé at-least-once doručenie kľúčový. Z týchto dôvodov je Apache Kafka pre ciele tejto práce jednoznačne vhodnejšou voľbou.
+Z hľadiska tejto bakalárskej práce je vhodnejšou voľbou práve Apache Kafka. RabbitMQ by bol postačujúci pre jednoduchší scenár doručenia správy medzi dvoma službami, avšak v kontexte tejto práce je nevyhnutná schopnosť prehrávať udalosti od ľubovoľného offsetu — napríklad pri reštarte konzumenta alebo ladení asynchrónneho toku. RabbitMQ túto vlastnosť nemá, pretože správy po potvrdení prijatia maže. Okrem toho model consumer groups s partition-based škálovaním Kafky priamo zodpovedá požiadavkám choreografie sagy, kde viacero nezávislých konzumentov reaguje na rovnaký prúd udalostí. Alternatívy ako \gls{nats} alebo ActiveMQ síce ponúkajú nižšiu latenciu, resp. širšiu škálu protokolov, no chýba im log-based model trvalého ukladania udalostí, ktorý je pre vzor transactional outbox a spoľahlivé at-least-once doručenie kľúčový. Z týchto dôvodov je Apache Kafka pre ciele tejto práce jednoznačne vhodnejšou voľbou.
 
 \begin{table}[H]
 \centering
@@ -75,7 +75,7 @@ Model doručenia   & Publish-subscribe (log-based) & Message queue (push/pull) \
 Uloženie správ    & Append-only log, konfigurovateľná retenčná doba & Správy sa mažú po potvrdení príjmu \\ \hline
 Škálovanie        & Horizontálne cez partície a consumer groups & Horizontálne cez fronty a shovel/federation \\ \hline
 Replay správ      & Áno — konzumenti môžu čítať od ľubovoľného offsetu & Nie — správa je dostupná iba raz \\ \hline
-Typické využitie  & Event streaming, event-driven architektúry, dátové toky & Fronty úloh, RPC, jemnejšie smerovanie správ \\ \hline
+Typické využitie  & Event streaming, event-driven architektúry, dátové toky & Fronty úloh, \gls{rpc}, jemnejšie smerovanie správ \\ \hline
 Vhodnosť pre prácu & \textbf{Áno} — event-driven mikroservisy, saga choreografia & Menej vhodný — chýba replay a log-based model \\ \hline
 \end{tabular}
 \caption{Porovnanie Apache Kafka a RabbitMQ}

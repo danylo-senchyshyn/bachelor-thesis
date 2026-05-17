@@ -253,7 +253,7 @@ Počet procesov      & 2          & 7            & 3,5$\times$ menej \\ \hline
 \label{tab:eval-summary}
 \end{table}
 
-Výsledky merania potvrdzujú teoretické očakávania formulované v analytickej časti. Monolitická architektúra dosahuje lepší výkon vo všetkých meraných dimenziách. Dominantným faktorom rozdielu v E2E čase je konfigurácia outbox schedulera (\texttt{fixedDelay=5000\,ms}), nie surový výpočtový výkon — optimalizácia tohto parametra (napr. na 100\,ms alebo použitie CDC) by mohla výrazne znížiť E2E latenciu mikroservisnej verzie bez zmeny základnej architektúry.
+Výsledky merania potvrdzujú teoretické očakávania formulované v analytickej časti. Monolitická architektúra dosahuje lepší výkon vo všetkých meraných dimenziách. Dominantným faktorom rozdielu v E2E čase je konfigurácia outbox schedulera (\texttt{fixedDelay=5000\,ms}), nie surový výpočtový výkon — optimalizácia tohto parametra (napr. na 100\,ms alebo použitie \gls{cdc}) by mohla výrazne znížiť E2E latenciu mikroservisnej verzie bez zmeny základnej architektúry.
 
 Stanovené ciele práce boli splnené:
 \begin{itemize}
@@ -268,7 +268,7 @@ Mikroservisná architektúra poskytuje výhody, ktoré tieto testy nezachytávaj
 \bigskip
 \noindent\rule{\linewidth}{0.6pt}
 
-\noindent\textbf{Kľúčové zistenie:} Dominantným faktorom E2E latencie mikroservisnej verzie nie je surový výpočtový výkon, ale konfigurácia outbox schedulera \\ (\texttt{fixedDelay=5000\,ms}). Optimalizácia tohto parametra — napríklad skrátením na 100\,ms alebo nahradením mechanizmom CDC (Change Data Capture) — by mohla výrazne znížiť E2E latenciu bez zásahu do základnej architektúry. Monolitická architektúra dosahuje lepší výkon vo všetkých meraných dimenziách, avšak mikroservisná verzia prináša architektonické vlastnosti, ktoré sa kvantitatívnymi meraniami nedajú priamo zachytiť.
+\noindent\textbf{Kľúčové zistenie:} Dominantným faktorom E2E latencie mikroservisnej verzie nie je surový výpočtový výkon, ale konfigurácia outbox schedulera \\ (\texttt{fixedDelay=5000\,ms}). Optimalizácia tohto parametra — napríklad skrátením na 100\,ms alebo nahradením mechanizmom \gls{cdc} — by mohla výrazne znížiť E2E latenciu bez zásahu do základnej architektúry. Monolitická architektúra dosahuje lepší výkon vo všetkých meraných dimenziách, avšak mikroservisná verzia prináša architektonické vlastnosti, ktoré sa kvantitatívnymi meraniami nedajú priamo zachytiť.
 
 \section{Analýza zložitosti kódu}
 

@@ -285,7 +285,7 @@ Perzistencia a transakcie:
 
 Nasadenie a spustenie:
 \begin{itemize}
-    \item \texttt{Dockerfile} — multi-stage build (Maven build + JRE runtime),
+    \item \texttt{Dockerfile} — multi-stage build (Maven build + \gls{jre} runtime),
     \item \texttt{docker-compose.yml} — dva kontajnery: \texttt{monolith-app} a \texttt{postgres},
     \item \texttt{application-docker.yml} — Spring profil pre Docker prostredie (hostname \texttt{postgres} namiesto \texttt{localhost}).
 \end{itemize}
@@ -408,7 +408,7 @@ Technológie:
 \begin{itemize}
     \item Java 17, Spring Boot 3.4.0, Spring Cloud (Gateway),
     \item Apache Kafka (Spring Kafka),
-    \item PostgreSQL (oddelené databázy na úrovni logických DB),
+    \item PostgreSQL (oddelené databázy na úrovni logických \gls{db}),
     \item Docker Compose pre lokálne spustenie~\cite{DockerCompose2025}.
 \end{itemize}
 
@@ -521,7 +521,7 @@ Z pohľadu prototypu je dôležité zdokumentovať minimálne tieto kontrakty:
     \item \texttt{GET /api/notifications} — čítanie záznamov z \texttt{notification\_logs} pre overenie, že notifikácia bola zapísaná po ukončení platobného procesu.
 \end{itemize}
 
-Pre interaktívne preskúmanie a manuálne testovanie HTTP rozhraní oboch prototypov bola integrovaná podpora Swagger UI prostredníctvom knižnice \\ \texttt{springdoc\allowbreak-openapi}. Každý prototyp generuje OpenAPI dokumentáciu automaticky pri štarte aplikácie na základe anotácií kontrolérov. V monolitickej verzii je Swagger UI dostupný na \texttt{/swagger-ui/index.html}. V mikroservisnej verzii je Swagger UI každej služby vystavený cez gateway na prefixovaných cestách \\ (napr.\ \texttt{/user-service/swagger-ui/index.html}), pričom každý \\ \texttt{OpenApiConfig} explicitne nastavuje \texttt{servers} URL na adresu gateway, aby volania cez „Try it out" smerovali správne cez jediný vstupný bod na porte 8080.
+Pre interaktívne preskúmanie a manuálne testovanie HTTP rozhraní oboch prototypov bola integrovaná podpora Swagger UI prostredníctvom knižnice \\ \texttt{springdoc\allowbreak-openapi}. Každý prototyp generuje OpenAPI dokumentáciu automaticky pri štarte aplikácie na základe anotácií kontrolérov. V monolitickej verzii je Swagger UI dostupný na \texttt{/swagger-ui/index.html}. V mikroservisnej verzii je Swagger UI každej služby vystavený cez gateway na prefixovaných cestách \\ (napr.\ \texttt{/user-service/swagger-ui/index.html}), pričom každý \\ \texttt{OpenApiConfig} explicitne nastavuje \texttt{servers} \gls{url} na adresu gateway, aby volania cez „Try it out" smerovali správne cez jediný vstupný bod na porte 8080.
 
 \subsection{Spustenie a testovanie}
 
