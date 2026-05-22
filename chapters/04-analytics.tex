@@ -132,8 +132,6 @@ Z hľadiska diagnostiky využíva mikroservisný prototyp Actuator endpointy Spr
 
 \section{Zhrnutie analytickej časti}
 
-Analýza ukázala, že monolitická architektúra poskytuje jednoduchý a tradičný základ pre implementáciu rezervačného systému s lokálnou transakčnou konzistenciou, zatiaľ čo mikroservisná architektúra umožňuje fyzické oddelenie domén a podporuje event-driven spracovanie. Zároveň boli identifikované kľúčové technické oblasti, v ktorých sa architektúry líšia: komunikácia, konzistencia dát, nasadenie a prevádzková náročnosť.
+Analýza ukázala, že monolitická architektúra poskytuje jednoduchý základ s lokálnou transakčnou konzistenciou, zatiaľ čo mikroservisná umožňuje fyzické oddelenie domén a event-driven spracovanie. Zároveň boli identifikované kľúčové technické oblasti, v ktorých sa architektúry líšia: komunikácia, konzistencia dát, nasadenie a prevádzková náročnosť.
 
-Tieto zistenia tvoria základ pre ďalšiu kapitolu, v ktorej sú uvedené použité metódy, konceptuálny návrh riešenia, požiadavky na systém a opis implementovaných prototypov s dôrazom na architektúru, komponenty, technológie, nasadenie a spôsob testovania.
-
-Dôležitým výstupom analytickej časti je aj vymedzenie hraníc porovnania: cieľom nie je dokázať nadradenosť jedného prístupu nad druhým, ale kvantifikovať konkrétne rozdiely merateľnými experimentmi. Tento zámer priamo ovplyvňuje návrh prototypov — oba musia byť funkčne ekvivalentné, nasaditeľné v rovnakom prostredí a testovateľné rovnakými nástrojmi, aby bolo porovnanie metodicky korektné a výsledky interpretovateľné.
+Dôležitým výstupom analytickej časti je vymedzenie hraníc porovnania: cieľom nie je dokázať nadradenosť jedného prístupu nad druhým, ale kvantifikovať konkrétne rozdiely merateľnými experimentmi. Oba prototypy musia byť funkčne ekvivalentné, nasaditeľné v rovnakom prostredí a testovateľné rovnakými nástrojmi, aby bolo porovnanie metodicky korektné a výsledky interpretovateľné.
