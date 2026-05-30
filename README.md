@@ -8,7 +8,8 @@
 
 ## Download
 
-[![Download PDF](https://img.shields.io/badge/Download-thesis.pdf-blue?style=for-the-badge&logo=adobeacrobatreader)](https://github.com/danylo-senchyshyn/bachelor-thesis/releases/latest/download/thesis.pdf)
+[![Download in Slovak](https://img.shields.io/badge/Download-Slovak%20(original)-blue?style=for-the-badge&logo=adobeacrobatreader)](https://github.com/danylo-senchyshyn/bachelor-thesis/releases/latest/download/thesis.pdf)
+[![Download in English](https://img.shields.io/badge/Download-English%20translation-green?style=for-the-badge&logo=adobeacrobatreader)](https://github.com/danylo-senchyshyn/bachelor-thesis/releases/latest/download/thesis-en.pdf)
 
 The PDF is automatically built from source on every push to `master` and published as a GitHub Release.
 
